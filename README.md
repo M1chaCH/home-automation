@@ -1,2 +1,2 @@
-# home-automation
-This repository contains my home automation system.
+# room-automation
+This repository contains my room automation system.
