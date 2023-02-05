@@ -1,0 +1,27 @@
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: nowrap;
+
+  backdrop-filter: blur(20px);
+  padding: 5vh 5vw;
+
+  a {
+    text-decoration: none;
+    color: var(--yellow-red);
+    font-size: 26px;
+    font-weight: 700;
+
+    transition: all 250ms ease-out;
+  }
+
+  a:hover {
+    scale: 1.08;
+    filter: brightness(120%);
+  }
+}

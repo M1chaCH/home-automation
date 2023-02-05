@@ -18,4 +18,8 @@ html {
   min-height: 100vh;
 }
 
+body {
+  margin: 0;
+}
+
 /*# sourceMappingURL=styles.css.map */
