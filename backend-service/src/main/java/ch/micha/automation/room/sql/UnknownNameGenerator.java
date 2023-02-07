@@ -22,4 +22,8 @@ public class UnknownNameGenerator {
         count++;
         return count;
     }
+
+    public void reset() {
+        this.count = 0;
+    }
 }

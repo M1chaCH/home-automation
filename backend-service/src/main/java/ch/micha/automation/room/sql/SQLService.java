@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class SQLService implements OnAppStartupListener, OnAppShutdownListener {
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private final String dbUrl;
     private final String dbUser;
@@ -54,5 +54,9 @@ public class SQLService implements OnAppStartupListener, OnAppShutdownListener {
         } catch (SQLException e) {
             logger.log(Level.WARNING, "failed to close db connection", e);
         }
+    }
+
+    public Connection getConnection() {
+        return dbConnection;
     }
 }

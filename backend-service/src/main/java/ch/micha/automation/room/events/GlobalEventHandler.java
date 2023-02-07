@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class GlobalEventHandler {
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private final Instance<OnAppStartupListener> onAppStartupListeners;
     private final Instance<OnAppShutdownListener> onAppShutdownListeners;

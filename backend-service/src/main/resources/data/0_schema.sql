@@ -1,3 +1,7 @@
+DROP USER IF EXISTS java;
+CREATE USER java WITH PASSWORD 'java';
+GRANT ALL PRIVILEGES ON  DATABASE room_automation TO  java;
+
 drop table if exists spotify_reference cascade;
 create table spotify_reference
 (

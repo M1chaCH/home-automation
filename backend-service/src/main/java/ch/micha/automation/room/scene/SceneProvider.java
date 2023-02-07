@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class SceneProvider {
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     @Inject
     Instance<Scene> scenes;

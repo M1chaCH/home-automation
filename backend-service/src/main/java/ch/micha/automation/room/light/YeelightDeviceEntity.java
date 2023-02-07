@@ -11,9 +11,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class YeelightDeviceEntity {
-    private int id;
+    /** primary key, should match with YeeLight location */
+    private String id;
     private String name;
-    private String ipAddress;
-    private boolean online = false;
     private YeeLight light;
+
+    public boolean isOnline() {
+        return light != null;
+    }
+
+    @Override
+    public String toString() {
+        return "YeelightDeviceEntity{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

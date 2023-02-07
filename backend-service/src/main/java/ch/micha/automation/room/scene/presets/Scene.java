@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class Scene {
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+    protected final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     protected abstract void runScene();
     public abstract String getSceneId();
