@@ -12,9 +12,14 @@
     <groupId>ch.micha</groupId>
     <artifactId>room-automation</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-    <properties>
-    </properties>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
 <!--Helidon dependencies-->
@@ -69,6 +74,18 @@
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.moppletop</groupId>
+            <artifactId>YeeLight-API</artifactId>
+            <version>8c90b02c1b82ff5981b17d107a7a20285105ea0e</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.5.3</version>
         </dependency>
     </dependencies>
 
