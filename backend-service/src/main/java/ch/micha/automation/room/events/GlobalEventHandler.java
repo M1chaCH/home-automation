@@ -11,6 +11,10 @@ import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Listens for application events and calls the custom listeners.
+ * Executes the handler methods of the listener classes with respect to their annotated priority.
+ */
 @ApplicationScoped
 public class GlobalEventHandler {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());

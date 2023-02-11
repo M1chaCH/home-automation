@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class ApplySceneDTO {
 
-    private String sceneId;
+    private int sceneId;
 }
