@@ -43,7 +43,7 @@ public class SceneProvider {
      */
     public SceneEntity loadDefaultScene() {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
-                "select * from scene where default_scene = true"
+                "select * from scene where default_scene = true;"
         )) {
             ResultSet result = statement.executeQuery();
 
@@ -82,7 +82,7 @@ public class SceneProvider {
      */
     public SceneEntity createNewScene(String name, boolean defaultScene, Map<YeelightDeviceEntity, LightConfigDTO> newLightConfigs) {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
-                "INSERT INTO scene (name, default_scene) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS
+                "INSERT INTO scene (name, default_scene) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
             statement.setString(1, name);
             statement.setBoolean(2, defaultScene);
@@ -141,7 +141,7 @@ public class SceneProvider {
 
     private Map<YeelightDeviceEntity, LightConfigDTO> loadDeviceLightConfigs(int sceneId) {
         Map<YeelightDeviceEntity, LightConfigDTO> deviceLightConfigs = new HashMap<>();
-        String query = "SELECT * FROM device_light_scene WHERE scene_id=?";
+        String query = "SELECT * FROM device_light_scene WHERE scene_id=?;";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
             statement.setInt(1, sceneId);
@@ -177,7 +177,7 @@ public class SceneProvider {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "UPDATE scene " +
                         "SET default_scene = false " +
-                        "WHERE id = ?"
+                        "WHERE id = ?;"
         )) {
             statement.setInt(1, defaultSceneId);
             statement.execute();
@@ -201,7 +201,7 @@ public class SceneProvider {
     }
 
     private void deleteAllLightConfigs(int sceneId) {
-        final String query = "DELETE FROM device_light_scene WHERE scene_id = ?";
+        final String query = "DELETE FROM device_light_scene WHERE scene_id = ?;";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
             statement.setInt(1, sceneId);

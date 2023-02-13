@@ -117,7 +117,7 @@ public class LightConfigProvider {
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "INSERT INTO light_configuration (name, power, red, green, blue, brightness, change_duration) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS
+                        "VALUES (?, ?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
             statement.setString(1, defaultConfig.name());
             statement.setBoolean(2, defaultConfig.power());

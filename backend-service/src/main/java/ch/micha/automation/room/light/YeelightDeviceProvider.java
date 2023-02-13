@@ -108,7 +108,7 @@ public class YeelightDeviceProvider implements OnAppStartupListener {
 
         // loads all lights from the db and maps them to an online light.
         // if no online light with the same id is found then null is mapped
-        try(PreparedStatement statement = sqlService.getConnection().prepareStatement("select * from yeelight_devices")){
+        try(PreparedStatement statement = sqlService.getConnection().prepareStatement("select * from yeelight_devices;")){
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
@@ -143,7 +143,7 @@ public class YeelightDeviceProvider implements OnAppStartupListener {
     private void saveNewEntity(YeelightDeviceEntity entity) {
 
         try (PreparedStatement statement = sqlService.getConnection().prepareStatement(
-                "insert into yeelight_devices values (?, ?)"
+                "insert into yeelight_devices values (?, ?);"
         )) {
             statement.setInt(1, entity.id());
             statement.setString(2, entity.name());
