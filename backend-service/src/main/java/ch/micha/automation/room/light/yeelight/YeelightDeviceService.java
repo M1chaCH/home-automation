@@ -1,6 +1,7 @@
-package ch.micha.automation.room.light;
+package ch.micha.automation.room.light.yeelight;
 
 import ch.micha.automation.room.errorhandling.exceptions.YeeLightOfflineException;
+import ch.micha.automation.room.light.configuration.LightConfigEntity;
 import com.moppletop.yeelight.api.YeeApi;
 import com.moppletop.yeelight.api.model.YeeDuration;
 import com.moppletop.yeelight.api.model.YeeLight;
@@ -31,7 +32,7 @@ public class YeelightDeviceService {
      * @param config the config to apply
      * @throws YeeLightOfflineException if the light is offline
      */
-    public void applyConfigToLight(YeelightDeviceEntity lightEntity, LightConfigDTO config) {
+    public void applyConfigToLight(YeelightDeviceEntity lightEntity, LightConfigEntity config) {
         final int changeDuration = config.changeDurationMillis() == 0 ? DEFAULT_CHANGE_DURATION : config.changeDurationMillis();
         final YeeDuration duration = YeeDuration.millis(changeDuration);
         YeeLight light = lightEntity.light();

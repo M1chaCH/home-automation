@@ -1,4 +1,4 @@
-package ch.micha.automation.room.light;
+package ch.micha.automation.room.light.configuration;
 
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
 import ch.micha.automation.room.sql.SQLService;
@@ -27,7 +27,7 @@ public class LightConfigProvider {
         this.sql = sql;
     }
 
-    public Optional<LightConfigDTO> findConfig(int configId) {
+    public Optional<LightConfigEntity> findConfig(int configId) {
         final String query = "SELECT * FROM light_configuration WHERE id = ?";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
@@ -38,7 +38,7 @@ public class LightConfigProvider {
                 logger.log(Level.INFO, "did not find LightConfig by id:{0}", configId);
                 return Optional.empty();
             }
-            LightConfigDTO lightConfig = createConfigFromCurrent(result);
+            LightConfigEntity lightConfig = createConfigFromCurrent(result);
 
             logger.log(Level.INFO, "selected light_configuration id:{0}", lightConfig.id());
             return Optional.of(lightConfig);
@@ -47,7 +47,7 @@ public class LightConfigProvider {
         }
     }
 
-    public Optional<LightConfigDTO> findConfigByName(String configName) {
+    public Optional<LightConfigEntity> findConfigByName(String configName) {
         final String query = "SELECT * FROM light_configuration WHERE name = ?";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
@@ -58,7 +58,7 @@ public class LightConfigProvider {
                 logger.log(Level.INFO, "did not find LightConfig by name:{0}", configName);
                 return Optional.empty();
             }
-            LightConfigDTO lightConfig = createConfigFromCurrent(result);
+            LightConfigEntity lightConfig = createConfigFromCurrent(result);
 
             logger.log(Level.INFO, "selected light_configuration id:{0}", lightConfig.id());
             return Optional.of(lightConfig);
@@ -67,8 +67,8 @@ public class LightConfigProvider {
         }
     }
 
-    public Map<Integer, LightConfigDTO> findConfigsToMap(Integer... configIds) {
-        Map<Integer, LightConfigDTO> lightConfigs = new HashMap<>();
+    public Map<Integer, LightConfigEntity> findConfigsToMap(Integer... configIds) {
+        Map<Integer, LightConfigEntity> lightConfigs = new HashMap<>();
         StringBuilder query = new StringBuilder("SELECT * FROM light_configuration WHERE ");
 
         for (int i = 0; i < configIds.length; i++) { // add or statement to include the given configIds
@@ -83,7 +83,7 @@ public class LightConfigProvider {
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
-                LightConfigDTO config = createConfigFromCurrent(result);
+                LightConfigEntity config = createConfigFromCurrent(result);
                 lightConfigs.put(config.id(), config);
             }
 
@@ -99,12 +99,12 @@ public class LightConfigProvider {
      * @param configIds a list of the configs to be selected
      * @return the selected and parsed configs (if id was not found, then nothing happens but the id won't be included in the result)
      */
-    public Collection<LightConfigDTO> findConfigs(Integer... configIds) {
+    public Collection<LightConfigEntity> findConfigs(Integer... configIds) {
         return findConfigsToMap(configIds).values();
     }
 
-    public LightConfigDTO createDefaultConfig() {
-        final LightConfigDTO defaultConfig = new LightConfigDTO(
+    public LightConfigEntity createDefaultConfig() {
+        final LightConfigEntity defaultConfig = new LightConfigEntity(
                 0,
                 DEFAULT_CONFIG_NAME,
                 true,
@@ -133,7 +133,7 @@ public class LightConfigProvider {
             generatedIdKeys.next();
             int generatedId = generatedIdKeys.getInt("id");
 
-            final LightConfigDTO lightConfigDTO = new LightConfigDTO(
+            final LightConfigEntity lightConfigEntity = new LightConfigEntity(
                     generatedId,
                     defaultConfig.name(),
                     defaultConfig.power(),
@@ -144,15 +144,15 @@ public class LightConfigProvider {
                     defaultConfig.changeDurationMillis()
             );
 
-            logger.log(Level.INFO, "created default light configuration: {0}", lightConfigDTO);
-            return lightConfigDTO;
+            logger.log(Level.INFO, "created default light configuration: {0}", lightConfigEntity);
+            return lightConfigEntity;
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
     }
 
-    private LightConfigDTO createConfigFromCurrent(ResultSet result) throws SQLException {
-        return new LightConfigDTO(
+    private LightConfigEntity createConfigFromCurrent(ResultSet result) throws SQLException {
+        return new LightConfigEntity(
                 result.getInt("id"),
                 result.getString("name"),
                 result.getBoolean("power"),

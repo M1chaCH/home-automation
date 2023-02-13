@@ -1,4 +1,4 @@
-package ch.micha.automation.room.light;
+package ch.micha.automation.room.light.yeelight;
 
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.events.OnAppStartupListener;

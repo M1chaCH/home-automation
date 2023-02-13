@@ -1,7 +1,7 @@
 package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
-import ch.micha.automation.room.light.YeelightDeviceService;
+import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

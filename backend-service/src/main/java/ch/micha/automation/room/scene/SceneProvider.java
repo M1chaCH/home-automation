@@ -1,7 +1,10 @@
 package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
-import ch.micha.automation.room.light.*;
+import ch.micha.automation.room.light.configuration.LightConfigEntity;
+import ch.micha.automation.room.light.configuration.LightConfigProvider;
+import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
+import ch.micha.automation.room.light.yeelight.YeelightDeviceProvider;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -80,7 +83,7 @@ public class SceneProvider {
      * @param defaultScene this new scene will be the default
      * @return the created scene with the correct generated id.
      */
-    public SceneEntity createNewScene(String name, boolean defaultScene, Map<YeelightDeviceEntity, LightConfigDTO> newLightConfigs) {
+    public SceneEntity createNewScene(String name, boolean defaultScene, Map<YeelightDeviceEntity, LightConfigEntity> newLightConfigs) {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "INSERT INTO scene (name, default_scene) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
@@ -109,7 +112,7 @@ public class SceneProvider {
      * @param sceneId the scene that should be changed
      * @param newLightConfigs the new light configuration
      */
-    public void saveChangedLightConfigs(int sceneId, Map<YeelightDeviceEntity, LightConfigDTO> newLightConfigs) {
+    public void saveChangedLightConfigs(int sceneId, Map<YeelightDeviceEntity, LightConfigEntity> newLightConfigs) {
         deleteAllLightConfigs(sceneId);
 
         StringBuilder query = new StringBuilder("INSERT INTO device_light_scene (scene_id, device_id, configuration_id) VALUES ");
@@ -122,7 +125,7 @@ public class SceneProvider {
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query.toString())) {
             int i = 0;
-            for (Map.Entry<YeelightDeviceEntity, LightConfigDTO> entry : newLightConfigs.entrySet()) {
+            for (Map.Entry<YeelightDeviceEntity, LightConfigEntity> entry : newLightConfigs.entrySet()) {
                 i++;
                 statement.setInt(i, sceneId);
                 i++;
@@ -139,8 +142,8 @@ public class SceneProvider {
         }
     }
 
-    private Map<YeelightDeviceEntity, LightConfigDTO> loadDeviceLightConfigs(int sceneId) {
-        Map<YeelightDeviceEntity, LightConfigDTO> deviceLightConfigs = new HashMap<>();
+    private Map<YeelightDeviceEntity, LightConfigEntity> loadDeviceLightConfigs(int sceneId) {
+        Map<YeelightDeviceEntity, LightConfigEntity> deviceLightConfigs = new HashMap<>();
         String query = "SELECT * FROM device_light_scene WHERE scene_id=?;";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
@@ -158,7 +161,7 @@ public class SceneProvider {
             Integer[] deviceIdsArray = deviceIds.toArray(new Integer[0]);
             List<YeelightDeviceEntity> devices = deviceProvider.findByIds(deviceIdsArray);
             Integer[] configurationIdsArray = configurationIds.toArray(new Integer[0]);
-            Map<Integer, LightConfigDTO> lightConfigs = lightConfigProvider.findConfigsToMap(configurationIdsArray);
+            Map<Integer, LightConfigEntity> lightConfigs = lightConfigProvider.findConfigsToMap(configurationIdsArray);
 
             for (int i = 0; i < devices.size(); i++) {
                 deviceLightConfigs.put(devices.get(i), lightConfigs.get(configurationIds.get(i)));
@@ -189,11 +192,11 @@ public class SceneProvider {
     }
 
     private SceneEntity createDefaultScene() {
-        Map<YeelightDeviceEntity, LightConfigDTO> defaultLightConfigs = new HashMap<>();
-        Optional<LightConfigDTO> existingLightConfig = lightConfigProvider
+        Map<YeelightDeviceEntity, LightConfigEntity> defaultLightConfigs = new HashMap<>();
+        Optional<LightConfigEntity> existingLightConfig = lightConfigProvider
                 .findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME);
 
-        LightConfigDTO defaultLightConfig = existingLightConfig.orElseGet(lightConfigProvider::createDefaultConfig);
+        LightConfigEntity defaultLightConfig = existingLightConfig.orElseGet(lightConfigProvider::createDefaultConfig);
 
         deviceProvider.getDevices().forEach(device -> defaultLightConfigs.put(device, defaultLightConfig));
 

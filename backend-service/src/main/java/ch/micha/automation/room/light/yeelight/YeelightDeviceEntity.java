@@ -1,4 +1,4 @@
-package ch.micha.automation.room.light;
+package ch.micha.automation.room.light.yeelight;
 
 import com.moppletop.yeelight.api.model.YeeLight;
 

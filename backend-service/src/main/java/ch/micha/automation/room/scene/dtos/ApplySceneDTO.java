@@ -1,4 +1,4 @@
-package ch.micha.automation.room.scene;
+package ch.micha.automation.room.scene.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

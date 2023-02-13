@@ -1,4 +1,4 @@
-package ch.micha.automation.room.light;
+package ch.micha.automation.room.light.configuration;
 
 /**
  * @param id autoincrement number
@@ -10,7 +10,7 @@ package ch.micha.automation.room.light;
  * @param brightness (1-100)
  * @param changeDurationMillis if 0 DEFAULT will be used (nullable)
  */
-public record LightConfigDTO(
+public record LightConfigEntity(
         int id,
         String name,
         boolean power,
