@@ -8,6 +8,8 @@ import { ScenesPageComponent } from './pages/scenes.page/scenes.page.component';
 import { SpotifyPageComponent } from './pages/spotify.page/spotify.page.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {HttpClientModule} from "@angular/common/http";
+import {PageMessagesComponent} from "./components/page-messages/page-messages.component";
 
 @NgModule({
   declarations: [
@@ -15,12 +17,14 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     HomePageComponent,
     ScenesPageComponent,
     SpotifyPageComponent,
-    NavigationComponent
+    NavigationComponent,
+    PageMessagesComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -39,5 +39,40 @@ create table device_light_scene
     scene_id int references scene(id)
 );
 
+drop table if exists spotify_authorisation cascade;
+create table spotify_authorisation
+(
+    id serial primary key,
+    access_token varchar(250) not null unique,
+    token_type varchar(250) not null,
+    scope varchar(250) not null,
+    generated_at int not null,
+    expires_in int not null,
+    refresh_token varchar(250) not null unique
+);
+
+drop function if exists validate_single_spotify_authorisation;
+create function validate_single_spotify_authorisation()
+    returns trigger
+    language plpgsql
+    as $$
+    declare
+        row_count int;
+    begin
+        select count(*) into row_count from spotify_authorisation;
+
+        if row_count > 1 then
+            raise sqlstate '27000' using message = 'cant insert more than one spotify authorisation';
+        end if;
+        return new;
+    end;
+$$;
+
+create or replace trigger spotify_authorisation_insert_trigger
+    before insert on spotify_authorisation
+    for each row execute function validate_single_spotify_authorisation();
+
+
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO java;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public to java;
+GRANT ALL PRIVILEGES ON ALL PROCEDURES IN SCHEMA public to java;
