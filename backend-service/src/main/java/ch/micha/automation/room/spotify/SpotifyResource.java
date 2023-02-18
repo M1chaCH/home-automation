@@ -1,7 +1,7 @@
 package ch.micha.automation.room.spotify;
 
 import ch.micha.automation.room.events.Logged;
-import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
+import ch.micha.automation.room.spotify.dtos.SpotifyCodeDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -23,18 +23,29 @@ public class SpotifyResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response isConnected() {
-        return Response
-                .status(Response.Status.OK)
-                .entity(service.getAccess())
-                .build();
+        service.getAccess();
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @GET
+    @Path("/client")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSpotifyClient() {
+        return Response.status(Response.Status.OK).entity(service.getClient()).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response storeConnection(SpotifyAuthorisationDTO dto) {
+    public Response storeConnection(SpotifyCodeDTO dto) {
         service.addAuthorisation(dto);
-        return Response
-                .status(Response.Status.CREATED)
-                .build();
+
+        return Response.status(Response.Status.CREATED).build();
+    }
+
+    @PUT
+    @Path("/playback")
+    public Response togglePlayback() {
+        service.togglePlayback();
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

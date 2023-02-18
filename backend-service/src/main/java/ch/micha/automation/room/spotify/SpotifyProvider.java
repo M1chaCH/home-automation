@@ -2,9 +2,11 @@ package ch.micha.automation.room.spotify;
 
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
 import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
+import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,10 +19,14 @@ import java.util.logging.Logger;
 public class SpotifyProvider {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final SQLService sql;
+    private final SpotifyClientDTO spotifyClient;
 
     @Inject
-    public SpotifyProvider(SQLService sql) {
+    public SpotifyProvider(SQLService sql,
+                           @ConfigProperty(name = "room.automation.spotify.id") String spotifyClientId,
+                           @ConfigProperty(name = "room.automation.spotify.secret") String spotifyClientSecret) {
         this.sql = sql;
+        spotifyClient = new SpotifyClientDTO(spotifyClientId, spotifyClientSecret);
     }
 
     public Optional<SpotifyAuthorisationDTO> findAuth() {
@@ -31,6 +37,7 @@ public class SpotifyProvider {
 
             if(result.next()) {
                 SpotifyAuthorisationDTO dto = new SpotifyAuthorisationDTO(
+                        getClient(),
                         result.getString("access_token"),
                         result.getString("token_type"),
                         result.getString("scope"),
@@ -58,8 +65,8 @@ public class SpotifyProvider {
             statement.setString(1, auth.getAccessToken());
             statement.setString(2, auth.getTokenType());
             statement.setString(3, auth.getScope());
-            statement.setInt(4, auth.getGeneratedAt());
-            statement.setInt(5, auth.getExpiresIn());
+            statement.setLong(4, auth.getGeneratedAt());
+            statement.setLong(5, auth.getExpiresIn());
             statement.setString(6, auth.getRefreshToken());
             statement.execute();
 
@@ -71,5 +78,9 @@ public class SpotifyProvider {
 
             throw new UnexpectedSqlException(e);
         }
+    }
+
+    public SpotifyClientDTO getClient() {
+        return spotifyClient;
     }
 }

@@ -1,0 +1,21 @@
+<div class="component-container" [ngSwitch]="authorisationState">
+    <div class="element" *ngSwitchCase="'initial'">
+        <h2>Authorize Spotify</h2>
+        <p>Currently this application is not allowed to access your spotify account</p>
+        <p>Click here to grant access to your spotify account</p>
+        <button type="button" (click)="authorize()">Authorize Spotify</button>
+    </div>
+    <div class="element" *ngSwitchCase="'success'">
+        <h2>Success</h2>
+        <p>You have successfully authorized this app to use spotify</p>
+        <a [routerLink]="BACK_ROUTE">Return home</a>
+    </div>
+    <div class="element" *ngSwitchCase="'error'">
+        <h2>Authorisation failed</h2>
+        <p>Error occurred during authorisation: {{error}}</p>
+        <div style="align-self: flex-end; display: flex; gap: 10px;">
+            <button type="button" (click)="authorize()">Try again</button>
+            <a [routerLink]="BACK_ROUTE" style="filter: brightness(80%)">Return home</a>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,11 @@
-<p>spotify.page works!</p>
-<ng-container *ngIf="(spotifyAuthorisation$ | async) else unauthorized">
+<ng-container *ngIf="!callback && (spotifyAuthorisation$ | async) else unauthorized">
     <p>authorized</p>
 </ng-container>
 <ng-template #unauthorized>
-    <p>needs new authorisation</p>
+    <app-spotify-authorisation
+            [client]="spotifyClient"
+            [code]="spotifyCode"
+            [error]="spotifyError"
+            [state]="spotifyState">
+    </app-spotify-authorisation>
 </ng-template>

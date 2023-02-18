@@ -10,6 +10,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {HttpClientModule} from "@angular/common/http";
 import {PageMessagesComponent} from "./components/page-messages/page-messages.component";
+import { SpotifyAuthorisationComponent } from './components/spotify/spotify.authorisation/spotify-authorisation.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {PageMessagesComponent} from "./components/page-messages/page-messages.co
     ScenesPageComponent,
     SpotifyPageComponent,
     NavigationComponent,
-    PageMessagesComponent
+    PageMessagesComponent,
+    SpotifyAuthorisationComponent
   ],
   imports: [
     BrowserModule,

@@ -8,6 +8,8 @@ import lombok.*;
 @Setter
 @ToString
 public class SpotifyAuthorisationDTO{
+    /** The Client ID generated after registering your application. */
+    private SpotifyClientDTO clientDTO;
     /** An Access Token that can be provided in subsequent calls, for example to Spotify Web API services. */
     private String accessToken;
     /** How the Access Token may be used: always “Bearer”. */
@@ -15,9 +17,9 @@ public class SpotifyAuthorisationDTO{
     /** A space-separated list of scopes which have been granted for this access_token */
     private String scope;
     /** the unix time code in seconds for when the accessToken was requested */
-    private int generatedAt;
+    private long generatedAt;
     /** The time period (in seconds) for which the Access Token is valid. */
-    private int expiresIn;
+    private long expiresIn;
     /**
      * A token that can be sent to the Spotify Accounts service in place of an authorization code. (When the access
      * code expires, send a POST request to the Accounts service /api/token endpoint, but use this code in place of an
