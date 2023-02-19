@@ -40,4 +40,8 @@ export class SpotifyPageComponent {
       });
     }
   }
+
+  togglePlay() {
+    this.service.togglePlay();
+  }
 }

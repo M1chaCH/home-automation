@@ -20,6 +20,7 @@ public class SpotifyProvider {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final SQLService sql;
     private final SpotifyClientDTO spotifyClient;
+    private SpotifyAuthorisationDTO cachedAuth;
 
     @Inject
     public SpotifyProvider(SQLService sql,
@@ -30,6 +31,9 @@ public class SpotifyProvider {
     }
 
     public Optional<SpotifyAuthorisationDTO> findAuth() {
+        if(cachedAuth != null)
+            return Optional.of(cachedAuth);
+
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "select * from spotify_authorisation limit 1"
         )) {
@@ -47,6 +51,7 @@ public class SpotifyProvider {
                 );
 
                 logger.log(Level.INFO, "successfully selected spotify auth");
+                cachedAuth = dto;
                 return Optional.of(dto);
             } else {
                 logger.log(Level.INFO, "did not select any rows in spotify auth");
@@ -71,11 +76,29 @@ public class SpotifyProvider {
             statement.execute();
 
             logger.log(Level.INFO, "successfully stored spotify authorisation");
+            cachedAuth = auth;
             return true;
         } catch (SQLException e) {
             if("27000".equals(e.getSQLState()))
                 return false;
 
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
+    public void updateAuth(SpotifyAuthorisationDTO auth) {
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "delete from spotify_authorisation where access_token = ?"
+        )) {
+            statement.setString(1, cachedAuth.getAccessToken());
+            statement.execute();
+            logger.log(Level.INFO, "deleted auth");
+
+            if(insertAuth(auth)) {
+                cachedAuth = auth;
+                logger.log(Level.INFO, "successfully updated auth");
+            }
+        } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
     }

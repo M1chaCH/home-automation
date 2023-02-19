@@ -1,5 +1,16 @@
 <ng-container *ngIf="!callback && (spotifyAuthorisation$ | async) else unauthorized">
-    <p>authorized</p>
+    <h1>Spotify connected</h1>
+    <div class="container">
+        <div class="text">
+            <p>TEST CONNECTION</p>
+        </div>
+        <div class="play-button-background">
+            <button type="button" class="play-buttons" (click)="togglePlay()">
+                <span class="material-symbols-rounded">play_arrow</span>
+                <span class="material-symbols-rounded">pause</span>
+            </button>
+        </div>
+    </div>
 </ng-container>
 <ng-template #unauthorized>
     <app-spotify-authorisation

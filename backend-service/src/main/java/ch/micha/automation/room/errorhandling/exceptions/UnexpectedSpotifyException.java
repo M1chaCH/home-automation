@@ -11,6 +11,11 @@ public class UnexpectedSpotifyException extends AppException{
         this.exception = exception;
     }
 
+    public UnexpectedSpotifyException(String message) {
+        super("got unexpected error while calling spotify: " + message, null, true);
+        this.exception = this;
+    }
+
     @Override
     public Response getResponse() {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorMessageDTO(

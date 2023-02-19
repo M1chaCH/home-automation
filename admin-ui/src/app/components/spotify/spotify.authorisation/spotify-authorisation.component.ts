@@ -26,7 +26,6 @@ export class SpotifyAuthorisationComponent implements OnInit{
 
   ngOnInit(): void {
     if(this.code) {
-      console.log("got code", this.code)
       this.service.requestAccessToken(this.code).subscribe(success => {
         if(success)
           this.authorisationState = "success"
@@ -42,7 +41,7 @@ export class SpotifyAuthorisationComponent implements OnInit{
   }
 
   authorize() {
-    const scope: string = "user-modify-playback-state playlist-read-private playlist-read-collaborative user-read-playback-position user-top-read user-read-recently-played user-library-read"
+    const scope: string = "user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative user-read-playback-position user-top-read user-read-recently-played user-library-read"
     const redirect: string = `${environment.UI_URL}/${appRoutes.ROOT}/${appRoutes.SPOTIFY_CALLBACK}`;
     this.state = crypto.randomUUID();
 

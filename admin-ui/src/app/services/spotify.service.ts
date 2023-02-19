@@ -28,6 +28,14 @@ export class SpotifyService {
     });
   }
 
+  togglePlay(): void {
+    this.api.callApi(
+      apiEndpoints.SPOTIFY_PLAYBACK,
+      "PUT",
+      undefined
+    ).subscribe(() => {});
+  }
+
   async loadClient() {
     this.spotifyClient = await firstValueFrom(this.api.callApi<SpotifyClientDTO>(
       apiEndpoints.SPOTIFY_CLIENT,

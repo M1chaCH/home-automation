@@ -11,5 +11,6 @@ export const apiEndpoints = {
     SCENE_REST: "automation/scene/rest",
     SPOTIFY: "automation/spotify",
     SPOTIFY_CLIENT: "automation/spotify/client",
+    SPOTIFY_PLAYBACK: "automation/spotify/playback",
 }
 export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';
