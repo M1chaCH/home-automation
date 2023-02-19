@@ -14,6 +14,7 @@ const routes: Routes = [
       { path: appRoutes.HOME, component: HomePageComponent, data: { animation: "HomePage" } },
       { path: appRoutes.SCENES, component: ScenesPageComponent, data: { animation: "ScenesPage" } },
       { path: appRoutes.SPOTIFY, component: SpotifyPageComponent, data: { animation: "SpotifyPage" } },
+      { path: appRoutes.SPOTIFY_CALLBACK, component: SpotifyPageComponent, data: { animation: "SpotifyPage" } },
     ]
   }
 ];

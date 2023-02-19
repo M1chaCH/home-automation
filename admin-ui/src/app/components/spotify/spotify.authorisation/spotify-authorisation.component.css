@@ -1,0 +1,32 @@
+.component-container {
+  display: flex;
+  justify-content: center;
+}
+.component-container .element {
+  min-width: 250px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+.component-container .element button, .component-container .element a {
+  all: unset;
+  padding: 10px 20px;
+  align-self: flex-end;
+  cursor: pointer;
+  border-radius: 30px;
+  border: none;
+  color: var(--black);
+  background-color: var(--lemon-meringue);
+  font-size: 15px;
+  font-family: "Work Sans", sans-serif;
+  transition: all 250ms ease-out;
+}
+.component-container .element button:hover {
+  filter: brightness(110%);
+}
+.component-container .element button:active {
+  filter: brightness(140%);
+}
+
+/*# sourceMappingURL=spotify-authorisation.component.css.map */
