@@ -6,9 +6,11 @@ import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
 import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
 import ch.micha.automation.room.spotify.dtos.SpotifyCodeDTO;
+import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,6 +49,11 @@ public class SpotifyService implements OnAppStartupListener {
             api.pausePlayback();
         else
             api.resumePlayback();
+    }
+
+    public List<SpotifyResourceDTO> loadResources() {
+        refreshTokenIfExpired();
+        return api.getSavedSpotifyResources();
     }
 
     public void addAuthorisation(SpotifyCodeDTO dto) {

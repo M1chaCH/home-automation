@@ -1,9 +1,13 @@
 package ch.micha.automation.room.spotify;
 
+import ch.micha.automation.room.cache.EntityCache;
+import ch.micha.automation.room.cache.EntityCacheFactory;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyException;
+import ch.micha.automation.room.errorhandling.exceptions.SpotifyNotAuthorizedException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSpotifyException;
 import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
 import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
+import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -17,7 +21,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,11 +34,14 @@ public class SpotifyApiService {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     public static final String SPOTIFY_API = "https://api.spotify.com";
     public static final String SPOTIFY_AUTH_API = "https://accounts.spotify.com/api/token";
+    public static final String SPOTIFY_PLAYER_PREFIX = "/v1/me/player";
     public static final String SPOTIFY_AUTH_HEADER = "Authorization";
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
     public static final String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
     public static final String CONTENT_TYPE_JSON = "application/json";
 
+    private final EntityCache<List<SpotifyResourceDTO>> resourceCache;
+    private final String userId;
     private final String deviceName;
     private String deviceId;
 
@@ -40,8 +49,13 @@ public class SpotifyApiService {
     private boolean initialized = false;
 
     @Inject
-    public SpotifyApiService(@ConfigProperty(name = "room.automation.spotify.device") String deviceName) {
+    public SpotifyApiService(EntityCacheFactory cacheFactory,
+                             @ConfigProperty(name = "room.automation.spotify.device") String deviceName,
+                             @ConfigProperty(name = "room.automation.spotify.user") String user) {
         this.deviceName = deviceName;
+        this.userId = user;
+
+        resourceCache = cacheFactory.build();
     }
 
     public void init(SpotifyAuthorisationDTO auth) {
@@ -99,6 +113,9 @@ public class SpotifyApiService {
     }
 
     public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth, SpotifyClientDTO client) {
+        if(auth == null)
+            throw new SpotifyNotAuthorizedException();
+
         if(auth.getGeneratedAt() + auth.getExpiresIn() < Instant.now().getEpochSecond()) {
             logger.log(Level.INFO, "refreshing spotify access token");
             try {
@@ -138,7 +155,7 @@ public class SpotifyApiService {
         try {
             logger.log(Level.INFO, "loading playback state of current player");
 
-            HttpResponse<JsonNode> response = callPlayerApi("", "get", null, null);
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX, "get", null, null);
             throwUnexpectedIfNeeded(response, "failed to load playback state");
 
             JSONObject body = response.getBody().getObject();
@@ -155,7 +172,7 @@ public class SpotifyApiService {
         try {
             logger.log(Level.INFO, "pausing playback of default device");
 
-            HttpResponse<JsonNode> response = callPlayerApi("/pause", "put", null, null);
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/pause", "put", null, null);
             throwUnexpectedIfNeeded(response, "failed to pause playback");
 
             logger.log(Level.INFO, "successfully paused playback");
@@ -168,10 +185,52 @@ public class SpotifyApiService {
         try {
             logger.log(Level.INFO, "resuming playback");
 
-            HttpResponse<JsonNode> response = callPlayerApi("/play", "put", Map.of("device_id", deviceId), null);
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/play", "put", Map.of("device_id", deviceId), null);
             throwUnexpectedIfNeeded(response, "failed to resume playback");
 
             logger.log(Level.INFO, "successfully resumed playback");
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
+    }
+
+    public List<SpotifyResourceDTO> getSavedSpotifyResources() {
+        try {
+            List<SpotifyResourceDTO> playlists = new ArrayList<>();
+            if(!resourceCache.isValid()) {
+                logger.log(Level.INFO, "loading first 50 saved playlists from spotify");
+                HttpResponse<JsonNode> response = callApi(String.format("/v1/users/%s/playlists", userId), "get", Map.of("limit", 50), null);
+                throwUnexpectedIfNeeded(response, "could not load saved playlists");
+
+                JSONObject body = response.getBody().getObject();
+                JSONArray jsonPlaylists = body.getJSONArray("items");
+                for (int i = 0; i < jsonPlaylists.length(); i++) {
+                    SpotifyResourceDTO playlist = new SpotifyResourceDTO();
+                    playlist.setName(jsonPlaylists.getJSONObject(i).getString("name"));
+                    playlist.setDescription(jsonPlaylists.getJSONObject(i).getString("description"));
+                    playlist.setSpotifyURI(jsonPlaylists.getJSONObject(i).getString("uri"));
+                    playlist.setHref(jsonPlaylists
+                            .getJSONObject(i)
+                            .getJSONObject("external_urls")
+                            .getString("spotify")
+                    );
+                    playlist.setImageUrl(jsonPlaylists
+                            .getJSONObject(i)
+                            .getJSONArray("images")
+                            .getJSONObject(0)
+                            .getString("url")
+                    );
+
+                    playlists.add(playlist);
+                }
+                resourceCache.store(playlists);
+            } else {
+                logger.log(Level.INFO, "loading playlists from cache");
+                playlists = resourceCache.load();
+            }
+
+            logger.log(Level.INFO, "successfully loaded {0} playlists", playlists.size());
+            return playlists;
         } catch (UnirestException e) {
             throw new UnexpectedSpotifyException(e);
         }
@@ -181,7 +240,7 @@ public class SpotifyApiService {
         try {
             logger.log(Level.INFO, "loading configured device: {0}", deviceName);
 
-            HttpResponse<JsonNode> response = callPlayerApi("/devices", "get", null, null);
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/devices", "get", null, null);
             throwUnexpectedIfNeeded(response, "failed to load device id");
 
             JSONObject body = response.getBody().getObject();
@@ -202,11 +261,11 @@ public class SpotifyApiService {
         }
     }
 
-    private HttpResponse<JsonNode> callPlayerApi(String endpoint, String method, Map<String, Object> queries, Map<String, String> customHeaders) throws UnirestException {
+    private HttpResponse<JsonNode> callApi(String endpoint, String method, Map<String, Object> queries, Map<String, String> customHeaders) throws UnirestException {
         if(!initialized)
             throw new IllegalStateException("api was never initialized");
 
-        endpoint = SPOTIFY_API + "/v1/me/player" + endpoint;
+        endpoint = SPOTIFY_API + endpoint;
         if(customHeaders == null)
             customHeaders = new HashMap<>();
         if(queries == null)

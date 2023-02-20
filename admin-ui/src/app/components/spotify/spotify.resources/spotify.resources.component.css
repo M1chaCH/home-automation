@@ -1,0 +1,56 @@
+.spotify-resources {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.spotify-resources .resource {
+  all: unset;
+  margin-top: 20px;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 250ms ease-out;
+  display: grid;
+  grid-template-columns: 60px auto;
+  grid-template-rows: 60px;
+  gap: 20px;
+  border-radius: 20px;
+  background-color: rgba(234, 226, 183, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+.spotify-resources .resource img {
+  height: 100%;
+  width: auto;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+.spotify-resources .resource .info {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto auto;
+  justify-items: start;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+}
+.spotify-resources .resource .info p {
+  margin: 0;
+}
+.spotify-resources .resource .info .name {
+  text-transform: uppercase;
+  font-size: 24px;
+  font-weight: 700;
+}
+.spotify-resources .resource .info .description {
+  text-transform: lowercase;
+  font-size: 16px;
+  font-weight: 300;
+}
+.spotify-resources .resource:hover {
+  scale: 1.02;
+}
+
+/*# sourceMappingURL=spotify.resources.component.css.map */

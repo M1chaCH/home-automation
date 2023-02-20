@@ -34,6 +34,13 @@ public class SpotifyResource {
         return Response.status(Response.Status.OK).entity(service.getClient()).build();
     }
 
+    @GET
+    @Path("/resources")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSpotifyResources() {
+        return Response.status(Response.Status.OK).entity(service.loadResources()).build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response storeConnection(SpotifyCodeDTO dto) {
