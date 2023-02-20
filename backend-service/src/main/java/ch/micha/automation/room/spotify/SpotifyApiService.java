@@ -95,6 +95,10 @@ public class SpotifyApiService {
     }
 
     public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyClientDTO client) {
+        return refreshTokenIfExpired(auth, client);
+    }
+
+    public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth, SpotifyClientDTO client) {
         if(auth.getGeneratedAt() + auth.getExpiresIn() < Instant.now().getEpochSecond()) {
             logger.log(Level.INFO, "refreshing spotify access token");
             try {

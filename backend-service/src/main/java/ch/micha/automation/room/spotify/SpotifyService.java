@@ -34,11 +34,11 @@ public class SpotifyService implements OnAppStartupListener {
     @Override
     public void onAppStartup() {
         try {
-            api.init(getAccess());
+            SpotifyAuthorisationDTO refreshedAccess = refreshTokenIfExpired(getAccess());
+            api.init(refreshedAccess);
         } catch (SpotifyNotAuthorizedException e) {
             logger.log(Level.WARNING, "did not initialize spotify. Not authorized.");
         }
-
     }
 
     public void togglePlayback() {
@@ -67,8 +67,20 @@ public class SpotifyService implements OnAppStartupListener {
     }
 
     private void refreshTokenIfExpired() {
-        SpotifyAuthorisationDTO newAuth = api.refreshTokenIfExpired(getClient());
-        if(newAuth != null)
+        refreshTokenIfExpired(null);
+    }
+
+    private SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth) {
+        SpotifyAuthorisationDTO newAuth;
+        if(auth != null)
+            newAuth = api.refreshTokenIfExpired(auth, getClient());
+        else
+            newAuth = api.refreshTokenIfExpired(getClient());
+
+        if(newAuth != null) {
             provider.updateAuth(newAuth);
+            return newAuth;
+        }
+        return auth;
     }
 }
