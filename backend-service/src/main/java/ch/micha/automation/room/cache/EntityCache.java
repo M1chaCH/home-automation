@@ -13,10 +13,6 @@ public class EntityCache<E> {
     }
 
     public E load() {
-        return cachedEntity;
-    }
-
-    public E loadIfValid() {
         if(isValid())
             return cachedEntity;
         return null;

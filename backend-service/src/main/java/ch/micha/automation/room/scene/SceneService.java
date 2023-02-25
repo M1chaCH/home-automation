@@ -2,6 +2,7 @@ package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
+import ch.micha.automation.room.spotify.SpotifyApiService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -14,11 +15,13 @@ public class SceneService {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final SceneProvider sceneProvider;
     private final YeelightDeviceService yeelightDeviceService;
+    private final SpotifyApiService spotifyService;
 
     @Inject
-    public SceneService(SceneProvider sceneProvider, YeelightDeviceService yeelightDeviceService) {
+    public SceneService(SceneProvider sceneProvider, YeelightDeviceService yeelightDeviceService, SpotifyApiService spotifyService) {
         this.sceneProvider = sceneProvider;
         this.yeelightDeviceService = yeelightDeviceService;
+        this.spotifyService = spotifyService;
     }
 
     public void applyScene(int sceneId){
@@ -46,5 +49,6 @@ public class SceneService {
      */
     public void shutdown() {
         yeelightDeviceService.powerAllOff();
+        spotifyService.pausePlayback();
     }
 }

@@ -7,6 +7,7 @@ export const appRoutes = {
 }
 
 export const apiEndpoints = {
+    AUTOMATION: "automation",
     SCENE: "automation/scene",
     SCENE_REST: "automation/scene/rest",
     SPOTIFY: "automation/spotify",

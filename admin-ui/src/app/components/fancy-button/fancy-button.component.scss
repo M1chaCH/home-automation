@@ -1,0 +1,77 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  container: fancy-button / size;
+
+  .text {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+      text-align: center;
+      font-size: clamp(40px, 10cqw, 100px);
+      font-weight: 800;
+      text-transform: uppercase;
+      word-break: break-word;
+      margin: 0 20px;
+    }
+  }
+
+  .button-background {
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    //noinspection CssInvalidPropertyValue chrome understands this so I don't care
+    border-radius: 15cqh;
+    background-color: rgba(234, 226, 183, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .button {
+      all: unset;
+      background-color: rgba(234, 226, 183, 0.8);
+      height: clamp(35px, 45cqh, 120px);
+      width: clamp(35px, 45cqh, 120px);
+      border-radius: 50%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      cursor: pointer;
+      transition: all 250ms ease-out;
+
+      .material-symbols-rounded {
+        color: var(--prussian-blue);
+        font-size: 30px;
+      }
+    }
+
+    .button:hover {
+      scale: 1.1;
+      background-color: rgba(234, 226, 183, 0.9);
+    }
+
+    .button:active {
+      scale: 1.2;
+      background-color: rgba(234, 226, 183, 0.96);
+    }
+  }
+}

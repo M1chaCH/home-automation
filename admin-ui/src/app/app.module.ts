@@ -12,6 +12,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {PageMessagesComponent} from "./components/page-messages/page-messages.component";
 import { SpotifyAuthorisationComponent } from './components/spotify/spotify.authorisation/spotify-authorisation.component';
 import { SpotifyResourcesComponent } from './components/spotify/spotify.resources/spotify.resources.component';
+import { FancyButtonComponent } from './components/fancy-button/fancy-button.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { SpotifyResourcesComponent } from './components/spotify/spotify.resource
     PageMessagesComponent,
     SpotifyAuthorisationComponent,
     SpotifyResourcesComponent,
+    FancyButtonComponent,
   ],
   imports: [
     BrowserModule,

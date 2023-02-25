@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {RoomAutomationService} from "../../services/room-automation.service";
 
 @Component({
   selector: 'app-home.page',
@@ -7,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class HomePageComponent {
 
+  constructor(
+    private automationService: RoomAutomationService,
+  ) { }
+
+  clicked() {
+    this.automationService.toggleRoom();
+  }
 }
