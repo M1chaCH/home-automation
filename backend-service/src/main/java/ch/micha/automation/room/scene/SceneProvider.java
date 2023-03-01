@@ -24,7 +24,7 @@ public class SceneProvider {
     private final YeelightDeviceProvider deviceProvider;
     private final LightConfigProvider lightConfigProvider;
 
-    private int defaultSceneId;
+    private int defaultSceneId = -1;
 
     @Inject
     public SceneProvider(SQLService sql, YeelightDeviceProvider deviceProvider, LightConfigProvider lightConfigProvider) {
@@ -142,6 +142,35 @@ public class SceneProvider {
         }
     }
 
+    public void addDeviceToScene(int deviceId, int configId, int sceneId){
+        if(configId < 1)
+            configId = lightConfigProvider
+                    .findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME)
+                    .orElseGet(lightConfigProvider::createDefaultConfig)
+                    .id();
+
+        if(sceneId < 1) {
+            if(defaultSceneId < 1) {
+                createDefaultScene();
+                return; // creating a new scene already adds all devices.
+            }
+            sceneId = defaultSceneId;
+        }
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "INSERT INTO device_light_scene (device_id, configuration_id, scene_id) VALUES (?, ?, ?);"
+        )) {
+            statement.setInt(1, deviceId);
+            statement.setInt(2, configId);
+            statement.setInt(3, sceneId);
+            statement.execute();
+
+            logger.log(Level.INFO, "added device {0} to scene {1} with config {2}", new Object[]{deviceId, sceneId, configId});
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
     private Map<YeelightDeviceEntity, LightConfigEntity> loadDeviceLightConfigs(int sceneId) {
         Map<YeelightDeviceEntity, LightConfigEntity> deviceLightConfigs = new HashMap<>();
         String query = "SELECT * FROM device_light_scene WHERE scene_id=?;";
@@ -200,7 +229,9 @@ public class SceneProvider {
 
         deviceProvider.getDevices().forEach(device -> defaultLightConfigs.put(device, defaultLightConfig));
 
-        return createNewScene("Default", true, defaultLightConfigs);
+        SceneEntity defaultScene = createNewScene("Default", true, defaultLightConfigs);
+        this.defaultSceneId = defaultScene.id();
+        return defaultScene;
     }
 
     private void deleteAllLightConfigs(int sceneId) {

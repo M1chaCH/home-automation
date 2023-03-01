@@ -44,6 +44,10 @@ public class SceneService {
         logger.log(Level.INFO, "applied scene");
     }
 
+    public void addDeviceToDefaultScene(int id) {
+        sceneProvider.addDeviceToScene(id, 0, 0);
+    }
+
     /**
      * prepares the room to be left alone. (alarms will also be disabled, will be enabled on the next entry)
      */

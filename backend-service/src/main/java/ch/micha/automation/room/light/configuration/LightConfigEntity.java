@@ -8,7 +8,6 @@ package ch.micha.automation.room.light.configuration;
  * @param green green color (0-255)
  * @param blue blue color (0-255)
  * @param brightness (1-100)
- * @param changeDurationMillis if 0 DEFAULT will be used (nullable)
  */
 public record LightConfigEntity(
         int id,
@@ -17,6 +16,5 @@ public record LightConfigEntity(
         int red,
         int green,
         int blue,
-        int brightness,
-        int changeDurationMillis)
+        int brightness)
 { }

@@ -111,13 +111,12 @@ public class LightConfigProvider {
                 255,
                 255,
                 255,
-                100,
-                0
+                100
         );
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
-                "INSERT INTO light_configuration (name, power, red, green, blue, brightness, change_duration) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS
+                "INSERT INTO light_configuration (name, power, red, green, blue, brightness) " +
+                        "VALUES (?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
             statement.setString(1, defaultConfig.name());
             statement.setBoolean(2, defaultConfig.power());
@@ -125,7 +124,6 @@ public class LightConfigProvider {
             statement.setInt(4, defaultConfig.green());
             statement.setInt(5, defaultConfig.blue());
             statement.setInt(6, defaultConfig.brightness());
-            statement.setInt(7, defaultConfig.changeDurationMillis());
 
             statement.execute();
 
@@ -140,8 +138,7 @@ public class LightConfigProvider {
                     defaultConfig.red(),
                     defaultConfig.green(),
                     defaultConfig.blue(),
-                    defaultConfig.brightness(),
-                    defaultConfig.changeDurationMillis()
+                    defaultConfig.brightness()
             );
 
             logger.log(Level.INFO, "created default light configuration: {0}", lightConfigEntity);
@@ -159,8 +156,7 @@ public class LightConfigProvider {
                 result.getInt("red"),
                 result.getInt("green"),
                 result.getInt("blue"),
-                result.getInt("brightness"),
-                result.getInt("change_duration")
+                result.getInt("brightness")
         );
     }
 }

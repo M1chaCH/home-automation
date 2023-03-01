@@ -77,9 +77,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.moppletop</groupId>
-            <artifactId>YeeLight-API</artifactId>
-            <version>8c90b02c1b82ff5981b17d107a7a20285105ea0e</version>
+            <groupId>com.github.florian-mollin</groupId>
+            <artifactId>yapi</artifactId>
+            <version>v1.0</version>
         </dependency>
 
         <dependency>

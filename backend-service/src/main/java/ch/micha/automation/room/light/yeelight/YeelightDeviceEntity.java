@@ -1,12 +1,17 @@
 package ch.micha.automation.room.light.yeelight;
 
-import com.moppletop.yeelight.api.model.YeeLight;
+import com.mollin.yapi.YeelightDevice;
 
 public record YeelightDeviceEntity (
-        int id, // id of YeeLight
+        int id,
         String name,
-        YeeLight light
+        String ip, // this is the primary key to identify a yeelight device
+        YeelightDevice light
         ){
+
+    public static final int DEFAULT_PORT = 55443;
+    /** (in ms) */
+    public static final int DEFAULT_DURATION = 500;
 
     public boolean isOnline() {
         return light != null;
