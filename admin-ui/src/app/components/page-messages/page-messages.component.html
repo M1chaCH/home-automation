@@ -3,10 +3,10 @@
     <div class="message" [id]="'message-' + message.id">
       <span *ngIf="message.type === 'INFO'"
             class="material-symbols-rounded"
-            style="color: var(--prussian-blue)">info</span>
+            style="color: var(--prussian-blue); font-size: 25px;">info</span>
       <span *ngIf="message.type === 'ERROR'"
             class="material-symbols-rounded"
-            style="color: var(--maximum-red)">error</span>
+            style="color: var(--maximum-red); font-size: 25px;">error</span>
       <span>{{message.message}}</span>
     </div>
   </ng-container>

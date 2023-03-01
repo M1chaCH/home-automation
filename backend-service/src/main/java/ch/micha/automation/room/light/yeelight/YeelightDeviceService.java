@@ -2,12 +2,15 @@ package ch.micha.automation.room.light.yeelight;
 
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedYeeLightException;
 import ch.micha.automation.room.errorhandling.exceptions.YeeLightOfflineException;
+import ch.micha.automation.room.events.EventHandlerPriority;
+import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.light.configuration.LightConfigEntity;
 import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import ch.micha.automation.room.scene.SceneService;
 import com.mollin.yapi.YeelightDevice;
 import com.mollin.yapi.enumeration.YeelightEffect;
+import com.mollin.yapi.enumeration.YeelightProperty;
 import com.mollin.yapi.exception.YeelightResultErrorException;
 import com.mollin.yapi.exception.YeelightSocketException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,6 +37,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
     }
 
     @Override
+    @EventHandlerPriority(HandlerPriority.NOT_APPLICABLE)
     public void onAppStartup() {
         loadYeelightDevices();
     }
@@ -65,6 +69,22 @@ public class YeelightDeviceService implements OnAppStartupListener {
         } catch (YeelightResultErrorException e) {
             throw new UnexpectedYeeLightException(lightEntity.ip(), e);
         }
+    }
+
+    public void togglePower(String name) {
+        YeelightDeviceEntity entity = provider.findYeelightDevice(name);
+        YeelightDevice device = entity.light();
+        if(device == null)
+            throw new YeeLightOfflineException(entity.ip(), entity.name());
+
+        try {
+            boolean on = isDeviceOn(device);
+            device.setPower(!on);
+            logger.log(Level.INFO, "toggled power of {0} to {1}", new Object[]{name, !on});
+        } catch (YeelightResultErrorException | YeelightSocketException e) {
+            throw new UnexpectedYeeLightException(entity.ip(), e);
+        }
+
     }
 
     public void powerAllOff() {
@@ -139,5 +159,9 @@ public class YeelightDeviceService implements OnAppStartupListener {
             logger.log(Level.INFO, "no connection available for device at {0}", ip);
             return null;
         }
+    }
+
+    private boolean isDeviceOn(YeelightDevice device) throws YeelightSocketException, YeelightResultErrorException {
+        return "on".equals(device.getProperties(YeelightProperty.POWER).get(YeelightProperty.POWER));
     }
 }

@@ -64,16 +64,17 @@ public class YeelightDeviceProvider {
 
     /**
      * (only gets devices from RAM, no DB access)
-     * @param id the id to query for
+     * @param name the device name to query for
      * @return the locally stored YeelightDeviceEntity by the given id
      * @throws ResourceNotFoundException if the id could not be found
      */
-    public YeelightDeviceEntity findYeelightDevice(int id) {
-        YeelightDeviceEntity device = devices.get(id);
-        if(device == null)
-            throw new ResourceNotFoundException("device", "" + id);
+    public YeelightDeviceEntity findYeelightDevice(String name) {
+        for (Map.Entry<Integer, YeelightDeviceEntity> entry : devices.entrySet()) {
+            if(entry.getValue().name().toLowerCase(Locale.ROOT).equals(name.toLowerCase(Locale.ROOT)))
+                return entry.getValue();
+        }
 
-        return device;
+        throw new ResourceNotFoundException("device", "" + name);
     }
 
     /**
@@ -125,7 +126,7 @@ public class YeelightDeviceProvider {
         try (PreparedStatement statement = sqlService.getConnection().prepareStatement(
                 "insert into yeelight_devices (name, device_ip) values (?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
-            statement.setString(1, entity.name());
+            statement.setString(1, entity.name().toLowerCase(Locale.ROOT));
             statement.setString(2, entity.ip());
             statement.execute();
             logger.log(Level.INFO, "inserted into yeelight_devices: {0}", entity);
@@ -149,12 +150,12 @@ public class YeelightDeviceProvider {
         try (PreparedStatement statement = sqlService.getConnection().prepareStatement(
                 "update yeelight_devices set name = ? where name = ?", Statement.RETURN_GENERATED_KEYS
         )) {
-            statement.setString(1, newName);
-            statement.setString(2, oldName);
+            statement.setString(1, newName.toLowerCase(Locale.ROOT));
+            statement.setString(2, oldName.toLowerCase(Locale.ROOT));
             statement.executeUpdate();
 
             for (Map.Entry<Integer, YeelightDeviceEntity> entry : devices.entrySet()) {
-                if(entry.getValue().name().equals(oldName)) {
+                if(entry.getValue().name().toLowerCase(Locale.ROOT).equals(oldName.toLowerCase(Locale.ROOT))) {
                     devices.put(entry.getKey(), new YeelightDeviceEntity(
                             entry.getValue().id(),
                             newName,
@@ -177,11 +178,11 @@ public class YeelightDeviceProvider {
         try (PreparedStatement statement = sqlService.getConnection().prepareStatement(
                 "delete from yeelight_devices where name = ?", Statement.RETURN_GENERATED_KEYS
         )) {
-            statement.setString(1, name);
+            statement.setString(1, name.toLowerCase(Locale.ROOT));
             statement.execute();
 
             for (Map.Entry<Integer, YeelightDeviceEntity> entry : devices.entrySet()) {
-                if(entry.getValue().name().equals(name)) {
+                if(entry.getValue().name().toLowerCase(Locale.ROOT).equals(name.toLowerCase(Locale.ROOT))){
                     devices.remove(entry.getKey());
                     break;
                 }

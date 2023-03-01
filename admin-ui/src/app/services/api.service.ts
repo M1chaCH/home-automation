@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {HttpMethods} from "../configuration/app.config";
 import {environment} from "../../environments/environment";
-import {Observable} from "rxjs";
+import {catchError, NEVER, Observable} from "rxjs";
+import {MessageDistributorService} from "./message-distributor.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class ApiService {
 
   constructor(
     private http: HttpClient,
+    private messageDistributor: MessageDistributorService,
   ) { }
 
   callApi<T>(endpoint: string, method: HttpMethods, body: any): Observable<T> {
@@ -32,6 +34,12 @@ export class ApiService {
         request = this.http.delete(requestEndpoint, { body });
         break;
     }
-    return (request as any) as Observable<T>;
+
+    return ((request as any) as Observable<T>).pipe(
+      catchError(err => {
+        this.messageDistributor.pushMessage({ message: err.error.message, type: "ERROR" })
+        return NEVER;
+      })
+    );
   }
 }

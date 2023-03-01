@@ -1,0 +1,44 @@
+<div class="head">
+    <div class="texts">
+        <h1>Devices</h1>
+        <p style="text-align: justify">This is a list of all saved devices.</p>
+    </div>
+    <app-fancy-button [buttonIcon]="showRemove ? 'check' : 'delete'"
+                      (buttonClicked)="showRemove = !showRemove">
+    </app-fancy-button>
+    <div class="add-container">
+        <div class="add-dialog" *ngIf="showAdd">
+            <input placeholder="Name ..." maxlength="50" [(ngModel)]="nameToAdd"
+                   (keydown.enter)="addNew()" (keydown.escape)="closeAdd()"/>
+            <input placeholder="IP-Address ..." maxlength="20" [(ngModel)]="ipToAdd"
+                   (keydown.enter)="addNew()" (keydown.escape)="closeAdd()"/>
+            <app-fancy-button buttonIcon="cancel"
+                              (buttonClicked)="closeAdd()">
+            </app-fancy-button>
+            <app-fancy-button buttonIcon="check"
+                              (buttonClicked)="addNew()">
+            </app-fancy-button>
+        </div>
+        <app-fancy-button id="add-button" buttonIcon="add"
+                          backgroundText="new"
+                          (buttonClicked)="showAdd = !showAdd">
+        </app-fancy-button>
+    </div>
+</div>
+
+<div class="devices">
+    <div class="device" *ngFor="let device of devices" [class.connected-device]="device.online" [class.disconnected-device]="!device.online">
+        <input id="name" [value]="device.name" placeholder="Name" maxlength="50"
+               (keydown.escape)="resetEditing($event, device)" (keydown.enter)="renameDevice($event, device)" (focusout)="resetEditing($event, device)"/>
+        <p id="ip">{{device.ip}}</p>
+        <div id="toggle">
+            <app-fancy-button buttonIcon="bolt"
+                              backgroundText="switch"
+                              (buttonClicked)="toggleDevicePower(device.name)">
+            </app-fancy-button>
+        </div>
+        <button class="delete" *ngIf="showRemove" (click)="removeDevice(device)">
+            <span class="material-symbols-rounded">delete</span>
+        </button>
+    </div>
+</div>

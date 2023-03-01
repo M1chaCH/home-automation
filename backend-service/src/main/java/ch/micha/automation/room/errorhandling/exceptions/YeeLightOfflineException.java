@@ -8,7 +8,7 @@ public class YeeLightOfflineException extends AppException{
     private final String deviceName;
 
     public YeeLightOfflineException(String ip, String name) {
-        super(String.format("tried to call to offline device { id:%s, name:%s }", ip, name), null, false);
+        super(String.format("tried to call to offline device { ip:%s, name:%s }", ip, name), null, false);
         this.deviceIp = ip;
         this.deviceName = name;
     }
@@ -18,7 +18,7 @@ public class YeeLightOfflineException extends AppException{
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .entity(new ErrorMessageDTO("can't change offline light",
-                        String.format("tried to call to offline device { id:%s, name:%s }", deviceIp, deviceName), ""))
+                        String.format("tried to call to offline device { ip:%s, name:%s }", deviceIp, deviceName), ""))
                 .build();
     }
 }

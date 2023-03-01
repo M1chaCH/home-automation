@@ -13,6 +13,8 @@ import {PageMessagesComponent} from "./components/page-messages/page-messages.co
 import { SpotifyAuthorisationComponent } from './components/spotify/spotify.authorisation/spotify-authorisation.component';
 import { SpotifyResourcesComponent } from './components/spotify/spotify.resources/spotify.resources.component';
 import { FancyButtonComponent } from './components/fancy-button/fancy-button.component';
+import { DevicePageComponent } from './pages/device.page/device.page.component';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -25,12 +27,14 @@ import { FancyButtonComponent } from './components/fancy-button/fancy-button.com
     SpotifyAuthorisationComponent,
     SpotifyResourcesComponent,
     FancyButtonComponent,
+    DevicePageComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

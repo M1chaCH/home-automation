@@ -4,13 +4,14 @@
   --message-animation-duration: 150ms;
   width: var(--message-container-width);
   height: var(--message-container-height);
-  position: absolute;
+  position: fixed;
   bottom: 0;
   right: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
   overflow: hidden;
+  z-index: 999;
   padding: 20px;
   pointer-events: none;
 }
@@ -31,7 +32,7 @@
 }
 .messages-container .message span {
   margin-left: 10px;
-  font-size: 25px;
+  font-size: 15px;
 }
 .messages-container .message p {
   margin: 5px 0;

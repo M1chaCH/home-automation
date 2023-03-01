@@ -1,5 +1,6 @@
 package ch.micha.automation.room.scene;
 
+import ch.micha.automation.room.errorhandling.exceptions.ResourceAlreadyExistsException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
 import ch.micha.automation.room.light.configuration.LightConfigEntity;
 import ch.micha.automation.room.light.configuration.LightConfigProvider;
@@ -8,6 +9,7 @@ import ch.micha.automation.room.light.yeelight.YeelightDeviceProvider;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.postgresql.util.PSQLException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,7 +89,7 @@ public class SceneProvider {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "INSERT INTO scene (name, default_scene) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
-            statement.setString(1, name);
+            statement.setString(1, name.toLowerCase(Locale.ROOT));
             statement.setBoolean(2, defaultScene);
 
             statement.execute();
@@ -102,6 +104,9 @@ public class SceneProvider {
 
             saveChangedLightConfigs(generatedId, newLightConfigs);
             return new SceneEntity(generatedId, name, defaultScene, new HashMap<>());
+        } catch (PSQLException e) {
+            throwKnownAlreadyExists(e, name);
+            return null;
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
@@ -114,6 +119,11 @@ public class SceneProvider {
      */
     public void saveChangedLightConfigs(int sceneId, Map<YeelightDeviceEntity, LightConfigEntity> newLightConfigs) {
         deleteAllLightConfigs(sceneId);
+        if(newLightConfigs.size() < 1) {
+            logger.log(Level.INFO, "updated light configs for scene {0} with {1} new configs",
+                    new Object[]{sceneId, 0});
+            return;
+        }
 
         StringBuilder query = new StringBuilder("INSERT INTO device_light_scene (scene_id, device_id, configuration_id) VALUES ");
         for (int i = 0; i < newLightConfigs.size(); i++) {
@@ -143,11 +153,11 @@ public class SceneProvider {
     }
 
     public void addDeviceToScene(int deviceId, int configId, int sceneId){
-        if(configId < 1)
-            configId = lightConfigProvider
-                    .findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME)
-                    .orElseGet(lightConfigProvider::createDefaultConfig)
-                    .id();
+        logger.log(Level.INFO, "adding device {0} to default scene", deviceId);
+        if(configId < 1) {
+            Optional<LightConfigEntity> config = lightConfigProvider.findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME);
+            configId = config.orElseGet(lightConfigProvider::createDefaultConfig).id();
+        }
 
         if(sceneId < 1) {
             if(defaultSceneId < 1) {
@@ -245,5 +255,12 @@ public class SceneProvider {
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
+    }
+
+    private void throwKnownAlreadyExists(PSQLException e, String name) {
+        if(e.getMessage().contains("scene_name_key")) {
+            throw new ResourceAlreadyExistsException("scene name", name);
+        }
+        throw new UnexpectedSqlException(e);
     }
 }

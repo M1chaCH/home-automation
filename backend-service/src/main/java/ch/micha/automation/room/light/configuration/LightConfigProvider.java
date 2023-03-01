@@ -69,6 +69,11 @@ public class LightConfigProvider {
 
     public Map<Integer, LightConfigEntity> findConfigsToMap(Integer... configIds) {
         Map<Integer, LightConfigEntity> lightConfigs = new HashMap<>();
+        if(configIds.length < 1) {
+            logger.log(Level.INFO, "selected 0 light_configurations");
+            return lightConfigs;
+        }
+
         StringBuilder query = new StringBuilder("SELECT * FROM light_configuration WHERE ");
 
         for (int i = 0; i < configIds.length; i++) { // add or statement to include the given configIds
@@ -104,6 +109,7 @@ public class LightConfigProvider {
     }
 
     public LightConfigEntity createDefaultConfig() {
+        logger.log(Level.INFO, "creating default light configuration");
         final LightConfigEntity defaultConfig = new LightConfigEntity(
                 0,
                 DEFAULT_CONFIG_NAME,

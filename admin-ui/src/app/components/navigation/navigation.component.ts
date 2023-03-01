@@ -11,4 +11,5 @@ export class NavigationComponent {
   public readonly homeRoute: string = `/${appRoutes.ROOT}/${appRoutes.HOME}`;
   public readonly scenesRoute: string = `/${appRoutes.ROOT}/${appRoutes.SCENES}`;
   public readonly spotifyRoute: string = `/${appRoutes.ROOT}/${appRoutes.SPOTIFY}`;
+  public readonly deviceRoute: string = `/${appRoutes.ROOT}/${appRoutes.DEVICES}`;
 }

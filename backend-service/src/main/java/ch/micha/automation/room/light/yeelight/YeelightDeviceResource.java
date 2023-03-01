@@ -46,6 +46,13 @@ public class YeelightDeviceResource {
                 .build();
     }
 
+    @PUT
+    @Path("{name}")
+    public Response toggleDevicePower(@PathParam("name") String name) {
+        service.togglePower(name);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
     @DELETE
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)

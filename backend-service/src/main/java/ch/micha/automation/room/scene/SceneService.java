@@ -1,6 +1,9 @@
 package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
+import ch.micha.automation.room.events.EventHandlerPriority;
+import ch.micha.automation.room.events.HandlerPriority;
+import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
 import ch.micha.automation.room.spotify.SpotifyApiService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @ApplicationScoped
-public class SceneService {
+public class SceneService implements OnAppStartupListener {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final SceneProvider sceneProvider;
     private final YeelightDeviceService yeelightDeviceService;
@@ -22,6 +25,12 @@ public class SceneService {
         this.sceneProvider = sceneProvider;
         this.yeelightDeviceService = yeelightDeviceService;
         this.spotifyService = spotifyService;
+    }
+
+    @Override
+    @EventHandlerPriority(HandlerPriority.LAST)
+    public void onAppStartup() {
+        sceneProvider.loadDefaultScene();
     }
 
     public void applyScene(int sceneId){

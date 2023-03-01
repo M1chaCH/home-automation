@@ -17,7 +17,7 @@
 
     p {
       text-align: center;
-      font-size: clamp(40px, 10cqw, 100px);
+      font-size: clamp(25px, 10cqw, 100px);
       font-weight: 800;
       text-transform: uppercase;
       word-break: break-word;
@@ -60,7 +60,7 @@
 
       .material-symbols-rounded {
         color: var(--prussian-blue);
-        font-size: 30px;
+        font-size: clamp(15px, 25cqh, 120px);
       }
     }
 
