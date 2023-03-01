@@ -50,12 +50,13 @@ public class YeelightDeviceService implements OnAppStartupListener {
             throw new YeeLightOfflineException(lightEntity.ip(), lightEntity.name());
 
         try {
+            light.setPower(config.power());
+
             if(config.power()) {
                 light.setBrightness(config.brightness());
                 light.setRGB(config.red(), config.green(), config.blue());
             }
 
-            light.setPower(config.power());
             logger.log(Level.INFO, "applied config to light: [ light:{0}-{1} | power:{2} | color:r-{3} g-{4} b-{5} | brightness:{6} ] }",
                     new Object[]{ lightEntity.ip(), lightEntity.name(), config.power(), config.red(),
                             config.green(), config.blue(), config.brightness() });
