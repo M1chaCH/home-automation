@@ -1,8 +1,8 @@
 
 # 1st stage, build the app
-FROM maven:3.8.4-openjdk-17-slim as build
+FROM maven:3.8.4-openjdk-17-slim as build-api
 
-WORKDIR /helidon
+WORKDIR /var/local/api/
 
 # Create a first layer to cache the "Maven World" in the local repository.
 # Incremental docker builds will always resume after that, unless you update
@@ -15,16 +15,14 @@ RUN mvn package -Dmaven.test.skip -Declipselink.weave.skip
 ADD src src
 RUN mvn package -DskipTests
 
-RUN echo "done!"
-
 # 2nd stage, build the runtime image
 FROM openjdk:17-jdk-slim
-WORKDIR /helidon
+WORKDIR /var/local/api/
 
 # Copy the binary built in the 1st stage
-COPY --from=build /helidon/target/home-automation.jar ./
-COPY --from=build /helidon/target/libs ./libs
+COPY --from=build-api /var/local/api/target/room-automation.jar ./
+COPY --from=build-api /var/local/api/target/libs ./libs
 
-CMD ["java", "-jar", "home-automation.jar"]
+CMD ["java", "-jar", "room-automation.jar"]
 
 EXPOSE 8080

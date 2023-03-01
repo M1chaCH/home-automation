@@ -1,0 +1,72 @@
+version: '3.9'
+
+services:
+    room-automation-db:
+        container_name: room-automation-db
+        build: 
+            context: ./../data/
+            dockerfile: Dockerfile
+            args: 
+                - STARTUP_SCRIPTS_DIR=./scripts
+        environment: 
+            - POSTGRES_USER=java
+            - POSTGRES_PASSWORD=java
+            - POSTGRES_DB=room_automation
+            - PGDATA=/var/lib/postgresql/data
+        networks:
+            - net-room-automation-data
+        volumes:
+            - vol-room-automation-data:/var/lib/postgresql/data
+
+    room-automation-api:
+        container_name: room-automation-api
+        build: 
+            context: ./../backend-service/
+            dockerfile: Dockerfile
+        restart: always
+        environment:
+            - ROOM_AUTOMATION_DB_URL=jdbc:postgresql://room-automation-db:5432/room_automation
+            - ROOM_AUTOMATION_SPOTIFY_USER=
+            - ROOM_AUTOMATION_SPOTIFY_DEVICE=
+            - ROOM_AUTOMATION_SPOTIFY_ID=
+            - ROOM_AUTOMATION_SPOTIFY_SECRET=
+        depends_on:
+            - room-automation-db
+        networks:
+            - net-room-automation-data
+            - net-room-automation-public
+
+    room-automation-ui:
+        container_name: room-automation-ui
+        build: 
+            context: ./../admin-ui/
+            dockerfile: Dockerfile
+            args:
+                - ngConfig=production
+        networks:
+            - net-room-automation-public
+        volumes:
+            - ./../admin-ui/.nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./../admin-ui/.nginx/mime.types:/etc/nginx/mime.types
+
+    room-automation-proxy:
+        container_name: room-automation-proxy
+        image: nginx:stable
+        depends_on:
+            - room-automation-api
+            - room-automation-ui
+        tty: true
+        networks:
+             - net-room-automation-public
+        ports:
+            - "80:80"
+        volumes:
+            - ./root-nginx.conf:/etc/nginx/nginx.conf
+            - ./../admin-ui/.nginx/mime.types:/etc/nginx/mime.types
+
+networks:
+    net-room-automation-data:
+    net-room-automation-public:
+
+volumes:
+    vol-room-automation-data:    
