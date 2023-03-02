@@ -1,10 +1,17 @@
 .page {
   display: grid;
-  grid-template-rows: 80px;
+  grid-template-rows: 80px auto;
   grid-template-columns: 100%;
   gap: 50px;
   position: relative;
   margin: 5vh 5vw;
+}
+
+@media (max-width: 600px) {
+  .page {
+    display: block;
+    padding-top: calc(80px - 5vh);
+  }
 }
 
 /*# sourceMappingURL=app.component.css.map */

@@ -7,6 +7,7 @@ import {appRoutes} from "../../configuration/app.config";
   styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent {
+  menuOpen: boolean = false;
 
   public readonly homeRoute: string = `/${appRoutes.ROOT}/${appRoutes.HOME}`;
   public readonly scenesRoute: string = `/${appRoutes.ROOT}/${appRoutes.SCENES}`;
