@@ -4,6 +4,7 @@ import {HttpMethods} from "../configuration/app.config";
 import {environment} from "../../environments/environment";
 import {catchError, NEVER, Observable} from "rxjs";
 import {MessageDistributorService} from "./message-distributor.service";
+import {ErrorMessageDTO} from "../dtos/ErrorMessageDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,11 @@ export class ApiService {
 
     return ((request as any) as Observable<T>).pipe(
       catchError(err => {
-        this.messageDistributor.pushMessage({ message: err.error.message, type: "ERROR" })
+        const error: ErrorMessageDTO = err.error;
+
+        this.messageDistributor.pushMessage({ message: error.message, type: "ERROR" })
+        console.warn("error thrown: " + error.message + " -- " + error.details)
+
         return NEVER;
       })
     );
