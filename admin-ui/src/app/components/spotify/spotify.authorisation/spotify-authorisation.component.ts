@@ -3,6 +3,7 @@ import {appRoutes} from "../../../configuration/app.config";
 import {environment} from "../../../../environments/environment";
 import {SpotifyService} from "../../../services/spotify.service";
 import {SpotifyClientDTO} from "../../../dtos/SpotifyClientDTO";
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-spotify-authorisation',
@@ -43,7 +44,7 @@ export class SpotifyAuthorisationComponent implements OnInit{
   authorize() {
     const scope: string = "user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative user-read-playback-position user-top-read user-read-recently-played user-library-read"
     const redirect: string = `${environment.UI_URL}/${appRoutes.ROOT}/${appRoutes.SPOTIFY_CALLBACK}`;
-    this.state = crypto.randomUUID();
+    this.state = uuidv4();
 
     window.location.href = `${this.SPOTIFY_AUTH_URL}?response_type=code&client_id=${this.client.clientId}&scope=${scope}&redirect_uri=${redirect}&state=${this.state}`;
   }
