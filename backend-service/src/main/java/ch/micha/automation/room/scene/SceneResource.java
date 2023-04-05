@@ -13,17 +13,19 @@ import jakarta.ws.rs.core.Response;
 @RequestScoped()
 public class SceneResource {
     private final SceneService service;
+    private final SceneRestService restService;
 
     @Inject
-    public SceneResource(SceneService service) {
+    public SceneResource(SceneService service, SceneRestService restService) {
         this.service = service;
+        this.restService = restService;
     }
 
     @GET
     @Path("/rest")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getScenes() {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).entity("method has not been implemented yet ):").build();
+        return Response.status(Response.Status.OK).entity(restService.loadScenes()).build();
     }
 
     @GET

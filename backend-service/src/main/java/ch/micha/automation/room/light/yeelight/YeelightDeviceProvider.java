@@ -51,6 +51,7 @@ public class YeelightDeviceProvider {
      * (only gets devices from RAM, no DB access)
      * @param deviceIds ids of devices to return.
      * @return all found devices by ids, if not found -> null entry in the list.
+     * @throws NullPointerException if one of the IDs was not found
      */
     public List<YeelightDeviceEntity> findByIds(Integer... deviceIds) {
         List<YeelightDeviceEntity> foundDevices = new ArrayList<>();
@@ -74,7 +75,7 @@ public class YeelightDeviceProvider {
                 return entry.getValue();
         }
 
-        throw new ResourceNotFoundException("device", "" + name);
+        throw new ResourceNotFoundException("device", name);
     }
 
     /**

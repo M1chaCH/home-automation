@@ -2,19 +2,17 @@ package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.errorhandling.exceptions.ResourceAlreadyExistsException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
-import ch.micha.automation.room.light.configuration.LightConfigEntity;
+import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.configuration.LightConfigProvider;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceProvider;
+import ch.micha.automation.room.scene.dtos.SceneDTO;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.postgresql.util.PSQLException;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,7 +60,9 @@ public class SceneProvider {
                         sceneId,
                         result.getString("name"),
                         result.getBoolean("default_scene"),
-                        loadDeviceLightConfigs(sceneId)
+                        loadDeviceLightConfigs(sceneId),
+                        result.getString("spotify_resource"),
+                        result.getInt("spotify_volume")
                 );
 
                 defaultSceneId = sceneId;
@@ -83,14 +83,18 @@ public class SceneProvider {
      * IMPORTANT! if default scene is true, the old default scene will be changed to no longer be default.
      * @param name the name of the new scene, must be unique. todo implement errorhandling for unique constraint violation stuff.
      * @param defaultScene this new scene will be the default
+     * @param spotifyResource the URI to a spotify resource
+     * @param spotifyVolume the volume to start the spotify resource at
      * @return the created scene with the correct generated id.
      */
-    public SceneEntity createNewScene(String name, boolean defaultScene, Map<YeelightDeviceEntity, LightConfigEntity> newLightConfigs) {
+    public SceneEntity createNewScene(String name, boolean defaultScene, String spotifyResource, int spotifyVolume, Map<YeelightDeviceEntity, LightConfig> newLightConfigs) {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
-                "INSERT INTO scene (name, default_scene) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS
+                "INSERT INTO scene (name, default_scene, spotify_resource, spotify_volume) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
             statement.setString(1, name.toLowerCase(Locale.ROOT));
             statement.setBoolean(2, defaultScene);
+            statement.setString(3, spotifyResource);
+            statement.setInt(4, spotifyVolume);
 
             statement.execute();
 
@@ -103,7 +107,7 @@ public class SceneProvider {
                 unsetOldDefaultScene(generatedId);
 
             saveChangedLightConfigs(generatedId, newLightConfigs);
-            return new SceneEntity(generatedId, name, defaultScene, new HashMap<>());
+            return new SceneEntity(generatedId, name, defaultScene, new HashMap<>(), spotifyResource, spotifyVolume);
         } catch (PSQLException e) {
             throwKnownAlreadyExists(e, name);
             return null;
@@ -117,7 +121,7 @@ public class SceneProvider {
      * @param sceneId the scene that should be changed
      * @param newLightConfigs the new light configuration
      */
-    public void saveChangedLightConfigs(int sceneId, Map<YeelightDeviceEntity, LightConfigEntity> newLightConfigs) {
+    public void saveChangedLightConfigs(int sceneId, Map<YeelightDeviceEntity, LightConfig> newLightConfigs) {
         deleteAllLightConfigs(sceneId);
         if(newLightConfigs.size() < 1) {
             logger.log(Level.INFO, "updated light configs for scene {0} with {1} new configs",
@@ -135,7 +139,7 @@ public class SceneProvider {
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query.toString())) {
             int i = 0;
-            for (Map.Entry<YeelightDeviceEntity, LightConfigEntity> entry : newLightConfigs.entrySet()) {
+            for (Map.Entry<YeelightDeviceEntity, LightConfig> entry : newLightConfigs.entrySet()) {
                 i++;
                 statement.setInt(i, sceneId);
                 i++;
@@ -155,7 +159,7 @@ public class SceneProvider {
     public void addDeviceToScene(int deviceId, int configId, int sceneId){
         logger.log(Level.INFO, "adding device {0} to default scene", deviceId);
         if(configId < 1) {
-            Optional<LightConfigEntity> config = lightConfigProvider.findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME);
+            Optional<LightConfig> config = lightConfigProvider.findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME);
             configId = config.orElseGet(lightConfigProvider::createDefaultConfig).id();
         }
 
@@ -181,8 +185,64 @@ public class SceneProvider {
         }
     }
 
-    private Map<YeelightDeviceEntity, LightConfigEntity> loadDeviceLightConfigs(int sceneId) {
-        Map<YeelightDeviceEntity, LightConfigEntity> deviceLightConfigs = new HashMap<>();
+    public List<SceneEntity> loadScenes() {
+        final String query = """
+                 SELECT
+                     s.id as scene_id, s.name as scene_name, s.default_scene, s.spotify_resource, s.spotify_volume,
+                     lc.id as config_id, lc.name as config_name, lc.red, lc.green, lc.blue, lc.brightness,
+                     dls.device_id as device_id
+                 FROM scene AS s
+                          LEFT JOIN device_light_scene AS dls ON s.id = dls.scene_id
+                          LEFT JOIN light_configuration AS lc ON dls.configuration_id = lc.id
+                 ORDER BY scene_id;""";
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
+            ResultSet result = statement.executeQuery();
+
+            List<SceneEntity> scenes = new ArrayList<>();
+            Map<YeelightDeviceEntity, LightConfig> lightsToFill = new HashMap<>();
+            int sceneIdToFill = -1;
+            while (result.next()) {
+                int currentSceneId = result.getInt("scene_id");
+
+                if(sceneIdToFill != currentSceneId) {
+                    sceneIdToFill = currentSceneId;
+                    lightsToFill = new HashMap<>();
+                    scenes.add(new SceneEntity(
+                            result.getInt("scene_id"),
+                            result.getString("scene_name"),
+                            result.getBoolean("default_scene"),
+                            lightsToFill,
+                            result.getString("spotify_resource"),
+                            result.getInt("spotify_volume")
+                    ));
+                }
+
+                YeelightDeviceEntity currentDevice = deviceProvider.findByIds(result.getInt("device_id")).get(0);
+                if(currentDevice != null)
+                    lightsToFill.put(currentDevice, new LightConfig(
+                            result.getInt("config_id"),
+                            result.getString("config_name"),
+                            result.getInt("red"),
+                            result.getInt("green"),
+                            result.getInt("blue"),
+                            result.getInt("brightness")
+                    ));
+            }
+
+            logger.log(Level.INFO, "selected {0} scenes", scenes.size());
+            return scenes;
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
+    public List<SceneDTO> loadScenesAsDto() {
+        return loadScenes().stream().map(SceneEntity::toDto).toList();
+    }
+
+    private Map<YeelightDeviceEntity, LightConfig> loadDeviceLightConfigs(int sceneId) {
+        Map<YeelightDeviceEntity, LightConfig> deviceLightConfigs = new HashMap<>();
         String query = "SELECT * FROM device_light_scene WHERE scene_id=?;";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
@@ -200,7 +260,7 @@ public class SceneProvider {
             Integer[] deviceIdsArray = deviceIds.toArray(new Integer[0]);
             List<YeelightDeviceEntity> devices = deviceProvider.findByIds(deviceIdsArray);
             Integer[] configurationIdsArray = configurationIds.toArray(new Integer[0]);
-            Map<Integer, LightConfigEntity> lightConfigs = lightConfigProvider.findConfigsToMap(configurationIdsArray);
+            Map<Integer, LightConfig> lightConfigs = lightConfigProvider.findConfigsToMap(configurationIdsArray);
 
             for (int i = 0; i < devices.size(); i++) {
                 deviceLightConfigs.put(devices.get(i), lightConfigs.get(configurationIds.get(i)));
@@ -231,15 +291,15 @@ public class SceneProvider {
     }
 
     private SceneEntity createDefaultScene() {
-        Map<YeelightDeviceEntity, LightConfigEntity> defaultLightConfigs = new HashMap<>();
-        Optional<LightConfigEntity> existingLightConfig = lightConfigProvider
+        Map<YeelightDeviceEntity, LightConfig> defaultLightConfigs = new HashMap<>();
+        Optional<LightConfig> existingLightConfig = lightConfigProvider
                 .findConfigByName(LightConfigProvider.DEFAULT_CONFIG_NAME);
 
-        LightConfigEntity defaultLightConfig = existingLightConfig.orElseGet(lightConfigProvider::createDefaultConfig);
+        LightConfig defaultLightConfig = existingLightConfig.orElseGet(lightConfigProvider::createDefaultConfig);
 
         deviceProvider.getDevices().forEach(device -> defaultLightConfigs.put(device, defaultLightConfig));
 
-        SceneEntity defaultScene = createNewScene("Default", true, defaultLightConfigs);
+        SceneEntity defaultScene = createNewScene("Default", true, "spotify:playlist:4kh5kepkkxFgrlUqFkcMfm", 30, defaultLightConfigs);
         this.defaultSceneId = defaultScene.id();
         return defaultScene;
     }

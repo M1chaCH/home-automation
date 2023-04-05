@@ -3,7 +3,9 @@ create table scene
 (
     id serial primary key,
     name varchar(50) not null unique,
-    default_scene boolean
+    default_scene boolean,
+    spotify_resource varchar(250),
+    spotify_volume int
 );
 
 drop table if exists yeelight_devices cascade;
@@ -19,7 +21,6 @@ create table light_configuration
 (
     id serial primary key,
     name varchar(50) not null unique,
-    power boolean not null,
     red int not null,
     green int not null,
     blue int not null,
