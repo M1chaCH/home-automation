@@ -10,7 +10,8 @@ export const appRoutes = {
 export const apiEndpoints = {
     AUTOMATION: "automation",
     SCENE: "automation/scene",
-    SCENE_REST: "automation/scene/rest",
+    SCENE_CRUD: "automation/scene/crud",
+    CONFIG_CRUD: "automation/config/crud",
     SPOTIFY: "automation/spotify",
     SPOTIFY_CLIENT: "automation/spotify/client",
     SPOTIFY_PLAYBACK: "automation/spotify/playback",

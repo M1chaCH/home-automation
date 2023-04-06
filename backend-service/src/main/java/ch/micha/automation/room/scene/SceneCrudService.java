@@ -7,11 +7,11 @@ import jakarta.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped
-public class SceneRestService {
+public class SceneCrudService {
     private final SceneProvider provider;
 
     @Inject
-    public SceneRestService(SceneProvider provider) {
+    public SceneCrudService(SceneProvider provider) {
         this.provider = provider;
     }
 

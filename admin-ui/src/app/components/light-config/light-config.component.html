@@ -1,0 +1,16 @@
+<div class="light-config" [class.open-editor]="editorOpen">
+    <div class="preview-container" (click)="toggleOpen()">
+        <div class="preview" [style.background-color]="getPreviewBackgroundColor()" [style.opacity]="getPreviewOpacity()"></div>
+    </div>
+
+    <app-hidden-input placeholder="Name"
+                      [initialValue]="lightConfig.name"
+                      [lengthLimit]="50"
+                      (saveRequest)="rename($event)">
+    </app-hidden-input>
+
+    <p>{{lightConfig.red}}</p>
+    <p>{{lightConfig.green}}</p>
+    <p>{{lightConfig.blue}}</p>
+    <p>{{lightConfig.brightness}}</p>
+</div>

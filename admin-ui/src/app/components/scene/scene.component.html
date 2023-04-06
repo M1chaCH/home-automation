@@ -1,0 +1,20 @@
+<div class="scene" [class.default-scene]="scene.defaultScene">
+    <app-hidden-input placeholder="Name"
+                      [initialValue]="scene.name"
+                      [lengthLimit]="50"
+                      (saveRequest)="renameScene($event)">
+    </app-hidden-input>
+
+    <div class="lights">
+        <div *ngFor="let light of scene.lights; let i = index"
+             class="light" >
+            <h4>{{light.deviceName | uppercase}} - {{light.lightConfig.name}}</h4>
+            <app-light-config [lightConfig]="light.lightConfig"
+                              [index]="i"
+                              [openEditorId$]="openLightConfigEditorSubject.asObservable()"
+                              (requestToggleOpen)="toggleOpen(i)">
+            </app-light-config>
+        </div>
+    </div>
+
+</div>

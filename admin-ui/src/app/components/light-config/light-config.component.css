@@ -1,0 +1,43 @@
+.light-config {
+  height: 50px;
+  border-radius: 10px;
+  transition: all 250ms ease-out;
+  filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.2));
+  position: relative;
+  overflow-y: hidden;
+  z-index: 1;
+}
+.light-config .preview-container {
+  cursor: pointer;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  border-radius: 10px;
+  background-color: white;
+}
+.light-config .preview-container .preview {
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+}
+
+.light-config:hover:not(.open-editor) {
+  transform: rotate(1deg) rotateY(5deg);
+}
+
+.open-editor {
+  padding-top: 50px;
+  display: block;
+  height: 300px;
+  background-color: rgba(234, 226, 183, 0.2);
+}
+.open-editor ::ng-deep .hidden-input {
+  font-size: 20px;
+  font-weight: normal;
+  text-transform: none;
+}
+
+/*# sourceMappingURL=light-config.component.css.map */

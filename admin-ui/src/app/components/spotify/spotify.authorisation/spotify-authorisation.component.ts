@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {appRoutes} from "../../../configuration/app.config";
 import {environment} from "../../../../environments/environment";
 import {SpotifyService} from "../../../services/spotify.service";
-import {SpotifyClientDTO} from "../../../dtos/SpotifyClientDTO";
+import {SpotifyClientDTO} from "../../../dtos/spotify/SpotifyClientDTO";
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({

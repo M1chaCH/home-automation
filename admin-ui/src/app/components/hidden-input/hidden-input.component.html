@@ -1,0 +1,8 @@
+<input class="hidden-input"
+       [value]="initialValue"
+       [placeholder]="placeholder"
+       [maxLength]="lengthLimit"
+       (keydown.escape)="resetValue($event)"
+       (keydown.enter)="saveValue($event)"
+       (focusout)="resetValue($event)"
+/>

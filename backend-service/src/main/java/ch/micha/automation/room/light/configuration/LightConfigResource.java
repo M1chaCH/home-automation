@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Logged
-@Path("/automation/config/rest")
+@Path("/automation/config/crud")
 @RequestScoped
 public class LightConfigResource {
 

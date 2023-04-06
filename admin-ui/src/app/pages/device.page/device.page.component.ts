@@ -46,14 +46,7 @@ export class DevicePageComponent implements OnInit{
     });
   }
 
-  resetEditing(e: Event, device: DeviceDTO) {
-    // @ts-ignore
-    e.target.value = device.name;
-  }
-
-  renameDevice(e: Event, device: DeviceDTO) {
-    // @ts-ignore
-    const newName: string = e.target.value;
+  renameDevice(newName: string, device: DeviceDTO) {
     this.api.callApi(apiEndpoints.DEVICES, "PUT", { oldName: device.name, newName }).subscribe(() => {
       device.name = newName;
       this.messageDistributor.pushMessage({ message: "successfully renamed device", type: "INFO" });

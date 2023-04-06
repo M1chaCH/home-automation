@@ -1,1 +1,3 @@
-<p>scenes.page works!</p>
+<div class="scenes">
+    <app-scene *ngFor="let scene of (scenes$ | async)" [scene]="scene"></app-scene>
+</div>

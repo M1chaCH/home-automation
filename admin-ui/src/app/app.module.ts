@@ -15,6 +15,9 @@ import { SpotifyResourcesComponent } from './components/spotify/spotify.resource
 import { FancyButtonComponent } from './components/fancy-button/fancy-button.component';
 import { DevicePageComponent } from './pages/device.page/device.page.component';
 import {FormsModule} from "@angular/forms";
+import { SceneComponent } from './components/scene/scene.component';
+import { LightConfigComponent } from './components/light-config/light-config.component';
+import { HiddenInputComponent } from './components/hidden-input/hidden-input.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,9 @@ import {FormsModule} from "@angular/forms";
     SpotifyResourcesComponent,
     FancyButtonComponent,
     DevicePageComponent,
+    SceneComponent,
+    LightConfigComponent,
+    HiddenInputComponent,
   ],
   imports: [
     BrowserModule,

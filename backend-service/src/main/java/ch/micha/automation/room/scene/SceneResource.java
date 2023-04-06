@@ -13,30 +13,30 @@ import jakarta.ws.rs.core.Response;
 @RequestScoped()
 public class SceneResource {
     private final SceneService service;
-    private final SceneRestService restService;
+    private final SceneCrudService crudService;
 
     @Inject
-    public SceneResource(SceneService service, SceneRestService restService) {
+    public SceneResource(SceneService service, SceneCrudService crudService) {
         this.service = service;
-        this.restService = restService;
+        this.crudService = crudService;
     }
 
     @GET
-    @Path("/rest")
+    @Path("/crud")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getScenes() {
-        return Response.status(Response.Status.OK).entity(restService.loadScenes()).build();
+        return Response.status(Response.Status.OK).entity(crudService.loadScenes()).build();
     }
 
     @GET
-    @Path("/rest/{sceneId}")
+    @Path("/crud/{sceneId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getScene(@PathParam("sceneId") int sceneId) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).entity("method has not been implemented yet ):").build();
     }
 
     @POST
-    @Path("/rest")
+    @Path("/crud")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createScene() {
@@ -44,7 +44,7 @@ public class SceneResource {
     }
 
     @PUT
-    @Path("/rest")
+    @Path("/crud")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateScene() {
@@ -52,7 +52,7 @@ public class SceneResource {
     }
 
     @DELETE
-    @Path("/rest/{sceneId}")
+    @Path("/crud/{sceneId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteScene(@PathParam("sceneId") int sceneId) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).entity("method has not been implemented yet ):").build();

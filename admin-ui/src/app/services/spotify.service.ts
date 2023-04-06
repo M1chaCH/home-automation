@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import {ApiService} from "./api.service";
 import {firstValueFrom, Observable, of} from "rxjs";
 import {apiEndpoints, appRoutes} from "../configuration/app.config";
-import {SpotifyClientDTO} from "../dtos/SpotifyClientDTO";
+import {SpotifyClientDTO} from "../dtos/spotify/SpotifyClientDTO";
 import {environment} from "../../environments/environment";
-import {SpotifyResourceDTO} from "../dtos/SpotifyResourceDTO";
+import {SpotifyResourceDTO} from "../dtos/spotify/SpotifyResourceDTO";
 
 @Injectable({
   providedIn: 'root'

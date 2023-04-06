@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {SpotifyService} from "../../../services/spotify.service";
 import {Observable} from "rxjs";
-import {SpotifyResourceDTO} from "../../../dtos/SpotifyResourceDTO";
+import {SpotifyResourceDTO} from "../../../dtos/spotify/SpotifyResourceDTO";
 
 @Component({
   selector: 'app-spotify-resources',
