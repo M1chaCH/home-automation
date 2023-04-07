@@ -14,10 +14,13 @@ import { SpotifyAuthorisationComponent } from './components/spotify/spotify.auth
 import { SpotifyResourcesComponent } from './components/spotify/spotify.resources/spotify.resources.component';
 import { FancyButtonComponent } from './components/fancy-button/fancy-button.component';
 import { DevicePageComponent } from './pages/device.page/device.page.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { SceneComponent } from './components/scene/scene.component';
 import { LightConfigComponent } from './components/light-config/light-config.component';
 import { HiddenInputComponent } from './components/hidden-input/hidden-input.component';
+import { ColorPickerModule } from '@iplab/ngx-color-picker';
+import { RgbConvertPipe } from './pipes/rgb-convert.pipe';
+import { BrightnessConvertPipe } from './pipes/brightness-convert.pipe';
 
 @NgModule({
   declarations: [
@@ -34,6 +37,8 @@ import { HiddenInputComponent } from './components/hidden-input/hidden-input.com
     SceneComponent,
     LightConfigComponent,
     HiddenInputComponent,
+    RgbConvertPipe,
+    BrightnessConvertPipe,
   ],
   imports: [
     BrowserModule,
@@ -41,8 +46,10 @@ import { HiddenInputComponent } from './components/hidden-input/hidden-input.com
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
+    ColorPickerModule
   ],
-  providers: [],
+  providers: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

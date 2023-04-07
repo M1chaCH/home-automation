@@ -1,6 +1,10 @@
 .scene {
   padding: 20px;
+  min-width: 250px;
+  width: 100%;
+  max-width: 450px;
   border-radius: 20px;
+  box-sizing: border-box;
 
   .lights {
     display: flex;
@@ -12,17 +16,6 @@
         margin-bottom: 5px;
       }
     }
-  }
-
-  ::ng-deep .hidden-input  {
-    font-size: 1.5em;
-    margin-block-start: 0.83em;
-    margin-block-end: 0.83em;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
-    font-weight: bold;
-
-    text-transform: uppercase;
   }
 }
 

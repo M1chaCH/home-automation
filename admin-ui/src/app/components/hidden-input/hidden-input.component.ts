@@ -9,6 +9,7 @@ export class HiddenInputComponent {
   @Input() placeholder: string = "";
   @Input() initialValue: string = "";
   @Input() lengthLimit: number = 50;
+  @Input() inputStyle: { [key: string]: string } = {};
 
   @Output() saveRequest: EventEmitter<string> = new EventEmitter<string>();
 

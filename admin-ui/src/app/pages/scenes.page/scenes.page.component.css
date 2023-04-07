@@ -1,6 +1,6 @@
 .scenes {
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row wrap;
   gap: 30px;
 }
 

@@ -15,7 +15,7 @@ export class SceneComponent {
 
   toggleOpen(index: number) {
     let indexToSend: number = this.openEditorIndex !== index ? index : -1;
-    console.log("sending next id", indexToSend)
+
     this.openLightConfigEditorSubject.next(indexToSend);
     this.openEditorIndex = indexToSend;
   }

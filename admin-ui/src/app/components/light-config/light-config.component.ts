@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {LightConfigDTO} from "../../dtos/scene/LightConfigDTO";
 import {Observable, of} from "rxjs";
+import {Color, ColorPickerControl} from "@iplab/ngx-color-picker";
+import {Rgba} from "@iplab/ngx-color-picker/lib/helpers/rgba.class";
 
 @Component({
   selector: 'app-light-config',
@@ -16,10 +18,29 @@ export class LightConfigComponent implements OnInit{
   @Input() openEditorId$: Observable<number> = of(-1);
   @Output() requestToggleOpen: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  colorPickerControl: ColorPickerControl;
+  private initialLightConfig: LightConfigDTO = this.lightConfig;
+
+  constructor() {
+    this.colorPickerControl = new ColorPickerControl().hidePresets();
+  }
+
   ngOnInit() {
+    this.initialLightConfig = structuredClone(this.lightConfig);
+
     this.openEditorId$.subscribe(index => {
       this.editorOpen = !this.editorOpen;
       this.editorOpen = index === this.index && this.editorOpen;
+    });
+
+    this.setColorPickerValue(this.lightConfig);
+    this.colorPickerControl.valueChanges.subscribe((change: Color) => {
+      const color: Rgba = change.getRgba();
+      this.lightConfig.red = color.getRed();
+      this.lightConfig.green = color.getGreen();
+      this.lightConfig.blue = color.getBlue();
+      this.lightConfig.brightness = color.getAlpha() * 100;
+      this.lightConfig = {... this.lightConfig}; // to let the template know that stuff has changed
     });
   }
 
@@ -27,15 +48,22 @@ export class LightConfigComponent implements OnInit{
     this.requestToggleOpen.next(!this.editorOpen);
   }
 
-  getPreviewBackgroundColor(): string {
-    return `rgb(${this.lightConfig.red}, ${this.lightConfig.green}, ${this.lightConfig.blue})`;
-  }
-
-  getPreviewOpacity(): string {
-    return `${this.lightConfig.brightness / 100}`;
-  }
-
   rename(newName: string) {
-    console.warn("save not implemented yet", newName)
+    this.lightConfig.name = newName;
+  }
+
+  saveChanges(): void {
+    console.warn("not yet implemented");
+  }
+
+  reset(): void {
+    this.lightConfig = structuredClone(this.initialLightConfig);
+    this.setColorPickerValue(this.lightConfig);
+  }
+
+  private setColorPickerValue(config: LightConfigDTO) {
+    this.colorPickerControl.setValueFrom(
+      `rgba(${config.red}, ${config.green}, ${config.blue}, ${config.brightness / 100})`
+    );
   }
 }

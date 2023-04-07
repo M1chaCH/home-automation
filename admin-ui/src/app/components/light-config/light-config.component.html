@@ -1,16 +1,27 @@
 <div class="light-config" [class.open-editor]="editorOpen">
     <div class="preview-container" (click)="toggleOpen()">
-        <div class="preview" [style.background-color]="getPreviewBackgroundColor()" [style.opacity]="getPreviewOpacity()"></div>
+        <div class="preview"
+             [style.background-color]="lightConfig | rgbConvert"
+             [style.opacity]="lightConfig | brightnessConvert">
+        </div>
     </div>
 
-    <app-hidden-input placeholder="Name"
+    <app-hidden-input placeholder="Config Name"
+                      [inputStyle]='{ "font-size": "20px", "font-weight": "normal" }'
                       [initialValue]="lightConfig.name"
                       [lengthLimit]="50"
                       (saveRequest)="rename($event)">
     </app-hidden-input>
 
-    <p>{{lightConfig.red}}</p>
-    <p>{{lightConfig.green}}</p>
-    <p>{{lightConfig.blue}}</p>
-    <p>{{lightConfig.brightness}}</p>
+    <chrome-picker [control]="colorPickerControl"></chrome-picker>
+    <div class="controls">
+        <app-fancy-button buttonIcon="check"
+                          backgroundText="Save"
+                          (buttonClicked)="saveChanges()">
+        </app-fancy-button>
+        <app-fancy-button buttonIcon="close"
+                          backgroundText="Reset"
+                          (buttonClicked)="reset()">
+        </app-fancy-button>
+    </div>
 </div>

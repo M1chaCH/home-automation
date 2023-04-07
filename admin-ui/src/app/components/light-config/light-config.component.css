@@ -23,21 +23,58 @@
   width: 100%;
   border-radius: inherit;
 }
+.light-config .controls {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+  grid-template-rows: 80px;
+  gap: 20px;
+}
 
 .light-config:hover:not(.open-editor) {
   transform: rotate(1deg) rotateY(5deg);
 }
 
 .open-editor {
-  padding-top: 50px;
-  display: block;
-  height: 300px;
-  background-color: rgba(234, 226, 183, 0.2);
+  padding: 55px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 360px;
 }
-.open-editor ::ng-deep .hidden-input {
-  font-size: 20px;
-  font-weight: normal;
-  text-transform: none;
+
+::ng-deep chrome-picker {
+  width: 100% !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+::ng-deep chrome-picker saturation-component {
+  border-radius: 5px !important;
+}
+::ng-deep chrome-picker saturation-component .pointer {
+  width: 15px !important;
+  height: 15px !important;
+  border: 1px var(--white) solid !important;
+  outline: 0.5px solid var(--black);
+}
+::ng-deep chrome-picker .type-column {
+  display: none !important;
+}
+::ng-deep chrome-picker rgba-input-component .column input {
+  background-color: var(--white);
+  border: none;
+  border-radius: 5px;
+  color: var(--black);
+  font-family: "Work Sans", sans-serif;
+  font-size: 14px;
+  pointer-events: none;
+}
+::ng-deep chrome-picker rgba-input-component .column span {
+  color: var(--white);
+  font-family: "Work Sans", sans-serif;
+  font-weight: lighter;
+  font-size: 14px;
+  text-transform: lowercase;
 }
 
 /*# sourceMappingURL=light-config.component.css.map */
