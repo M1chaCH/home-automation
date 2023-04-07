@@ -172,6 +172,19 @@ public class LightConfigProvider {
     public void deleteConfig(int id) {
         logger.log(Level.INFO, "deleting light config {0}", id);
 
+        final int defaultConfigId = findConfigByName(DEFAULT_CONFIG_NAME).orElseThrow().id();
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "UPDATE device_light_scene SET configuration_id = ? WHERE configuration_id = ?;"
+        )) {
+            statement.setInt(1, defaultConfigId);
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+            logger.log(Level.INFO, "changed all usages of light config {0} to default config", id);
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "DELETE FROM light_configuration WHERE id = ?"
