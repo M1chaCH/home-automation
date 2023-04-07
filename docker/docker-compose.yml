@@ -26,10 +26,10 @@ services:
         restart: always
         environment:
             - ROOM_AUTOMATION_DB_URL=jdbc:postgresql://room-automation-db:5432/room_automation
-            - ROOM_AUTOMATION_SPOTIFY_USER=micha_-ch
-            - ROOM_AUTOMATION_SPOTIFY_DEVICE=michus-raser
-            - ROOM_AUTOMATION_SPOTIFY_ID=f1b59305c4ca4b11a330f068f4a6ba47
-            - ROOM_AUTOMATION_SPOTIFY_SECRET=55bdb2ae04eb46a98f0bc5f8399d4b17
+            - ROOM_AUTOMATION_SPOTIFY_USER=
+            - ROOM_AUTOMATION_SPOTIFY_DEVICE=
+            - ROOM_AUTOMATION_SPOTIFY_ID=
+            - ROOM_AUTOMATION_SPOTIFY_SECRET=
         depends_on:
             - room-automation-db
         networks:

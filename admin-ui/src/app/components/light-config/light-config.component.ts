@@ -13,6 +13,7 @@ import {MessageDistributorService} from "../../services/message-distributor.serv
   styleUrls: ['./light-config.component.scss']
 })
 export class LightConfigComponent implements OnInit{
+  readonly DEFAUL_LIGHT_CONFIG_NAME = "_default";
 
   @Input() lightConfig!: LightConfigDTO;
   @Input() index!: number;
@@ -20,6 +21,8 @@ export class LightConfigComponent implements OnInit{
 
   @Input() openEditorId$: Observable<number> = of(-1);
   @Output() requestToggleOpen: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  deleteVerifyPopupOpen: boolean = false;
 
   private initialLightConfig: LightConfigDTO = this.lightConfig;
 
@@ -58,8 +61,20 @@ export class LightConfigComponent implements OnInit{
   saveChanges(): void {
     this.service.updateLightConfig(this.lightConfig).subscribe(() => {
       this.dataUpdater.updateTopic("UPDATED_LIGHT_CONFIG", this.lightConfig);
-      this.messageDistributor.pushMessage("INFO", "saved changes to light config")
+      this.messageDistributor.pushMessage("INFO", "saved changes to light config");
     });
+  }
+
+  deleteIfAllowed(allowed: boolean) {
+    if(allowed) {
+      if(this.lightConfig.name === this.DEFAUL_LIGHT_CONFIG_NAME){
+        this.messageDistributor.pushMessage("INFO", "Can't delete default config!");
+        return;
+      } else {
+        this.service.removeLightConfig(this.lightConfig.id).subscribe(() =>
+          this.dataUpdater.updateTopic("REMOVED_LIGHT_CONFIG", this.lightConfig));
+      }
+    }
   }
 
   reset(): void {

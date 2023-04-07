@@ -1,0 +1,14 @@
+<div class="popup-backdrop" *ngIf="open">
+    <div class="popup">
+        <div class="content">
+            <ng-content></ng-content>
+        </div>
+
+        <app-fancy-button buttonIcon="check"
+                          (buttonClicked)="approve()">
+        </app-fancy-button>
+        <app-fancy-button buttonIcon="cancel"
+                          (buttonClicked)="decline()">
+        </app-fancy-button>
+    </div>
+</div>

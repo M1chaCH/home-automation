@@ -4,7 +4,7 @@ export interface DataUpdateListener {
   updateData(topic: DataTopic, data: any): void;
 }
 
-export type DataTopic  = "NEW_LIGHT_CONFIG" | "UPDATED_LIGHT_CONFIG";
+export type DataTopic  = "NEW_LIGHT_CONFIG" | "UPDATED_LIGHT_CONFIG" | "REMOVED_LIGHT_CONFIG";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,7 @@ export class DataUpdateDistributorService {
   private listeners: Map<DataTopic, DataUpdateListener[]> = new Map<DataTopic, DataUpdateListener[]>([
     ["NEW_LIGHT_CONFIG", []],
     ["UPDATED_LIGHT_CONFIG", []],
+    ["REMOVED_LIGHT_CONFIG", []],
   ]);
 
   updateTopic(topic: DataTopic, data: any): void {

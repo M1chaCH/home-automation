@@ -31,6 +31,6 @@ export class ScenesService {
   }
 
   removeLightConfig(configId: number): Observable<void> {
-    return this.api.callApi<void>(`${apiEndpoints.CONFIG_CRUD}/${configId}`, "PUT", undefined);
+    return this.api.callApi<void>(`${apiEndpoints.CONFIG_CRUD}/${configId}`, "DELETE", undefined);
   }
 }

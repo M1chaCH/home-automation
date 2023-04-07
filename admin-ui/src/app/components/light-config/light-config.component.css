@@ -27,8 +27,11 @@
   display: grid;
   justify-content: center;
   grid-template-columns: calc(50% - 10px) calc(50% - 10px);
-  grid-template-rows: 80px;
+  grid-template-rows: 50px 50px;
   gap: 20px;
+}
+.light-config .controls #save {
+  grid-column: 1/3;
 }
 
 .light-config:hover:not(.open-editor) {
@@ -40,7 +43,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 360px;
+  height: 400px;
 }
 
 /*# sourceMappingURL=light-config.component.css.map */

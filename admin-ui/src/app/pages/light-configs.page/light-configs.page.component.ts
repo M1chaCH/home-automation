@@ -23,7 +23,7 @@ export class LightConfigsPageComponent implements DataUpdateListener{
     private service: ScenesService,
     private dataUpdater: DataUpdateDistributorService,
   ) {
-    dataUpdater.registerListener(this, "NEW_LIGHT_CONFIG", "UPDATED_LIGHT_CONFIG");
+    dataUpdater.registerListener(this, "NEW_LIGHT_CONFIG", "UPDATED_LIGHT_CONFIG", "REMOVED_LIGHT_CONFIG");
     service.loadLightConfigs().subscribe(lightConfigs => this.lightConfigs = lightConfigs);
   }
 
@@ -42,6 +42,9 @@ export class LightConfigsPageComponent implements DataUpdateListener{
       case "UPDATED_LIGHT_CONFIG":
         this.updateLightConfig(data);
         break;
+      case "REMOVED_LIGHT_CONFIG":
+        this.removeLightConfig(data);
+        break;
     }
   }
 
@@ -55,7 +58,17 @@ export class LightConfigsPageComponent implements DataUpdateListener{
       }
     }
 
-    if(changedIndex) this.toggleOpen(changedIndex); // closes automatically, this is used to let everybody know that this did actually closed
+    if(changedIndex) this.toggleOpen(changedIndex); // closes automatically, this is used to let everybody know that this did actually close
     this.lightConfigs = [...(this.lightConfigs || [])];
+  }
+
+  private removeLightConfig(deletedConfig: LightConfigDTO): void {
+    for(let i = 0; i < (this.lightConfigs?.length || 0); i++){
+      if(this.lightConfigs![i].id === deletedConfig.id) {
+        this.lightConfigs!.splice(i, 1);
+        this.toggleOpen(-1); // closes automatically, this is used to let everybody know that this did actually close
+        break;
+      }
+    }
   }
 }

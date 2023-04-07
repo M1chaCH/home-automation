@@ -26,6 +26,7 @@ import { LightConfigsPageComponent } from './pages/light-configs.page/light-conf
 import { AddLightConfigComponent } from './components/add-light-config/add-light-config.component';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
 import {RgbsConvertPipe} from "./pipes/light-config-converters/rgba-convert.pipe";
+import { VerifyPopupComponent } from './components/verify-popup/verify-popup.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import {RgbsConvertPipe} from "./pipes/light-config-converters/rgba-convert.pipe
     LightConfigsPageComponent,
     AddLightConfigComponent,
     ColorPickerComponent,
+    VerifyPopupComponent,
   ],
   imports: [
     BrowserModule,
