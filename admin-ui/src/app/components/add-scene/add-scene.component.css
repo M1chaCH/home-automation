@@ -1,0 +1,12 @@
+.add-scene-container {
+  padding: 20px;
+  min-width: 250px;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  height: 100%;
+  transition: all 250ms ease-out;
+}
+
+/*# sourceMappingURL=add-scene.component.css.map */

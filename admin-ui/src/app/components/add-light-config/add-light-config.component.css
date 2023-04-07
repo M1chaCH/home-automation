@@ -1,0 +1,42 @@
+.add-light-config-container {
+  padding: 20px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  min-width: 250px;
+  width: 100%;
+  max-width: 450px;
+  height: 100%;
+}
+.add-light-config-container .add-light-config {
+  animation: scale-in 250ms ease-out;
+}
+.add-light-config-container .add-light-config input {
+  width: 100%;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: var(--white);
+  font-family: "Work Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.add-light-config-container .add-light-config .controls {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: calc(50% - 5px) calc(50% - 5px);
+  grid-template-rows: 50px;
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 75%;
+    scale: 75%;
+  }
+  100% {
+    opacity: 100%;
+    scale: 100%;
+  }
+}
+
+/*# sourceMappingURL=add-light-config.component.css.map */

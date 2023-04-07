@@ -43,38 +43,4 @@
   height: 360px;
 }
 
-::ng-deep chrome-picker {
-  width: 100% !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-}
-::ng-deep chrome-picker saturation-component {
-  border-radius: 5px !important;
-}
-::ng-deep chrome-picker saturation-component .pointer {
-  width: 15px !important;
-  height: 15px !important;
-  border: 1px var(--white) solid !important;
-  outline: 0.5px solid var(--black);
-}
-::ng-deep chrome-picker .type-column {
-  display: none !important;
-}
-::ng-deep chrome-picker rgba-input-component .column input {
-  background-color: var(--white);
-  border: none;
-  border-radius: 5px;
-  color: var(--black);
-  font-family: "Work Sans", sans-serif;
-  font-size: 14px;
-  pointer-events: none;
-}
-::ng-deep chrome-picker rgba-input-component .column span {
-  color: var(--white);
-  font-family: "Work Sans", sans-serif;
-  font-weight: lighter;
-  font-size: 14px;
-  text-transform: lowercase;
-}
-
 /*# sourceMappingURL=light-config.component.css.map */

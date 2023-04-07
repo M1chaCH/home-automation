@@ -1,0 +1,13 @@
+.light-configs {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.light-configs .light-config {
+  min-width: 200px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/*# sourceMappingURL=light-configs.page.component.css.map */

@@ -14,3 +14,11 @@ This is a description of my current deployed setup. If you set your environment 
     - the script of the shortcut can be like `apply-shortcut.txt`
 - run the backend-service on the remote pc
     - `java -jar room-automation.jar`
+
+    
+## run with docker
+1. clone this repo
+2. fill API properties (docker-compose or room-automation/backend-service/src/main/resources/META-INF/microprofile-config.properties)
+3. change URLs in the UI config (room-automation/admin-ui/src/environments/environment.ts)
+4. generate a self signed SSL certificate: 
+    - source ( https://tecadmin.net/how-to-generate-lets-encrypt-ssl-using-certbot/ )

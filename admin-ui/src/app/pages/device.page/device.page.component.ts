@@ -49,13 +49,13 @@ export class DevicePageComponent implements OnInit{
   renameDevice(newName: string, device: DeviceDTO) {
     this.api.callApi(apiEndpoints.DEVICES, "PUT", { oldName: device.name, newName }).subscribe(() => {
       device.name = newName;
-      this.messageDistributor.pushMessage({ message: "successfully renamed device", type: "INFO" });
+      this.messageDistributor.pushMessage("INFO", "successfully renamed device");
     });
   }
 
   removeDevice(device: DeviceDTO) {
     this.api.callApi(`${apiEndpoints.DEVICES}/${device.name}`, "DELETE", {}).subscribe(() => {
-      this.messageDistributor.pushMessage({message: "successfully deleted device", type: "INFO"});
+      this.messageDistributor.pushMessage("INFO", "successfully deleted device");
 
       const index: number = this.devices.indexOf(device);
       this.devices.splice(index, 1);

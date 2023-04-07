@@ -6,14 +6,17 @@
         </div>
     </div>
 
-    <app-hidden-input placeholder="Config Name"
-                      [inputStyle]='{ "font-size": "20px", "font-weight": "normal" }'
+    <app-hidden-input *ngIf="lightConfig.name !== '_default' else defaultLabel" placeholder="Config Name"
+                      [inputStyle]="{ 'font-size': '20px', 'font-weight': 'normal' }"
                       [initialValue]="lightConfig.name"
                       [lengthLimit]="50"
                       (saveRequest)="rename($event)">
     </app-hidden-input>
+    <ng-template #defaultLabel>
+        <span style="font-size: 20px; font-weight: normal;">{{lightConfig.name}}</span>
+    </ng-template>
 
-    <chrome-picker [control]="colorPickerControl"></chrome-picker>
+    <app-color-picker [value]="lightConfig | rgbsConvert" (valueChange)="colorPickerChange($event)"></app-color-picker>
     <div class="controls">
         <app-fancy-button buttonIcon="check"
                           backgroundText="Save"

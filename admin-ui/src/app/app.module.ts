@@ -19,8 +19,13 @@ import { SceneComponent } from './components/scene/scene.component';
 import { LightConfigComponent } from './components/light-config/light-config.component';
 import { HiddenInputComponent } from './components/hidden-input/hidden-input.component';
 import { ColorPickerModule } from '@iplab/ngx-color-picker';
-import { RgbConvertPipe } from './pipes/rgb-convert.pipe';
-import { BrightnessConvertPipe } from './pipes/brightness-convert.pipe';
+import { RgbConvertPipe } from './pipes/light-config-converters/rgb-convert.pipe';
+import { BrightnessConvertPipe } from './pipes/light-config-converters/brightness-convert.pipe';
+import { AddSceneComponent } from './components/add-scene/add-scene.component';
+import { LightConfigsPageComponent } from './pages/light-configs.page/light-configs.page.component';
+import { AddLightConfigComponent } from './components/add-light-config/add-light-config.component';
+import { ColorPickerComponent } from './components/color-picker/color-picker.component';
+import {RgbsConvertPipe} from "./pipes/light-config-converters/rgba-convert.pipe";
 
 @NgModule({
   declarations: [
@@ -39,6 +44,11 @@ import { BrightnessConvertPipe } from './pipes/brightness-convert.pipe';
     HiddenInputComponent,
     RgbConvertPipe,
     BrightnessConvertPipe,
+    RgbsConvertPipe,
+    AddSceneComponent,
+    LightConfigsPageComponent,
+    AddLightConfigComponent,
+    ColorPickerComponent,
   ],
   imports: [
     BrowserModule,

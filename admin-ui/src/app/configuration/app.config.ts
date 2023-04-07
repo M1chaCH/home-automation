@@ -2,6 +2,7 @@ export const appRoutes = {
     ROOT: "admin",
     HOME: "home",
     SCENES: "scenes",
+    LIGHT_CONFIGS: "light-configs",
     SPOTIFY: "spotify",
     SPOTIFY_CALLBACK: "spotify/callback",
     DEVICES: "devices",

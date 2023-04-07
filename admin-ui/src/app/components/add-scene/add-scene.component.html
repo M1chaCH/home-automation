@@ -1,0 +1,11 @@
+<div class="add-scene-container">
+    <div *ngIf="active else placeholder" class="add-scene">
+
+    </div>
+    <ng-template #placeholder>
+        <app-fancy-button buttonIcon="add"
+                          backgroundText="ADD"
+                          (buttonClicked)="active = true">
+        </app-fancy-button>
+    </ng-template>
+</div>

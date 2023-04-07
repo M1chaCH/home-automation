@@ -29,16 +29,18 @@ export class MessageDistributorService {
 
   /**
    * Use this to display a message on the screen. The "page-messages" component will listen for it
-   * @param message
+   * @param type the type of the message
+   * @param message the message
    */
-  pushMessage(message: ActiveMessage) {
+  pushMessage(type: "ERROR" | "INFO", message: string) {
+    const activeMessage: ActiveMessage = { type, message };
     this.messageIdIncrementor++;
-    message.id = this.messageIdIncrementor;
-    this.activeMessages.set(this.messageIdIncrementor, message);
-    setTimeout(() => this.expireMessage(message), this.MESSAGE_DISPLAY_TIME);
+    activeMessage.id = this.messageIdIncrementor;
+    this.activeMessages.set(this.messageIdIncrementor, activeMessage);
+    setTimeout(() => this.expireMessage(activeMessage), this.MESSAGE_DISPLAY_TIME);
 
     for (let listener of this.listeners.values())
-      listener.messageActivated(message);
+      listener.messageActivated(activeMessage);
   }
 
   /**

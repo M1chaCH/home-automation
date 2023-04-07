@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {LightConfigDTO} from "../dtos/scene/LightConfigDTO";
+import {LightConfigDTO} from "../../dtos/scene/LightConfigDTO";
 
 @Pipe({
   name: 'brightnessConvert'
