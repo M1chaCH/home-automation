@@ -1,6 +1,6 @@
 <div class="add-light-config-container">
     <div *ngIf="active else placeholder" class="add-light-config">
-        <input type="text" placeholder="New config name here" [formControl]="lightConfigNameControl" (keydown.enter)="create()"/>
+        <input type="text" class="simple-input" placeholder="New config name here" [formControl]="lightConfigNameControl" (keydown.enter)="create()"/>
         <app-color-picker [value]="'rgba(255, 255, 255, 1)'" (valueChange)="updateSelectedColor($event)"></app-color-picker>
         <div class="controls">
             <app-fancy-button buttonIcon="check"

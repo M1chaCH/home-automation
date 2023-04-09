@@ -27,6 +27,7 @@ import { AddLightConfigComponent } from './components/add-light-config/add-light
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
 import {RgbsConvertPipe} from "./pipes/light-config-converters/rgba-convert.pipe";
 import { VerifyPopupComponent } from './components/verify-popup/verify-popup.component';
+import { LightConfigPreviewComponent } from './components/light-config-preview/light-config-preview.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { VerifyPopupComponent } from './components/verify-popup/verify-popup.com
     AddLightConfigComponent,
     ColorPickerComponent,
     VerifyPopupComponent,
+    LightConfigPreviewComponent,
   ],
   imports: [
     BrowserModule,

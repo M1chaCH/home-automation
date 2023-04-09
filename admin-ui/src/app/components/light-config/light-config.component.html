@@ -1,9 +1,6 @@
 <div class="light-config" [class.open-editor]="editorOpen">
-    <div class="preview-container" (click)="toggleOpen()">
-        <div class="preview"
-             [style.background-color]="lightConfig | rgbConvert"
-             [style.opacity]="lightConfig | brightnessConvert">
-        </div>
+    <div class="preview">
+        <app-light-config-preview [lightConfig]="lightConfig" (previewClicked)="toggleOpen()"></app-light-config-preview>
     </div>
 
     <app-hidden-input *ngIf="lightConfig.name !== DEFAUL_LIGHT_CONFIG_NAME else defaultLabel" placeholder="Config Name"

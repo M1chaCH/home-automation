@@ -11,19 +11,6 @@
   .add-light-config {
     animation: scale-in 250ms ease-out;
 
-    input {
-      width: 100%;
-      background-color: transparent;
-      outline: none;
-      border: none;
-
-      color: var(--white);
-      font-family: 'Work Sans', sans-serif;
-      font-size: 20px;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-
     .controls {
       display: grid;
       gap: 10px;

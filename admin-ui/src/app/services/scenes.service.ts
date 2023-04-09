@@ -18,6 +18,10 @@ export class ScenesService {
     return this.api.callApi<SceneDTO[]>(apiEndpoints.SCENE_CRUD, "GET", undefined);
   }
 
+  createScene(scene: SceneDTO): Observable<SceneDTO> {
+    // todo
+  }
+
   loadLightConfigs(): Observable<LightConfigDTO[]> {
     return this.api.callApi<LightConfigDTO[]>(apiEndpoints.CONFIG_CRUD, "GET", undefined);
   }

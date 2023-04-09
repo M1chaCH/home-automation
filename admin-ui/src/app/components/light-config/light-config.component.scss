@@ -7,23 +7,12 @@
   overflow-y: hidden;
   z-index: 1;
 
-  .preview-container {
-    cursor: pointer;
-    z-index: 2;
+  .preview {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-
-    height: 50px;
-    border-radius: 10px;
-    background-color: white;
-
-    .preview {
-      height: 100%;
-      width: 100%;
-      border-radius: inherit;
-    }
+    z-index: 2;
 
   }
 
