@@ -6,13 +6,15 @@ import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.configuration.LightConfigProvider;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceProvider;
-import ch.micha.automation.room.scene.dtos.SceneDTO;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.postgresql.util.PSQLException;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,10 +109,43 @@ public class SceneProvider {
                 unsetOldDefaultScene(generatedId);
 
             saveChangedLightConfigs(generatedId, newLightConfigs);
-            return new SceneEntity(generatedId, name, defaultScene, new HashMap<>(), spotifyResource, spotifyVolume);
+            return new SceneEntity(generatedId, name, defaultScene, newLightConfigs, spotifyResource, spotifyVolume);
         } catch (PSQLException e) {
             throwKnownAlreadyExists(e, name);
             return null;
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
+    public void updateScene(int id, String name, String spotifyResource, int spotifyVolume, Map<YeelightDeviceEntity, LightConfig> lightConfigs) {
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "UPDATE scene SET name = ?, spotify_resource = ?, spotify_volume = ? where id = ?;"
+        )) {
+            statement.setString(1, name);
+            statement.setString(2, spotifyResource);
+            statement.setInt(3, spotifyVolume);
+            statement.setInt(4, id);
+
+            statement.executeUpdate();
+
+            logger.log(Level.INFO, "updated scene {0} -> now updating dependant light configs", id);
+            saveChangedLightConfigs(id, lightConfigs);
+        } catch (PSQLException e) {
+            throwKnownAlreadyExists(e, name);
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
+    public void deleteScene(int id) {
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "DELETE FROM scene where id = ?;"
+        )) {
+            statement.setInt(1, id);
+            statement.execute();
+
+            logger.log(Level.INFO, "deleted scene {0}", id);
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
@@ -235,10 +270,6 @@ public class SceneProvider {
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
-    }
-
-    public List<SceneDTO> loadScenesAsDto() {
-        return loadScenes().stream().map(SceneEntity::toDto).toList();
     }
 
     private Map<YeelightDeviceEntity, LightConfig> loadDeviceLightConfigs(int sceneId) {
