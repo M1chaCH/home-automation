@@ -51,6 +51,18 @@ public class SpotifyService implements OnAppStartupListener {
             api.resumePlayback();
     }
 
+    public void startContext(String contextUri, int volume) {
+        refreshTokenIfExpired();
+        api.setPlaybackVolume(volume);
+        api.setPlaybackShuffle(true);
+        api.playContext(contextUri);
+    }
+
+    public void pausePlayback() {
+        refreshTokenIfExpired();
+        api.pausePlayback();
+    }
+
     public List<SpotifyResourceDTO> loadResources() {
         refreshTokenIfExpired();
         return api.getSavedSpotifyResources();
@@ -89,5 +101,9 @@ public class SpotifyService implements OnAppStartupListener {
             return newAuth;
         }
         return auth;
+    }
+
+    public boolean isSpotifyAuthorized() {
+        return api.isInitialized();
     }
 }

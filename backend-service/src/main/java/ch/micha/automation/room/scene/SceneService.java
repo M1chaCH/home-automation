@@ -5,7 +5,7 @@ import ch.micha.automation.room.events.EventHandlerPriority;
 import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
-import ch.micha.automation.room.spotify.SpotifyApiService;
+import ch.micha.automation.room.spotify.SpotifyService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -18,10 +18,10 @@ public class SceneService implements OnAppStartupListener {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final SceneProvider sceneProvider;
     private final YeelightDeviceService yeelightDeviceService;
-    private final SpotifyApiService spotifyService;
+    private final SpotifyService spotifyService;
 
     @Inject
-    public SceneService(SceneProvider sceneProvider, YeelightDeviceService yeelightDeviceService, SpotifyApiService spotifyService) {
+    public SceneService(SceneProvider sceneProvider, YeelightDeviceService yeelightDeviceService, SpotifyService spotifyService) {
         this.sceneProvider = sceneProvider;
         this.yeelightDeviceService = yeelightDeviceService;
         this.spotifyService = spotifyService;
@@ -50,6 +50,10 @@ public class SceneService implements OnAppStartupListener {
 
         scene.lights().forEach(yeelightDeviceService::applyConfigToLight);
 
+        if(scene.spotifyResource() != null && !scene.spotifyResource().isEmpty()) {
+            spotifyService.startContext(scene.spotifyResource(), scene.spotifyVolume());
+        }
+
         logger.log(Level.INFO, "applied scene");
     }
 
@@ -62,6 +66,8 @@ public class SceneService implements OnAppStartupListener {
      */
     public void shutdown() {
         yeelightDeviceService.powerAllOff();
-        spotifyService.pausePlayback();
+        if(spotifyService.isSpotifyAuthorized()) {
+            spotifyService.pausePlayback();
+        }
     }
 }

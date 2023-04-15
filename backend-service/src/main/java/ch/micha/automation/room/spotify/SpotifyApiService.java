@@ -12,7 +12,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mashape.unirest.request.HttpRequest;
+import com.mashape.unirest.request.HttpRequestWithBody;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -185,10 +185,53 @@ public class SpotifyApiService {
         try {
             logger.log(Level.INFO, "resuming playback");
 
-            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/play", "put", Map.of("device_id", deviceId), null);
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/play", "put", null, Map.of("device_id", deviceId));
             throwUnexpectedIfNeeded(response, "failed to resume playback");
 
             logger.log(Level.INFO, "successfully resumed playback");
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
+    }
+
+    public void playContext(String contextUri) {
+        try {
+            logger.log(Level.INFO, "playing {0}", contextUri);
+
+            JSONObject body = new JSONObject();
+            body.put("context_uri", contextUri);
+
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/play", "put", body, Map.of("device_id", deviceId));
+            throwUnexpectedIfNeeded(response, "failed to play contextUri " + contextUri);
+
+            logger.log(Level.INFO, "successfully started at context");
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
+    }
+
+    public void setPlaybackVolume(int volume) {
+        try {
+            volume = Math.max(0, Math.min(100, volume));
+            logger.log(Level.INFO, "setting playback volume to {0}", volume);
+
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/volume", "put", null, Map.of("device_id", deviceId, "volume_percent", volume));
+            throwUnexpectedIfNeeded(response, "failed to set playback volume");
+
+            logger.log(Level.INFO, "successfully set playback volume");
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
+    }
+
+    public void setPlaybackShuffle(boolean shuffle) {
+        try {
+            logger.log(Level.INFO, "setting playback shuffle to {0}", shuffle);
+
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/shuffle", "put", null, Map.of("device_id", deviceId, "state", shuffle));
+            throwUnexpectedIfNeeded(response, "failed to set playback shuffle");
+
+            logger.log(Level.INFO, "successfully set playback shuffle");
         } catch (UnirestException e) {
             throw new UnexpectedSpotifyException(e);
         }
@@ -199,7 +242,7 @@ public class SpotifyApiService {
             List<SpotifyResourceDTO> playlists = new ArrayList<>();
             if(!resourceCache.isValid()) {
                 logger.log(Level.INFO, "loading first 50 saved playlists from spotify");
-                HttpResponse<JsonNode> response = callApi(String.format("/v1/users/%s/playlists", userId), "get", Map.of("limit", 50), null);
+                HttpResponse<JsonNode> response = callApi(String.format("/v1/users/%s/playlists", userId), "get", null, Map.of("limit", 50));
                 throwUnexpectedIfNeeded(response, "could not load saved playlists");
 
                 JSONObject body = response.getBody().getObject();
@@ -261,27 +304,36 @@ public class SpotifyApiService {
         }
     }
 
-    private HttpResponse<JsonNode> callApi(String endpoint, String method, Map<String, Object> queries, Map<String, String> customHeaders) throws UnirestException {
+    private HttpResponse<JsonNode> callApi(String endpoint, String method, JSONObject body, Map<String, Object> queries) throws UnirestException {
         if(!initialized)
             throw new IllegalStateException("api was never initialized");
 
         endpoint = SPOTIFY_API + endpoint;
-        if(customHeaders == null)
-            customHeaders = new HashMap<>();
         if(queries == null)
             queries = new HashMap<>();
 
-        HttpRequest request = switch (method) {
-            case "post" -> Unirest.post(endpoint);
-            case "put" -> Unirest.put(endpoint);
-            default -> Unirest.get(endpoint);
-        };
+        if(method.equals("get")) {
+            return Unirest.get(endpoint)
+                    .header(SPOTIFY_AUTH_HEADER, auth.getTokenType() +  " " + auth.getAccessToken())
+                    .header(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
+                    .queryString(queries)
+                    .asJson();
+        }
+
+        HttpRequestWithBody request;
+        if(method.equals("post"))
+            request = Unirest.post(endpoint);
+        else
+            request = Unirest.put(endpoint);
+
+        if(body == null)
+            body = new JSONObject();
 
         return request
                 .header(SPOTIFY_AUTH_HEADER, auth.getTokenType() +  " " + auth.getAccessToken())
                 .header(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
-                .headers(customHeaders)
                 .queryString(queries)
+                .body(body)
                 .asJson();
     }
 
@@ -294,5 +346,9 @@ public class SpotifyApiService {
             }
             throw new UnexpectedSpotifyException(message);
         }
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 }
