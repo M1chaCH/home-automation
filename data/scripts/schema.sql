@@ -3,7 +3,9 @@ create table scene
 (
     id serial primary key,
     name varchar(50) not null unique,
-    default_scene boolean
+    default_scene boolean,
+    spotify_resource varchar(250),
+    spotify_volume int
 );
 
 drop table if exists yeelight_devices cascade;
@@ -19,7 +21,6 @@ create table light_configuration
 (
     id serial primary key,
     name varchar(50) not null unique,
-    power boolean not null,
     red int not null,
     green int not null,
     blue int not null,
@@ -30,7 +31,7 @@ drop table if exists device_light_scene cascade;
 create table device_light_scene
 (
     device_id int references yeelight_devices(id) on delete cascade,
-    configuration_id int references light_configuration(id) on delete cascade,
+    configuration_id int references light_configuration(id),
     scene_id int references scene(id) on delete cascade
 );
 
@@ -66,7 +67,6 @@ $$;
 create or replace trigger spotify_authorisation_insert_trigger
     before insert on spotify_authorisation
     for each row execute function validate_single_spotify_authorisation();
-
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO java;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public to java;

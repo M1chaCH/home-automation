@@ -5,7 +5,7 @@ import ch.micha.automation.room.errorhandling.exceptions.YeeLightOfflineExceptio
 import ch.micha.automation.room.events.EventHandlerPriority;
 import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppStartupListener;
-import ch.micha.automation.room.light.configuration.LightConfigEntity;
+import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import ch.micha.automation.room.scene.SceneService;
 import com.mollin.yapi.YeelightDevice;
@@ -48,21 +48,18 @@ public class YeelightDeviceService implements OnAppStartupListener {
      * @param config the config to apply
      * @throws YeeLightOfflineException if the light is offline
      */
-    public void applyConfigToLight(YeelightDeviceEntity lightEntity, LightConfigEntity config) {
+    public void applyConfigToLight(YeelightDeviceEntity lightEntity, LightConfig config) {
         YeelightDevice light = lightEntity.light();
         if(light == null)
             throw new YeeLightOfflineException(lightEntity.ip(), lightEntity.name());
 
         try {
-            light.setPower(config.power());
+            light.setPower(true);
+            light.setBrightness(config.brightness());
+            light.setRGB(config.red(), config.green(), config.blue());
 
-            if(config.power()) {
-                light.setBrightness(config.brightness());
-                light.setRGB(config.red(), config.green(), config.blue());
-            }
-
-            logger.log(Level.INFO, "applied config to light: [ light:{0}-{1} | power:{2} | color:r-{3} g-{4} b-{5} | brightness:{6} ] }",
-                    new Object[]{ lightEntity.ip(), lightEntity.name(), config.power(), config.red(),
+            logger.log(Level.INFO, "applied config to light: [ light:{0}-{1} | color:r-{2} g-{3} b-{4} | brightness:{5} ] }",
+                    new Object[]{ lightEntity.ip(), lightEntity.name(), config.red(),
                             config.green(), config.blue(), config.brightness() });
         } catch (YeelightSocketException e) {
             throw new YeeLightOfflineException(lightEntity.ip(), lightEntity.name());

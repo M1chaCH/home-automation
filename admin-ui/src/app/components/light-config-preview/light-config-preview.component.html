@@ -1,0 +1,6 @@
+<div class="preview-container" (click)="previewClicked.emit()">
+    <div class="preview"
+         [style.background-color]="lightConfig | rgbConvert"
+         [style.opacity]="lightConfig | brightnessConvert">
+    </div>
+</div>

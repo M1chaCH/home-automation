@@ -3,6 +3,7 @@ package ch.micha.automation.room.light.yeelight;
 import ch.micha.automation.room.errorhandling.exceptions.ResourceAlreadyExistsException;
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
+import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -51,6 +52,7 @@ public class YeelightDeviceProvider {
      * (only gets devices from RAM, no DB access)
      * @param deviceIds ids of devices to return.
      * @return all found devices by ids, if not found -> null entry in the list.
+     * @throws NullPointerException if one of the IDs was not found
      */
     public List<YeelightDeviceEntity> findByIds(Integer... deviceIds) {
         List<YeelightDeviceEntity> foundDevices = new ArrayList<>();
@@ -60,6 +62,10 @@ public class YeelightDeviceProvider {
         }
 
         return foundDevices;
+    }
+
+    public YeelightDeviceEntity findFromDto(YeelightDeviceDTO dto) {
+        return devices.values().stream().filter(entity -> dto.getName().equals(entity.name())).findAny().orElseThrow();
     }
 
     /**
@@ -74,7 +80,7 @@ public class YeelightDeviceProvider {
                 return entry.getValue();
         }
 
-        throw new ResourceNotFoundException("device", "" + name);
+        throw new ResourceNotFoundException("device", name);
     }
 
     /**

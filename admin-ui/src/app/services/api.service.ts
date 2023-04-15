@@ -40,7 +40,7 @@ export class ApiService {
       catchError(err => {
         const error: ErrorMessageDTO = err.error;
 
-        this.messageDistributor.pushMessage({ message: error.message, type: "ERROR" })
+        this.messageDistributor.pushMessage("ERROR", error.message);
         console.warn("error thrown: " + error.message + " -- " + error.details)
 
         return NEVER;

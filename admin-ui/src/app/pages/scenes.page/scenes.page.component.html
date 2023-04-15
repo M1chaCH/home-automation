@@ -1,1 +1,4 @@
-<p>scenes.page works!</p>
+<div class="scenes">
+    <app-add-scene></app-add-scene>
+    <app-scene *ngFor="let scene of scenes" [scene]="scene" [allLightConfigs]="lightConfigs$ | async"></app-scene>
+</div>

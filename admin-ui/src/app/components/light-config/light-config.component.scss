@@ -1,0 +1,44 @@
+.light-config {
+  height: 50px;
+  border-radius: 10px;
+  transition: all 250ms ease-out;
+  filter: drop-shadow(10px 10px 10px rgba(0,0,0, 0.2));
+  position: relative;
+  overflow-y: hidden;
+  z-index: 1;
+
+  .preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+
+  }
+
+  .controls {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: calc(50% - 10px) calc(50% - 10px); // -10px because 20px gap
+    grid-template-rows: 50px 50px;
+    gap: 20px;
+
+    #save {
+      grid-column: 1/3;
+    }
+  }
+}
+
+.light-config:hover {
+  &:not(.open-editor) {
+    transform: rotate(1deg) rotateY(5deg);
+  }
+}
+
+.open-editor {
+  padding: 55px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 400px;
+}

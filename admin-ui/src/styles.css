@@ -22,4 +22,28 @@ body {
   margin: 0;
 }
 
+input {
+  font-family: "Work Sans", sans-serif;
+}
+
+.simple-input {
+  width: 100%;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: var(--white);
+  font-family: "Work Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.simple-select {
+  font-family: "Work Sans", sans-serif;
+  background-color: transparent;
+  outline: none;
+  border: none;
+}
+
 /*# sourceMappingURL=styles.css.map */

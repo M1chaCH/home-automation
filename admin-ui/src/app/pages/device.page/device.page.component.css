@@ -63,7 +63,7 @@
   width: calc(100% - 10vw);
   margin: 35px 5vw 0 5vw;
 }
-.devices .device {
+.devices .device-label {
   width: 220px;
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@
   padding: 15px;
   animation: device-fade-in ease-out 250ms;
 }
-.devices .device .delete {
+.devices .device-label .delete {
   all: unset;
   display: flex;
   justify-content: center;
@@ -92,18 +92,18 @@
   cursor: pointer;
   animation: wiggle 1.3s infinite;
 }
-.devices .device .delete span {
+.devices .device-label .delete span {
   font-size: 24px;
 }
-.devices .device .delete:hover {
+.devices .device-label .delete:hover {
   background-color: rgb(214, 40, 40);
   scale: 1.07;
 }
-.devices .device p {
+.devices .device-label p {
   text-align: start;
   margin: 0;
 }
-.devices .device #name {
+.devices .device-label #name {
   font-size: 20px;
   font-weight: 600;
   text-transform: uppercase;
@@ -111,13 +111,13 @@
   border: none;
   background-color: transparent;
 }
-.devices .device #ip {
+.devices .device-label #ip {
   font-size: 15px;
   font-weight: 200;
   font-style: italic;
   text-transform: uppercase;
 }
-.devices .device #toggle {
+.devices .device-label #toggle {
   height: 60px;
 }
 .devices .disconnected-device {

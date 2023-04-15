@@ -1,0 +1,103 @@
+.add-scene-container {
+  padding: 20px;
+  min-width: 250px;
+  width: 90vw;
+  max-width: 450px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  min-height: 200px;
+  height: 100%;
+  transition: all 250ms ease-out;
+}
+.add-scene-container .add-scene {
+  animation: scale-in 250ms ease-out;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+  grid-template-rows: 50px calc(100% - 50px - 10px);
+  overflow-x: hidden;
+}
+.add-scene-container .add-scene .control {
+  all: unset;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  grid-template-rows: 100%;
+  align-items: center;
+  justify-items: center;
+  border-radius: 5px;
+  background-color: rgba(234, 226, 183, 0.2);
+  font-size: 16px;
+  transition: all 250ms ease-out;
+  cursor: pointer;
+  scale: 0.95;
+}
+.add-scene-container .add-scene .control:hover {
+  background-color: rgba(234, 226, 183, 0.35);
+}
+.add-scene-container .add-scene .control:active {
+  background-color: rgba(234, 226, 183, 0.4);
+  scale: 1;
+}
+.add-scene-container .add-scene .control:disabled {
+  opacity: 0.5;
+  scale: 0.95;
+  background-color: rgba(234, 226, 183, 0.2);
+}
+.add-scene-container .add-scene .stages {
+  grid-column: 1/3;
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  height: 100%;
+}
+.add-scene-container .add-scene .stages .stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow-y: auto;
+}
+.add-scene-container .add-scene .stages .stage .devices {
+  display: flex;
+  flex-flow: column;
+  gap: 20px;
+}
+.add-scene-container .add-scene .stages .stage .devices .device-label {
+  background-color: rgba(234, 226, 183, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 250ms ease-out;
+}
+.add-scene-container .add-scene .stages .stage .devices .device-label input {
+  display: none;
+}
+.add-scene-container .add-scene .stages .stage .devices .selected-device-label {
+  background-color: rgba(234, 226, 183, 0.3);
+}
+.add-scene-container .add-scene .stages .light-configs p {
+  margin-bottom: 2px;
+  display: inline-block;
+}
+.add-scene-container .add-scene .stages .light-configs select {
+  margin-left: 5px;
+  margin-bottom: 2px;
+  font-size: 16px;
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 75%;
+    scale: 75%;
+  }
+  100% {
+    opacity: 100%;
+    scale: 100%;
+  }
+}
+
+/*# sourceMappingURL=add-scene.component.css.map */

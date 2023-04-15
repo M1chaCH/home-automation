@@ -1,0 +1,84 @@
+<div class="add-scene-container">
+    <div *ngIf="active else placeholder" class="add-scene">
+        <button class="control"
+                (click)="cancel()"
+                *ngIf="currentAddStageIndex === 0">
+            <span class="material-symbols-rounded">cancel</span>
+            <span>Cancel</span>
+            <span></span>
+        </button>
+        <button class="control"
+                (click)="currentAddStageIndex = currentAddStageIndex - 1"
+                *ngIf="currentAddStageIndex !== 0">
+            <span class="material-symbols-rounded">arrow_back_ios</span>
+            <span>Previous</span>
+            <span></span>
+        </button>
+        <button class="control"
+                (click)="currentAddStageIndex = currentAddStageIndex + 1"
+                *ngIf="currentAddStageIndex < addStages.length - 1">
+            <span></span>
+            <span>Next</span>
+            <span class="material-symbols-rounded">arrow_forward_ios</span>
+        </button>
+        <button class="control"
+                (click)="create()"
+                [disabled]="!isSceneValid()"
+                *ngIf="currentAddStageIndex === addStages.length - 1">
+            <span></span>
+            <span>Complete</span>
+            <span class="material-symbols-rounded">check</span>
+        </button>
+
+        <form class="stages" [ngSwitch]="addStages[currentAddStageIndex]"  [@tabSwitcherAnimation]="currentAddStageIndex">
+            <div *ngSwitchCase="'SCENE_NAME'" class="stage">
+                <p>Define a name for the new Scene</p>
+                <input type="text" class="simple-input" maxlength="50" placeholder="Name" [formControl]="sceneNameControl"/>
+            </div>
+            <div *ngSwitchCase="'DEVICES'" class="stage">
+                <p>Select the devices that should be added to the scene</p>
+                <form class="devices">
+                    <label *ngFor="let device of (devices$ | async)"
+                           class="device-label"
+                           [class.selected-device-label]="isDeviceSelected(device)">
+                        <input type="checkbox" (change)="checkboxChanged($event, device)" [checked]="isDeviceSelected(device)" class="device-checkbox"/>
+                        {{device.name}}
+                    </label>
+                </form>
+            </div>
+            <div *ngSwitchCase="'DEVICES_X_CONFIGS'" class="stage light-configs">
+                <p *ngIf="scene.lights.length === 0">No devices selected</p>
+                <div *ngFor="let light of scene.lights">
+                    <p><strong>{{light.device.name}}</strong> • </p>
+                    <select class="simple-select"
+                            [value]="light.lightConfig.name"
+                            (change)="selectChanged($event, light)">
+                        <option *ngFor="let lightConfigOption of (lightConfigs$ | async)"
+                                [value]="lightConfigOption.name" [defaultSelected]="light.lightConfig.name === lightConfigOption.name">
+                            {{lightConfigOption.name}}
+                        </option>
+                    </select>
+                    <app-light-config-preview [lightConfig]="light.lightConfig"></app-light-config-preview>
+                </div>
+            </div>
+            <div *ngSwitchCase="'SPOTIFY'" class="stage">
+                <p>spotify not implemented</p>
+            </div>
+            <div *ngSwitchCase="'ALARM'" class="stage">
+                <p>alarm not implements</p>
+            </div>
+            <div *ngSwitchCase="'OVERVIEW'" class="stage">
+                <p>Create new scene - <strong>{{scene.name}}</strong></p>
+                <p>With <strong>{{scene.lights.length}}</strong> devices,</p>
+                <p>no spotify integration</p>
+                <p>and no alarm.</p>
+            </div>
+        </form>
+    </div>
+    <ng-template #placeholder>
+        <app-fancy-button buttonIcon="add"
+                          backgroundText="ADD"
+                          (buttonClicked)="active = true">
+        </app-fancy-button>
+    </ng-template>
+</div>

@@ -27,7 +27,7 @@ public class LightConfigProvider {
         this.sql = sql;
     }
 
-    public Optional<LightConfigEntity> findConfig(int configId) {
+    public Optional<LightConfig> findConfig(int configId) {
         final String query = "SELECT * FROM light_configuration WHERE id = ?";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
@@ -38,7 +38,7 @@ public class LightConfigProvider {
                 logger.log(Level.INFO, "did not find LightConfig by id:{0}", configId);
                 return Optional.empty();
             }
-            LightConfigEntity lightConfig = createConfigFromCurrent(result);
+            LightConfig lightConfig = createConfigFromCurrent(result);
 
             logger.log(Level.INFO, "selected light_configuration id:{0}", lightConfig.id());
             return Optional.of(lightConfig);
@@ -47,7 +47,7 @@ public class LightConfigProvider {
         }
     }
 
-    public Optional<LightConfigEntity> findConfigByName(String configName) {
+    public Optional<LightConfig> findConfigByName(String configName) {
         final String query = "SELECT * FROM light_configuration WHERE name = ?";
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
@@ -58,7 +58,7 @@ public class LightConfigProvider {
                 logger.log(Level.INFO, "did not find LightConfig by name:{0}", configName);
                 return Optional.empty();
             }
-            LightConfigEntity lightConfig = createConfigFromCurrent(result);
+            LightConfig lightConfig = createConfigFromCurrent(result);
 
             logger.log(Level.INFO, "selected light_configuration id:{0}", lightConfig.id());
             return Optional.of(lightConfig);
@@ -67,18 +67,16 @@ public class LightConfigProvider {
         }
     }
 
-    public Map<Integer, LightConfigEntity> findConfigsToMap(Integer... configIds) {
-        Map<Integer, LightConfigEntity> lightConfigs = new HashMap<>();
-        if(configIds.length < 1) {
-            logger.log(Level.INFO, "selected 0 light_configurations");
-            return lightConfigs;
-        }
+    public Map<Integer, LightConfig> findConfigsToMap(Integer... configIds) {
+        Map<Integer, LightConfig> lightConfigs = new HashMap<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM light_configuration ");
 
-        StringBuilder query = new StringBuilder("SELECT * FROM light_configuration WHERE ");
-
-        for (int i = 0; i < configIds.length; i++) { // add or statement to include the given configIds
-            query.append("id = ?");
-            if(i != configIds.length -1) query.append(" OR ");
+        if(configIds.length > 0) {
+            query.append("WHERE ");
+            for (int i = 0; i < configIds.length; i++) { // add or statement to include the given configIds
+                query.append("id = ?");
+                if(i != configIds.length -1) query.append(" OR ");
+            }
         }
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(query.toString())) {
@@ -88,7 +86,7 @@ public class LightConfigProvider {
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
-                LightConfigEntity config = createConfigFromCurrent(result);
+                LightConfig config = createConfigFromCurrent(result);
                 lightConfigs.put(config.id(), config);
             }
 
@@ -104,32 +102,27 @@ public class LightConfigProvider {
      * @param configIds a list of the configs to be selected
      * @return the selected and parsed configs (if id was not found, then nothing happens but the id won't be included in the result)
      */
-    public Collection<LightConfigEntity> findConfigs(Integer... configIds) {
+    public Collection<LightConfig> findConfigs(Integer... configIds) {
         return findConfigsToMap(configIds).values();
     }
 
-    public LightConfigEntity createDefaultConfig() {
+    public LightConfig createDefaultConfig() {
         logger.log(Level.INFO, "creating default light configuration");
-        final LightConfigEntity defaultConfig = new LightConfigEntity(
-                0,
-                DEFAULT_CONFIG_NAME,
-                true,
-                255,
-                255,
-                255,
-                100
-        );
+        return createConfig(DEFAULT_CONFIG_NAME, 255, 255, 255, 100);
+    }
+
+    public LightConfig createConfig(String name, int red, int green, int blue, int brightnes) {
+        logger.log(Level.INFO, "creating light configuration");
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
-                "INSERT INTO light_configuration (name, power, red, green, blue, brightness) " +
-                        "VALUES (?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS
+                "INSERT INTO light_configuration (name, red, green, blue, brightness) " +
+                        "VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
-            statement.setString(1, defaultConfig.name());
-            statement.setBoolean(2, defaultConfig.power());
-            statement.setInt(3, defaultConfig.red());
-            statement.setInt(4, defaultConfig.green());
-            statement.setInt(5, defaultConfig.blue());
-            statement.setInt(6, defaultConfig.brightness());
+            statement.setString(1, name);
+            statement.setInt(2, red);
+            statement.setInt(3, green);
+            statement.setInt(4, blue);
+            statement.setInt(5, brightnes);
 
             statement.execute();
 
@@ -137,28 +130,78 @@ public class LightConfigProvider {
             generatedIdKeys.next();
             int generatedId = generatedIdKeys.getInt("id");
 
-            final LightConfigEntity lightConfigEntity = new LightConfigEntity(
+            final LightConfig lightConfigEntity = new LightConfig(
                     generatedId,
-                    defaultConfig.name(),
-                    defaultConfig.power(),
-                    defaultConfig.red(),
-                    defaultConfig.green(),
-                    defaultConfig.blue(),
-                    defaultConfig.brightness()
+                    name,
+                    red,
+                    green,
+                    blue,
+                    brightnes
             );
 
-            logger.log(Level.INFO, "created default light configuration: {0}", lightConfigEntity);
+            logger.log(Level.INFO, "created light configuration: {0}", lightConfigEntity);
             return lightConfigEntity;
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e); // todo handle unique constraint exception (some good generic error handling)
+        }
+    }
+
+    public void updateConfig(int id, String name, int red, int green, int blue, int brightness) {
+        logger.log(Level.INFO, "updating light configuration {0}", id);
+
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "UPDATE light_configuration " +
+                        "SET name = ?, red = ?, green = ?, blue = ?, brightness = ? " +
+                        "WHERE id = ?;"
+        )) {
+            statement.setString(1, name);
+            statement.setInt(2, red);
+            statement.setInt(3, green);
+            statement.setInt(4, blue);
+            statement.setInt(5, brightness);
+            statement.setInt(6, id);
+
+            statement.executeUpdate();
+            logger.log(Level.INFO, "updated configs with id {0}", id);
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
     }
 
-    private LightConfigEntity createConfigFromCurrent(ResultSet result) throws SQLException {
-        return new LightConfigEntity(
+    public void deleteConfig(int id) {
+        logger.log(Level.INFO, "deleting light config {0}", id);
+
+        final int defaultConfigId = findConfigByName(DEFAULT_CONFIG_NAME).orElseThrow().id();
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "UPDATE device_light_scene SET configuration_id = ? WHERE configuration_id = ?;"
+        )) {
+            statement.setInt(1, defaultConfigId);
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+            logger.log(Level.INFO, "changed all usages of light config {0} to default config", id);
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "DELETE FROM light_configuration WHERE id = ?"
+        )) {
+            statement.setInt(1, id);
+
+            statement.execute();
+            logger.log(Level.INFO, "delete config with id {0}", id);
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
+    private LightConfig createConfigFromCurrent(ResultSet result) throws SQLException {
+        return new LightConfig(
                 result.getInt("id"),
                 result.getString("name"),
-                result.getBoolean("power"),
                 result.getInt("red"),
                 result.getInt("green"),
                 result.getInt("blue"),

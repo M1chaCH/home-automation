@@ -14,7 +14,20 @@ import { SpotifyAuthorisationComponent } from './components/spotify/spotify.auth
 import { SpotifyResourcesComponent } from './components/spotify/spotify.resources/spotify.resources.component';
 import { FancyButtonComponent } from './components/fancy-button/fancy-button.component';
 import { DevicePageComponent } from './pages/device.page/device.page.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { SceneComponent } from './components/scene/scene.component';
+import { LightConfigComponent } from './components/light-config/light-config.component';
+import { HiddenInputComponent } from './components/hidden-input/hidden-input.component';
+import { ColorPickerModule } from '@iplab/ngx-color-picker';
+import { RgbConvertPipe } from './pipes/light-config-converters/rgb-convert.pipe';
+import { BrightnessConvertPipe } from './pipes/light-config-converters/brightness-convert.pipe';
+import { AddSceneComponent } from './components/add-scene/add-scene.component';
+import { LightConfigsPageComponent } from './pages/light-configs.page/light-configs.page.component';
+import { AddLightConfigComponent } from './components/add-light-config/add-light-config.component';
+import { ColorPickerComponent } from './components/color-picker/color-picker.component';
+import {RgbsConvertPipe} from "./pipes/light-config-converters/rgba-convert.pipe";
+import { VerifyPopupComponent } from './components/verify-popup/verify-popup.component';
+import { LightConfigPreviewComponent } from './components/light-config-preview/light-config-preview.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +41,18 @@ import {FormsModule} from "@angular/forms";
     SpotifyResourcesComponent,
     FancyButtonComponent,
     DevicePageComponent,
+    SceneComponent,
+    LightConfigComponent,
+    HiddenInputComponent,
+    RgbConvertPipe,
+    BrightnessConvertPipe,
+    RgbsConvertPipe,
+    AddSceneComponent,
+    LightConfigsPageComponent,
+    AddLightConfigComponent,
+    ColorPickerComponent,
+    VerifyPopupComponent,
+    LightConfigPreviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,8 +60,10 @@ import {FormsModule} from "@angular/forms";
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
+    ColorPickerModule
   ],
-  providers: [],
+  providers: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,24 @@
+<div class="add-light-config-container">
+    <div *ngIf="active else placeholder" class="add-light-config">
+        <input type="text" class="simple-input" placeholder="New config name here" [formControl]="lightConfigNameControl" (keydown.enter)="create()"/>
+        <app-color-picker [value]="'rgba(255, 255, 255, 1)'" (valueChange)="updateSelectedColor($event)"></app-color-picker>
+        <div class="controls">
+            <app-fancy-button buttonIcon="check"
+                              backgroundText="SAVE"
+                              (buttonClicked)="create()">
+            </app-fancy-button>
+            <app-fancy-button buttonIcon="cancel"
+                              backgroundText="CANCEL"
+                              (buttonClicked)="cancel()">
+            </app-fancy-button>
+        </div>
+    </div>
+    <ng-template #placeholder>
+        <div style="min-width: 100px; width: 100%; max-width: 400px; height: 100%; min-height: 100px">
+            <app-fancy-button buttonIcon="add"
+                              backgroundText="ADD"
+                              (buttonClicked)="active = true">
+            </app-fancy-button>
+        </div>
+    </ng-template>
+</div>

@@ -27,9 +27,13 @@
 </div>
 
 <div class="devices">
-    <div class="device" *ngFor="let device of devices" [class.connected-device]="device.online" [class.disconnected-device]="!device.online">
-        <input id="name" [value]="device.name" placeholder="Name" maxlength="50"
-               (keydown.escape)="resetEditing($event, device)" (keydown.enter)="renameDevice($event, device)" (focusout)="resetEditing($event, device)"/>
+    <div class="device-label" *ngFor="let device of devices" [class.connected-device]="device.online" [class.disconnected-device]="!device.online">
+        <app-hidden-input placeholder="Name"
+                          [inputStyle]='{ "font-size": "20px", "font-weight": "600", "text-transform": "uppercase" }'
+                          [initialValue]="device.name"
+                          [lengthLimit]="50"
+                          (saveRequest)="renameDevice($event, device)">
+        </app-hidden-input>
         <p id="ip">{{device.ip}}</p>
         <div id="toggle">
             <app-fancy-button buttonIcon="bolt"

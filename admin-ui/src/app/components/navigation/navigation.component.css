@@ -3,7 +3,7 @@ nav {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 998;
   backdrop-filter: blur(20px);
 }
 nav .burger, nav .small-header {
@@ -27,7 +27,7 @@ nav a:hover {
   filter: brightness(120%);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   nav {
     display: grid;
     grid-template-columns: 20% 60% 20%;

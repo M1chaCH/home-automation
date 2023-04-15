@@ -1,0 +1,13 @@
+.preview-container {
+  cursor: pointer;
+  height: 50px;
+  border-radius: 10px;
+  background-color: white;
+}
+.preview-container .preview {
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+}
+
+/*# sourceMappingURL=light-config-preview.component.css.map */

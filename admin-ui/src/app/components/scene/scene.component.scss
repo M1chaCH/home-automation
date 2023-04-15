@@ -1,0 +1,63 @@
+.scene {
+  padding: 20px;
+  min-width: 250px;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  box-sizing: border-box;
+
+  .head {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      all: unset;
+      cursor: pointer;
+      color: var(--oragne);
+      transition: all 250ms ease-out;
+      width: fit-content;
+      height: fit-content;
+
+      &:hover {
+        scale: 1.1;
+      }
+
+      &:active {
+        scale: 1.2;
+      }
+    }
+  }
+
+  .lights {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .light {
+      .config-title {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 10px;
+
+        h4 {
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  .controls {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+    grid-template-rows: 50px;
+
+    margin-top: 20px;
+  }
+}
+
+.default-scene {
+  background-color: rgba(234, 226, 183, 0.2);
+}

@@ -1,0 +1,38 @@
+<div class="light-config" [class.open-editor]="editorOpen">
+    <div class="preview">
+        <app-light-config-preview [lightConfig]="lightConfig" (previewClicked)="toggleOpen()"></app-light-config-preview>
+    </div>
+
+    <app-hidden-input *ngIf="lightConfig.name !== DEFAULT_LIGHT_CONFIG_NAME else defaultLabel" placeholder="Config Name"
+                      [inputStyle]="{ 'font-size': '20px', 'font-weight': 'normal' }"
+                      [initialValue]="lightConfig.name"
+                      [lengthLimit]="50"
+                      (saveRequest)="rename($event)">
+    </app-hidden-input>
+    <ng-template #defaultLabel>
+        <span style="font-size: 20px; font-weight: normal;">{{lightConfig.name}}</span>
+    </ng-template>
+
+    <app-color-picker [value]="lightConfig | rgbsConvert" (valueChange)="colorPickerChange($event)"></app-color-picker>
+    <div class="controls">
+        <app-fancy-button id="save"
+                          buttonIcon="check"
+                          backgroundText="Save"
+                          (buttonClicked)="saveChanges()">
+        </app-fancy-button>
+        <app-fancy-button id="delete"
+                          buttonIcon="delete"
+                          backgroundText="Delete"
+                          (buttonClicked)="deleteVerifyPopupOpen = true">
+        </app-fancy-button>
+        <app-fancy-button id="cancel"
+                          buttonIcon="close"
+                          backgroundText="Reset"
+                          (buttonClicked)="reset()">
+        </app-fancy-button>
+    </div>
+</div>
+
+<app-verify-popup id="delete-verify-popup" [(open)]="deleteVerifyPopupOpen" (responded)="deleteIfAllowed($event)">
+    <p>Do you really want to delete the {{lightConfig.name}} light config?</p>
+</app-verify-popup>

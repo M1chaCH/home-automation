@@ -1,0 +1,41 @@
+.popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  z-index: 997;
+}
+.popup-backdrop .popup {
+  background-color: var(--prussian-blue);
+  box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  border-radius: 20px;
+  padding: 20px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: calc(50% - 5px) calc(50% - 5px);
+  grid-template-rows: auto 50px;
+  min-width: 200px;
+  width: 75vw;
+  max-width: 450px;
+  animation: skew-in 350ms ease-out;
+}
+.popup-backdrop .popup .content {
+  grid-column: 1/3;
+}
+
+@keyframes skew-in {
+  0% {
+    transform: rotateX(80deg) scale(75%) translateZ(200px);
+  }
+  100% {
+    transform: rotateX(0) scale(1) translateZ(0);
+  }
+}
+
+/*# sourceMappingURL=verify-popup.component.css.map */

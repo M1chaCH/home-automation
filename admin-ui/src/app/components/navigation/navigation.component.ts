@@ -11,6 +11,12 @@ export class NavigationComponent {
 
   public readonly homeRoute: string = `/${appRoutes.ROOT}/${appRoutes.HOME}`;
   public readonly scenesRoute: string = `/${appRoutes.ROOT}/${appRoutes.SCENES}`;
+  public readonly lightConfigsRoute: string = `/${appRoutes.ROOT}/${appRoutes.LIGHT_CONFIGS}`;
   public readonly spotifyRoute: string = `/${appRoutes.ROOT}/${appRoutes.SPOTIFY}`;
   public readonly deviceRoute: string = `/${appRoutes.ROOT}/${appRoutes.DEVICES}`;
+
+  navigationClicked() {
+    this.menuOpen = false;
+    window.scrollTo(0, 0);
+  }
 }

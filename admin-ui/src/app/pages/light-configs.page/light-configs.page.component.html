@@ -1,0 +1,13 @@
+<div class="light-configs">
+    <app-add-light-config></app-add-light-config>
+    <div *ngFor="let light of lightConfigs; let i = index" class="light-config">
+        <h4>{{light.name}}</h4>
+        <app-light-config
+                [lightConfig]="light"
+                [index]="i"
+                [openEditorId$]="openLightConfigEditorSubject.asObservable()"
+                (requestToggleOpen)="toggleOpen(i)">
+        </app-light-config>
+    </div>
+</div>
+
