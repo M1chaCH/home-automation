@@ -18,7 +18,7 @@ public record SceneEntity(
     public SceneDTO toDto() {
         return new SceneDTO(id, name, defaultScene, spotifyResource, spotifyVolume, lights.entrySet()
                 .stream()
-                .map(entry -> new SceneLightConfigDTO(entry.getKey().id(), entry.getKey().name(), entry.getValue())).toList()
+                .map(entry -> new SceneLightConfigDTO(entry.getKey().toDto(), entry.getValue())).toList()
         );
     }
 }

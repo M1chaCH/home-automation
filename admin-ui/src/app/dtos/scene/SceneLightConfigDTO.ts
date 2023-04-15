@@ -1,7 +1,7 @@
 import {LightConfigDTO} from "./LightConfigDTO";
+import {DeviceDTO} from "../DeviceDTO";
 
 export type SceneLightConfigDTO = {
-  deviceId: number,
-  deviceName: string,
+  device: DeviceDTO,
   lightConfig: LightConfigDTO,
 };

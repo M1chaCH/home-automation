@@ -3,6 +3,7 @@ package ch.micha.automation.room.light.yeelight;
 import ch.micha.automation.room.errorhandling.exceptions.ResourceAlreadyExistsException;
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSqlException;
+import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import ch.micha.automation.room.sql.SQLService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -61,6 +62,10 @@ public class YeelightDeviceProvider {
         }
 
         return foundDevices;
+    }
+
+    public YeelightDeviceEntity findFromDto(YeelightDeviceDTO dto) {
+        return devices.values().stream().filter(entity -> dto.getName().equals(entity.name())).findAny().orElseThrow();
     }
 
     /**

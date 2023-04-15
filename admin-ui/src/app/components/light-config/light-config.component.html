@@ -3,7 +3,7 @@
         <app-light-config-preview [lightConfig]="lightConfig" (previewClicked)="toggleOpen()"></app-light-config-preview>
     </div>
 
-    <app-hidden-input *ngIf="lightConfig.name !== DEFAUL_LIGHT_CONFIG_NAME else defaultLabel" placeholder="Config Name"
+    <app-hidden-input *ngIf="lightConfig.name !== DEFAULT_LIGHT_CONFIG_NAME else defaultLabel" placeholder="Config Name"
                       [inputStyle]="{ 'font-size': '20px', 'font-weight': 'normal' }"
                       [initialValue]="lightConfig.name"
                       [lengthLimit]="50"

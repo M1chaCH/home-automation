@@ -3,10 +3,10 @@
     <a class="small-header" [routerLink]="[homeRoute]"  (click)="menuOpen = false">AUTOMATION</a>
     <button class="burger material-symbols-rounded" [class.burger-open]="menuOpen" (click)="menuOpen = !menuOpen">add</button>
     <div class="links" [class.links-open]="menuOpen">
-        <a [routerLink]="[homeRoute]" (click)="menuOpen = false">HOME</a>
-        <a [routerLink]="[scenesRoute]" (click)="menuOpen = false">SCENES</a>
-        <a [routerLink]="[lightConfigsRoute]" (click)="menuOpen = false">LIGHT CONFIGS</a>
-        <a [routerLink]="[spotifyRoute]" (click)="menuOpen = false">SPOTIFY</a>
-        <a [routerLink]="[deviceRoute]" (click)="menuOpen = false">DEVICES</a>
+        <a [routerLink]="[homeRoute]" (click)="navigationClicked()">HOME</a>
+        <a [routerLink]="[scenesRoute]" (click)="navigationClicked()">SCENES</a>
+        <a [routerLink]="[lightConfigsRoute]" (click)="navigationClicked()">LIGHT CONFIGS</a>
+        <a [routerLink]="[spotifyRoute]" (click)="navigationClicked()">SPOTIFY</a>
+        <a [routerLink]="[deviceRoute]" (click)="navigationClicked()">DEVICES</a>
     </div>
 </nav>

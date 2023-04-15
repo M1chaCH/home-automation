@@ -23,7 +23,7 @@ export class LightConfigsPageComponent implements DataUpdateListener{
     private service: ScenesService,
     private dataUpdater: DataUpdateDistributorService,
   ) {
-    dataUpdater.registerListener(this, "NEW_LIGHT_CONFIG", "UPDATED_LIGHT_CONFIG", "REMOVED_LIGHT_CONFIG");
+    dataUpdater.registerListener(this, "NEW_LIGHT_CONFIG", "REMOVED_LIGHT_CONFIG");
     service.loadLightConfigs().subscribe(lightConfigs => this.lightConfigs = lightConfigs);
   }
 

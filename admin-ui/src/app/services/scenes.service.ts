@@ -14,12 +14,24 @@ export class ScenesService {
     private api: ApiService,
   ) { }
 
+  applyScene(id: number): void {
+    this.api.callApi<void>(`${apiEndpoints.SCENE}/${id}`, "POST", undefined).subscribe();
+  }
+
   loadScenes(): Observable<SceneDTO[]> {
     return this.api.callApi<SceneDTO[]>(apiEndpoints.SCENE_CRUD, "GET", undefined);
   }
 
   createScene(scene: SceneDTO): Observable<SceneDTO> {
-    // todo
+    return this.api.callApi<SceneDTO>(apiEndpoints.SCENE_CRUD, "POST", scene);
+  }
+
+  updateScene(scene: SceneDTO): Observable<void> {
+    return this.api.callApi(apiEndpoints.SCENE_CRUD, "PUT", scene);
+  }
+
+  deleteScene(id: number): Observable<void> {
+    return this.api.callApi(`${apiEndpoints.SCENE_CRUD}/${id}`, "DELETE", undefined);
   }
 
   loadLightConfigs(): Observable<LightConfigDTO[]> {

@@ -4,7 +4,11 @@ import {Observable, of} from "rxjs";
 import {Color} from "@iplab/ngx-color-picker";
 import {Rgba} from "@iplab/ngx-color-picker/lib/helpers/rgba.class";
 import {ScenesService} from "../../services/scenes.service";
-import {DataUpdateDistributorService} from "../../services/data-update-distributor.service";
+import {
+  DataTopic,
+  DataUpdateDistributorService,
+  DataUpdateListener
+} from "../../services/data-update-distributor.service";
 import {MessageDistributorService} from "../../services/message-distributor.service";
 
 @Component({
@@ -12,8 +16,8 @@ import {MessageDistributorService} from "../../services/message-distributor.serv
   templateUrl: './light-config.component.html',
   styleUrls: ['./light-config.component.scss']
 })
-export class LightConfigComponent implements OnInit{
-  readonly DEFAUL_LIGHT_CONFIG_NAME = "_default";
+export class LightConfigComponent implements OnInit, DataUpdateListener{
+  readonly DEFAULT_LIGHT_CONFIG_NAME = "_default";
 
   @Input() lightConfig!: LightConfigDTO;
   @Input() index!: number;
@@ -39,6 +43,8 @@ export class LightConfigComponent implements OnInit{
       this.editorOpen = !this.editorOpen;
       this.editorOpen = index === this.index && this.editorOpen;
     });
+
+    this.dataUpdater.registerListener(this, "UPDATED_LIGHT_CONFIG");
   }
 
   colorPickerChange(newColor: Color): void {
@@ -67,7 +73,7 @@ export class LightConfigComponent implements OnInit{
 
   deleteIfAllowed(allowed: boolean) {
     if(allowed) {
-      if(this.lightConfig.name === this.DEFAUL_LIGHT_CONFIG_NAME){
+      if(this.lightConfig.name === this.DEFAULT_LIGHT_CONFIG_NAME){
         this.messageDistributor.pushMessage("INFO", "Can't delete default config!");
         return;
       } else {
@@ -81,5 +87,9 @@ export class LightConfigComponent implements OnInit{
     this.lightConfig = structuredClone(this.initialLightConfig);
   }
 
-
+  updateData(topic: DataTopic, data: any): void {
+    if(topic === "UPDATED_LIGHT_CONFIG" && (data as LightConfigDTO).id === this.lightConfig.id) {
+      this.lightConfig = data;
+    }
+  }
 }

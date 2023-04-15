@@ -43,7 +43,7 @@ public class SceneCrudService {
 
     private Map<YeelightDeviceEntity, LightConfig> parseSceneLightConfig(List<SceneLightConfigDTO> sceneLightConfigDTO) {
         return sceneLightConfigDTO.stream().collect(Collectors.toMap(
-                dto -> deviceProvider.findByIds(dto.getDeviceId()).get(0),
+                dto -> deviceProvider.findFromDto(dto.getDevice()),
                 SceneLightConfigDTO::getLightConfig
         ));
     }

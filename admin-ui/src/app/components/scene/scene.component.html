@@ -1,6 +1,7 @@
 <div class="scene" [class.default-scene]="scene.defaultScene">
-    <app-hidden-input placeholder="Name"
-                      [inputStyle]='{
+    <div class="head">
+        <app-hidden-input placeholder="Name"
+                          [inputStyle]='{
                         "font-size": "1.5em",
                         "margin-block-start": "0.83em",
                         "margin-block-end": "0.83em",
@@ -9,15 +10,29 @@
                         "font-weight": "bold",
                         "text-transform": "uppercase"
                       }'
-                      [initialValue]="scene.name"
-                      [lengthLimit]="50"
-                      (saveRequest)="renameScene($event)">
-    </app-hidden-input>
+                          [initialValue]="scene.name"
+                          [lengthLimit]="50"
+                          (saveRequest)="renameScene($event)">
+        </app-hidden-input>
+        <button *ngIf="!scene.defaultScene" (click)="requestDelete()">
+            <span class="material-symbols-rounded">delete</span>
+        </button>
+    </div>
 
     <div class="lights">
         <div *ngFor="let light of scene.lights; let i = index"
              class="light" >
-            <h4>{{light.deviceName | uppercase}} - {{light.lightConfig.name}}</h4>
+            <div class="config-title">
+                <h4>{{light.device.name | uppercase}} - </h4>
+                <select class="simple-select"
+                        (ngModelChange)="configChanged(i, $event)"
+                        [(ngModel)]="light.lightConfig.name">
+                    <option *ngFor="let lightConfigOption of allLightConfigs"
+                            [value]="lightConfigOption.name" [defaultSelected]="light.lightConfig.name === lightConfigOption.name">
+                        {{lightConfigOption.name}}
+                    </option>
+                </select>
+            </div>
             <app-light-config [lightConfig]="light.lightConfig"
                               [index]="i"
                               [openEditorId$]="openLightConfigEditorSubject.asObservable()"
@@ -26,4 +41,19 @@
         </div>
     </div>
 
+    <div class="controls">
+        <app-fancy-button *ngIf="edited else notChanged"
+                          backgroundText="save"
+                          (buttonClicked)="saveChangedConfigs()"
+                          buttonIcon="save">
+        </app-fancy-button>
+        <ng-template #notChanged>
+            <div></div>
+        </ng-template>
+        <app-fancy-button backgroundText="run" (buttonClicked)="applyScene()" buttonIcon="bolt"></app-fancy-button>
+    </div>
 </div>
+
+<app-verify-popup [(open)]="deleting" (responded)="deleteSceneIfApproved($event)">
+    <p>Do you really want to delete scene {{scene.name}}?</p>
+</app-verify-popup>

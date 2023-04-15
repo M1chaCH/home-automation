@@ -8,6 +8,8 @@ import {DevicesService} from "../../services/devices.service";
 import {LightConfigDTO} from "../../dtos/scene/LightConfigDTO";
 import {SceneDTO} from "../../dtos/scene/SceneDTO";
 import {SceneLightConfigDTO} from "../../dtos/scene/SceneLightConfigDTO";
+import {DataUpdateDistributorService} from "../../services/data-update-distributor.service";
+import {MessageDistributorService} from "../../services/message-distributor.service";
 
 @Component({
   selector: 'app-add-scene',
@@ -31,6 +33,8 @@ export class AddSceneComponent {
   constructor(
     private service: ScenesService,
     private devicesService: DevicesService,
+    private dataUpdater: DataUpdateDistributorService,
+    private messageDistributor: MessageDistributorService,
   ) {
     this.devices$ = devicesService.loadAllDevices();
     this.lightConfigs$ = service.loadLightConfigs();
@@ -46,14 +50,12 @@ export class AddSceneComponent {
     const checked: boolean = e.target!.checked;
     if(checked)
       this.scene.lights.push({
-        deviceId: -1,
-        deviceName:
-        device.name,
+        device,
         lightConfig: this.defaultLightConfig!
       });
     else {
       const index: number = this.scene.lights.indexOf(
-        this.scene.lights.find(config => config.deviceName === device.name)!
+        this.scene.lights.find(config => config.device.name === device.name)!
       );
       this.scene.lights.splice(index, 1);
     }
@@ -63,21 +65,33 @@ export class AddSceneComponent {
     // @ts-ignore
     // noinspection UnnecessaryLocalVariableJS
     const selectedLightConfig: LightConfigDTO = (await firstValueFrom(this.lightConfigs$)).find(config => config.name === e.target!.value)!;
-    this.scene.lights.find(l => l.deviceName === light.deviceName)!.lightConfig = selectedLightConfig;
+    this.scene.lights.find(l => l.device.name === light.device.name)!.lightConfig = selectedLightConfig;
   }
 
   isDeviceSelected(device: DeviceDTO): boolean {
-    return this.scene.lights.find(config => config.deviceName === device.name) !== undefined;
+    return this.scene.lights.find(config => config.device.name === device.name) !== undefined;
   }
 
   create() {
+    if(this.isSceneValid())
+      this.service.createScene(this.scene).subscribe(scene => {
+        this.dataUpdater.updateTopic("NEW_SCENE", scene);
+        this.messageDistributor.pushMessage("INFO", "created new scene " + scene.name);
 
+        this.active = false;
+        this.scene = this.createEmptyScene();
+        this.sceneNameControl.setValue("");
+      });
   }
 
   cancel() {
     this.scene = this.createEmptyScene();
     this.sceneNameControl.setValue("");
     this.active = false;
+  }
+
+  isSceneValid(): boolean {
+    return this.scene.name.length >= 1 && this.scene.lights.length >= 1;
   }
 
   private createEmptyScene(): SceneDTO {

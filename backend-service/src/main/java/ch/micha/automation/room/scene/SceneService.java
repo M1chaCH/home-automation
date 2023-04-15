@@ -36,7 +36,7 @@ public class SceneService implements OnAppStartupListener {
     public void applyScene(int sceneId){
         Optional<SceneEntity> scene = sceneProvider.findSceneById(sceneId);
         if(scene.isEmpty())
-            throw new ResourceNotFoundException("scene", "" + sceneId);
+            throw new ResourceNotFoundException("scene", String.valueOf(sceneId));
 
         applyScene(scene.get());
     }

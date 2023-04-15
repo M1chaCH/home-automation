@@ -1,7 +1,6 @@
 package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.events.Logged;
-import ch.micha.automation.room.scene.dtos.ApplySceneDTO;
 import ch.micha.automation.room.scene.dtos.SceneDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -55,10 +54,11 @@ public class SceneResource {
     }
 
     @POST()
+    @Path("/{sceneId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response applyScene(ApplySceneDTO dto) {
-        service.applyScene(dto.getSceneId());
+    public Response applyScene(@PathParam("sceneId") int sceneId) {
+        service.applyScene(sceneId);
 
         return Response
                 .status(Response.Status.NO_CONTENT)

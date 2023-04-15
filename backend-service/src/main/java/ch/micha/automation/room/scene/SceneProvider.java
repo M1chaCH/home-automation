@@ -26,6 +26,12 @@ public class SceneProvider {
     private final YeelightDeviceProvider deviceProvider;
     private final LightConfigProvider lightConfigProvider;
 
+    private static final String ID_COLUMN = "id";
+    private static final String NAME_COLUMN = "name";
+    private static final String DEFAULT_SCENE_COLUMN = "default_scene";
+    private static final String SPOTIFY_RESOURCE_COLUMN = "spotify_resource";
+    private static final String SPOTIFY_VOLUME_COLUMN = "spotify_volume";
+
     private int defaultSceneId = -1;
 
     @Inject
@@ -35,9 +41,34 @@ public class SceneProvider {
         this.lightConfigProvider = lightConfigProvider;
     }
 
+    /**
+     * @param id of the scene to search
+     * @return an optional with the selected scene or an empty optional if scene was not found
+     */
     public Optional<SceneEntity> findSceneById(int id) {
-        logger.log(Level.SEVERE, "@micha, du hesch das noni implementiert");
-        return Optional.empty();
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(
+                "select * from scene where id = ?"
+        )) {
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+
+            if(!result.next())
+                return Optional.empty();
+
+            Map<YeelightDeviceEntity, LightConfig> lights = loadDeviceLightConfigs(id);
+
+            SceneEntity scene = new SceneEntity(
+                    id,
+                    result.getString(NAME_COLUMN),
+                    result.getBoolean(DEFAULT_SCENE_COLUMN),
+                    lights,
+                    result.getString(SPOTIFY_RESOURCE_COLUMN),
+                    result.getInt(SPOTIFY_VOLUME_COLUMN)
+            );
+            return Optional.of(scene);
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
     }
 
     /**
@@ -57,14 +88,14 @@ public class SceneProvider {
             }
 
             if(result.next()) {
-                final int sceneId = result.getInt("id");
+                final int sceneId = result.getInt(ID_COLUMN);
                 final SceneEntity scene = new SceneEntity(
                         sceneId,
-                        result.getString("name"),
-                        result.getBoolean("default_scene"),
+                        result.getString(NAME_COLUMN),
+                        result.getBoolean(DEFAULT_SCENE_COLUMN),
                         loadDeviceLightConfigs(sceneId),
-                        result.getString("spotify_resource"),
-                        result.getInt("spotify_volume")
+                        result.getString(SPOTIFY_RESOURCE_COLUMN),
+                        result.getInt(SPOTIFY_VOLUME_COLUMN)
                 );
 
                 defaultSceneId = sceneId;
@@ -83,7 +114,7 @@ public class SceneProvider {
      * inserts a new scene to the DB.
      * <br><br>
      * IMPORTANT! if default scene is true, the old default scene will be changed to no longer be default.
-     * @param name the name of the new scene, must be unique. todo implement errorhandling for unique constraint violation stuff.
+     * @param name the name of the new scene, must be unique.
      * @param defaultScene this new scene will be the default
      * @param spotifyResource the URI to a spotify resource
      * @param spotifyVolume the volume to start the spotify resource at
@@ -102,7 +133,7 @@ public class SceneProvider {
 
             ResultSet generatedIdKeys = statement.getGeneratedKeys();
             generatedIdKeys.next();
-            int generatedId = generatedIdKeys.getInt("id");
+            int generatedId = generatedIdKeys.getInt(ID_COLUMN);
             logger.log(Level.INFO, "created new scene: {0}-{1}", new Object[]{generatedId, name});
 
             if(defaultScene)
@@ -246,10 +277,10 @@ public class SceneProvider {
                     scenes.add(new SceneEntity(
                             result.getInt("scene_id"),
                             result.getString("scene_name"),
-                            result.getBoolean("default_scene"),
+                            result.getBoolean(DEFAULT_SCENE_COLUMN),
                             lightsToFill,
-                            result.getString("spotify_resource"),
-                            result.getInt("spotify_volume")
+                            result.getString(SPOTIFY_RESOURCE_COLUMN),
+                            result.getInt(SPOTIFY_VOLUME_COLUMN)
                     ));
                 }
 

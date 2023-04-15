@@ -1,5 +1,6 @@
 package ch.micha.automation.room.light.yeelight;
 
+import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import com.mollin.yapi.YeelightDevice;
 
 public record YeelightDeviceEntity (
@@ -15,5 +16,9 @@ public record YeelightDeviceEntity (
 
     public boolean isOnline() {
         return light != null;
+    }
+
+    public YeelightDeviceDTO toDto() {
+        return new YeelightDeviceDTO(name, ip, isOnline());
     }
 }

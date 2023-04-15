@@ -23,6 +23,7 @@
         </button>
         <button class="control"
                 (click)="create()"
+                [disabled]="!isSceneValid()"
                 *ngIf="currentAddStageIndex === addStages.length - 1">
             <span></span>
             <span>Complete</span>
@@ -48,7 +49,7 @@
             <div *ngSwitchCase="'DEVICES_X_CONFIGS'" class="stage light-configs">
                 <p *ngIf="scene.lights.length === 0">No devices selected</p>
                 <div *ngFor="let light of scene.lights">
-                    <p><strong>{{light.deviceName}}</strong> • </p>
+                    <p><strong>{{light.device.name}}</strong> • </p>
                     <select class="simple-select"
                             [value]="light.lightConfig.name"
                             (change)="selectChanged($event, light)">

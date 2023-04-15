@@ -6,13 +6,45 @@
   border-radius: 20px;
   box-sizing: border-box;
 }
+.scene .head {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.scene .head button {
+  all: unset;
+  cursor: pointer;
+  color: var(--oragne);
+  transition: all 250ms ease-out;
+  width: fit-content;
+  height: fit-content;
+}
+.scene .head button:hover {
+  scale: 1.1;
+}
+.scene .head button:active {
+  scale: 1.2;
+}
 .scene .lights {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-.scene .lights .light h4 {
-  margin-bottom: 5px;
+.scene .lights .light .config-title {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 10px;
+}
+.scene .lights .light .config-title h4 {
+  display: inline-block;
+}
+.scene .controls {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+  grid-template-rows: 50px;
+  margin-top: 20px;
 }
 
 .default-scene {
