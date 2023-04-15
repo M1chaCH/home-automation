@@ -20,7 +20,8 @@
   font-size: clamp(25px, 10cqw, 100px);
   font-weight: 800;
   text-transform: uppercase;
-  word-break: break-word;
+  word-break: keep-all;
+  overflow-x: hidden;
   margin: 0 20px;
 }
 .container .button-background {
