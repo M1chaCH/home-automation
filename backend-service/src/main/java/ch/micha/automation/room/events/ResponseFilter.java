@@ -8,6 +8,7 @@ import jakarta.ws.rs.ext.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Logged
 @Provider
 public class ResponseFilter implements ContainerResponseFilter {
     private final Logger logger = Logger.getLogger(ResponseFilter.class.getSimpleName());

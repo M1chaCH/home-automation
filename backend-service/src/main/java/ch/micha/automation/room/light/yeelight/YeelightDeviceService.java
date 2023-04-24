@@ -7,6 +7,7 @@ import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
+import ch.micha.automation.room.light.yeelight.interceptor.RequireLightConnection;
 import ch.micha.automation.room.scene.SceneService;
 import com.mollin.yapi.YeelightDevice;
 import com.mollin.yapi.enumeration.YeelightEffect;
@@ -15,7 +16,9 @@ import com.mollin.yapi.exception.YeelightResultErrorException;
 import com.mollin.yapi.exception.YeelightSocketException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +32,17 @@ public class YeelightDeviceService implements OnAppStartupListener {
     protected final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final YeelightDeviceProvider provider;
     private final SceneService sceneService;
+    private final int deviceConnectionLifetime;
+
+    private Instant devicesLoaded;
+
 
     @Inject
-    public YeelightDeviceService(YeelightDeviceProvider provider, SceneService sceneService) {
+    public YeelightDeviceService(YeelightDeviceProvider provider, SceneService sceneService,
+                                 @ConfigProperty(name = "room.automation.device.connection.lifetime") int deviceConnectionLifetimeMin) {
         this.provider = provider;
         this.sceneService = sceneService;
+        this.deviceConnectionLifetime = deviceConnectionLifetimeMin > 0 ? deviceConnectionLifetimeMin : 60;
     }
 
     @Override
@@ -48,6 +57,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
      * @param config the config to apply
      * @throws YeeLightOfflineException if the light is offline
      */
+    @RequireLightConnection
     public void applyConfigToLight(YeelightDeviceEntity lightEntity, LightConfig config) {
         YeelightDevice light = lightEntity.light();
         if(light == null)
@@ -68,6 +78,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
         }
     }
 
+    @RequireLightConnection
     public void togglePower(String name) {
         YeelightDeviceEntity entity = provider.findYeelightDevice(name);
         YeelightDevice device = entity.light();
@@ -84,6 +95,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
 
     }
 
+    @RequireLightConnection
     public void powerAllOff() {
         List<YeelightDeviceEntity> onlineDevices = provider.getOnlineDevices();
         for (YeelightDeviceEntity device : onlineDevices) {
@@ -125,7 +137,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
         provider.deleteDevice(name);
     }
 
-    private void loadYeelightDevices() {
+    public void loadYeelightDevices() {
         List<YeelightDeviceEntity> storedDevices = provider.loadYeelightDeviceEntities();
         Map<Integer, YeelightDeviceEntity> devices = new HashMap<>();
 
@@ -139,8 +151,13 @@ public class YeelightDeviceService implements OnAppStartupListener {
         }
 
         provider.setDevices(devices);
+        devicesLoaded = Instant.now();
         logger.log(Level.INFO, "connected to {0} devices & found {1} offline devices",
                 new Object[]{provider.getOnlineDevices().size(), provider.getOfflineDevices().size()});
+    }
+
+    public boolean isDeviceConnectionExpired() {
+        return devicesLoaded.plusSeconds(deviceConnectionLifetime * 60L).isBefore(Instant.now());
     }
 
     private YeelightDevice tryToConnect(String ip) {

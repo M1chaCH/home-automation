@@ -5,6 +5,7 @@ import ch.micha.automation.room.cache.EntityCacheFactory;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyException;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyNotAuthorizedException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSpotifyException;
+import ch.micha.automation.room.spotify.interceptor.SpotifyAuthorized;
 import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
 import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
 import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
@@ -151,6 +152,7 @@ public class SpotifyApiService {
         return null;
     }
 
+    @SpotifyAuthorized
     public boolean isPlaying() {
         try {
             logger.log(Level.INFO, "loading playback state of current player");
@@ -168,6 +170,7 @@ public class SpotifyApiService {
         }
     }
 
+    @SpotifyAuthorized
     public void pausePlayback() {
         try {
             logger.log(Level.INFO, "pausing playback of default device");
@@ -181,6 +184,7 @@ public class SpotifyApiService {
         }
     }
 
+    @SpotifyAuthorized
     public void resumePlayback() {
         try {
             logger.log(Level.INFO, "resuming playback");
@@ -194,6 +198,7 @@ public class SpotifyApiService {
         }
     }
 
+    @SpotifyAuthorized
     public void playContext(String contextUri) {
         try {
             logger.log(Level.INFO, "playing {0}", contextUri);
@@ -210,6 +215,7 @@ public class SpotifyApiService {
         }
     }
 
+    @SpotifyAuthorized
     public void setPlaybackVolume(int volume) {
         try {
             volume = Math.max(0, Math.min(100, volume));
@@ -224,6 +230,7 @@ public class SpotifyApiService {
         }
     }
 
+    @SpotifyAuthorized
     public void setPlaybackShuffle(boolean shuffle) {
         try {
             logger.log(Level.INFO, "setting playback shuffle to {0}", shuffle);
@@ -237,6 +244,7 @@ public class SpotifyApiService {
         }
     }
 
+    @SpotifyAuthorized
     public List<SpotifyResourceDTO> getSavedSpotifyResources() {
         try {
             List<SpotifyResourceDTO> playlists = new ArrayList<>();
