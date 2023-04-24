@@ -18,6 +18,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,6 +109,39 @@ public class YeelightDeviceService implements OnAppStartupListener {
             }
         }
         logger.log(Level.INFO, "powered {0} online devices off", onlineDevices.size());
+    }
+
+    @RequireLightConnection
+    public Map<YeelightDeviceEntity, LightConfig> loadCurrentOnlineConfigs() {
+        Map<YeelightDeviceEntity, LightConfig> lights = new HashMap<>();
+
+        for (YeelightDeviceEntity device : provider.getOnlineDevices()) {
+            try {
+                Map<YeelightProperty, String> properties = device.light()
+                        .getProperties(YeelightProperty.POWER, YeelightProperty.BRIGHTNESS, YeelightProperty.RGB);
+
+                int brightnes = Integer.parseInt(properties.get(YeelightProperty.BRIGHTNESS));
+                Color color = new Color(Integer.parseInt(properties.get(YeelightProperty.RGB)));
+
+                if("on".equals(properties.get(YeelightProperty.POWER))) {
+                    lights.put(device, new LightConfig(
+                            -1,
+                            "generated",
+                            color.getRed(),
+                            color.getGreen(),
+                            color.getBlue(),
+                            brightnes
+                    ));
+                }
+            } catch (YeelightResultErrorException | NullPointerException | NumberFormatException e) {
+                logger.log(Level.WARNING, "could not load properties of light at {0}: {1}",
+                        new Object[]{ device.ip(), e.getMessage() });
+            } catch (YeelightSocketException e) {
+                throw new UnexpectedYeeLightException(device.ip(), e);
+            }
+        }
+
+        return lights;
     }
 
     public List<YeelightDeviceDTO> getAllDevices() {

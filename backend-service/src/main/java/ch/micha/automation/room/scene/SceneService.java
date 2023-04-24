@@ -6,6 +6,7 @@ import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
 import ch.micha.automation.room.spotify.SpotifyService;
+import ch.micha.automation.room.spotify.dtos.SpotifyContextDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -51,7 +52,7 @@ public class SceneService implements OnAppStartupListener {
         scene.lights().forEach(yeelightDeviceService::applyConfigToLight);
 
         if(scene.spotifyResource() != null && !scene.spotifyResource().isEmpty()) {
-            spotifyService.startContext(scene.spotifyResource(), scene.spotifyVolume());
+            spotifyService.startContext(new SpotifyContextDTO(scene.spotifyResource(), scene.spotifyVolume()));
         }
 
         logger.log(Level.INFO, "applied scene");
@@ -59,6 +60,11 @@ public class SceneService implements OnAppStartupListener {
 
     public void addDeviceToDefaultScene(int id) {
         sceneProvider.addDeviceToScene(id, 0, 0);
+    }
+
+    public SpotifyContextDTO getDefaultSpotifyContext() {
+        SceneEntity scene = sceneProvider.loadDefaultScene();
+        return new SpotifyContextDTO(scene.spotifyResource(), scene.spotifyVolume());
     }
 
     /**

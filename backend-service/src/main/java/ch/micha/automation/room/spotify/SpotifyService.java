@@ -3,10 +3,7 @@ package ch.micha.automation.room.spotify;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyAlreadyAuthorizedException;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyNotAuthorizedException;
 import ch.micha.automation.room.events.OnAppStartupListener;
-import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
-import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
-import ch.micha.automation.room.spotify.dtos.SpotifyCodeDTO;
-import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
+import ch.micha.automation.room.spotify.dtos.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -44,16 +41,23 @@ public class SpotifyService implements OnAppStartupListener {
     }
 
     public void togglePlayback() {
-        if(api.isPlaying())
+        if(api.getPlayerState().equals(SpotifyPlayerState.PLAYING))
             api.pausePlayback();
         else
             api.resumePlayback();
     }
 
-    public void startContext(String contextUri, int volume) {
-        api.setPlaybackVolume(volume);
+    public void startContext(SpotifyContextDTO context) {
+        api.setPlaybackVolume(context.getVolume());
         api.setPlaybackShuffle(true);
-        api.playContext(contextUri);
+        api.playContext(context.getContext());
+    }
+
+    public void resumePlayerOrStartContext(SpotifyContextDTO context) {
+        if(api.getPlayerState().equals(SpotifyPlayerState.STOPPED))
+            startContext(context);
+        else
+            api.resumePlayback();
     }
 
     public void pausePlayback() {

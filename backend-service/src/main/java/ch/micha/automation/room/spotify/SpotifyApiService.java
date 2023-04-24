@@ -5,6 +5,7 @@ import ch.micha.automation.room.cache.EntityCacheFactory;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyException;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyNotAuthorizedException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSpotifyException;
+import ch.micha.automation.room.spotify.dtos.SpotifyPlayerState;
 import ch.micha.automation.room.spotify.interceptor.SpotifyAuthorized;
 import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
 import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
@@ -153,20 +154,23 @@ public class SpotifyApiService {
     }
 
     @SpotifyAuthorized
-    public boolean isPlaying() {
+    public SpotifyPlayerState getPlayerState() {
         try {
             logger.log(Level.INFO, "loading playback state of current player");
 
             HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX, "get", null, null);
+            if(response.getStatus() == 204)
+                return SpotifyPlayerState.STOPPED;
+
             throwUnexpectedIfNeeded(response, "failed to load playback state");
 
             JSONObject body = response.getBody().getObject();
-            return body.getBoolean("is_playing");
+            return body.getBoolean("is_playing") ? SpotifyPlayerState.PLAYING : SpotifyPlayerState.PAUSED;
         } catch (UnirestException e) {
             throw new UnexpectedSpotifyException(e);
         } catch (NullPointerException e) {
             logger.info("no player is active");
-            return false;
+            return SpotifyPlayerState.STOPPED;
         }
     }
 
@@ -176,9 +180,13 @@ public class SpotifyApiService {
             logger.log(Level.INFO, "pausing playback of default device");
 
             HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/pause", "put", null, null);
-            throwUnexpectedIfNeeded(response, "failed to pause playback");
 
-            logger.log(Level.INFO, "successfully paused playback");
+            if(response.getStatus() == 404) {
+                logger.log(Level.WARNING, "tried to pause already paused player");
+            } else {
+                throwUnexpectedIfNeeded(response, "failed to pause playback");
+                logger.log(Level.INFO, "successfully paused playback");
+            }
         } catch (UnirestException e) {
             throw new UnexpectedSpotifyException(e);
         }
@@ -352,7 +360,7 @@ public class SpotifyApiService {
             } catch (IOException e) {
                 logger.log(Level.INFO, "call to spotify failed. with status: {0} - {1}", new Object[]{ response.getStatus(), response.getStatusText() });
             }
-            throw new UnexpectedSpotifyException(message);
+            throw new UnexpectedSpotifyException(String.format("%s - %s: %s", response.getStatus(), response.getStatusText(), message));
         }
     }
 
