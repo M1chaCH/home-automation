@@ -3,6 +3,7 @@ import {ApiService} from "./api.service";
 import {apiEndpoints} from "../configuration/app.config";
 import {Observable} from "rxjs";
 import {DeviceDTO} from "../dtos/DeviceDTO";
+import {LightConfigDTO} from "../dtos/scene/LightConfigDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,16 @@ export class DevicesService {
     private api: ApiService,
   ) { }
 
-  loadAllDevices(): Observable<DeviceDTO[]> {
+  loadAllDevices(withState: boolean = false): Observable<DeviceDTO[]> {
+    if(withState)
+      return this.api.callApi<DeviceDTO[]>(`${apiEndpoints.DEVICES}?includeState=${withState}`,
+        "GET", {});
+
     return this.api.callApi<DeviceDTO[]>(apiEndpoints.DEVICES, "GET", {});
   }
 
-  toggleDevicePower(name: string) {
-    this.api.callApi(`${apiEndpoints.DEVICES}/${name}`, "PUT", {}).subscribe();
+  toggleDevicePower(name: string): Observable<LightConfigDTO | undefined> {
+    return this.api.callApi<LightConfigDTO | undefined>(`${apiEndpoints.DEVICES}/${name}`, "PUT", {});
   }
 
   addDevice(name: string, ip: string): Observable<DeviceDTO> {

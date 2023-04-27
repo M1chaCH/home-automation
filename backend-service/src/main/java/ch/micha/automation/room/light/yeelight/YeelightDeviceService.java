@@ -6,6 +6,7 @@ import ch.micha.automation.room.events.EventHandlerPriority;
 import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppStartupListener;
 import ch.micha.automation.room.light.configuration.LightConfig;
+import ch.micha.automation.room.light.yeelight.dtos.DeviceWithStateDTO;
 import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import ch.micha.automation.room.light.yeelight.interceptor.RequireLightConnection;
 import ch.micha.automation.room.scene.SceneService;
@@ -80,7 +81,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
     }
 
     @RequireLightConnection
-    public void togglePower(String name) {
+    public LightConfig togglePower(String name) {
         YeelightDeviceEntity entity = provider.findYeelightDevice(name);
         YeelightDevice device = entity.light();
         if(device == null)
@@ -90,10 +91,10 @@ public class YeelightDeviceService implements OnAppStartupListener {
             boolean on = isDeviceOn(device);
             device.setPower(!on);
             logger.log(Level.INFO, "toggled power of {0} to {1}", new Object[]{name, !on});
+            return !on ? loadConfig(entity) : null;
         } catch (YeelightResultErrorException | YeelightSocketException e) {
             throw new UnexpectedYeeLightException(entity.ip(), e);
         }
-
     }
 
     @RequireLightConnection
@@ -115,31 +116,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
     public Map<YeelightDeviceEntity, LightConfig> loadCurrentOnlineConfigs() {
         Map<YeelightDeviceEntity, LightConfig> lights = new HashMap<>();
 
-        for (YeelightDeviceEntity device : provider.getOnlineDevices()) {
-            try {
-                Map<YeelightProperty, String> properties = device.light()
-                        .getProperties(YeelightProperty.POWER, YeelightProperty.BRIGHTNESS, YeelightProperty.RGB);
-
-                int brightnes = Integer.parseInt(properties.get(YeelightProperty.BRIGHTNESS));
-                Color color = new Color(Integer.parseInt(properties.get(YeelightProperty.RGB)));
-
-                if("on".equals(properties.get(YeelightProperty.POWER))) {
-                    lights.put(device, new LightConfig(
-                            -1,
-                            "generated",
-                            color.getRed(),
-                            color.getGreen(),
-                            color.getBlue(),
-                            brightnes
-                    ));
-                }
-            } catch (YeelightResultErrorException | NullPointerException | NumberFormatException e) {
-                logger.log(Level.WARNING, "could not load properties of light at {0}: {1}",
-                        new Object[]{ device.ip(), e.getMessage() });
-            } catch (YeelightSocketException e) {
-                throw new UnexpectedYeeLightException(device.ip(), e);
-            }
-        }
+        provider.getOnlineDevices().forEach(d -> lights.put(d, loadConfig(d)));
 
         return lights;
     }
@@ -147,6 +124,24 @@ public class YeelightDeviceService implements OnAppStartupListener {
     public List<YeelightDeviceDTO> getAllDevices() {
         List<YeelightDeviceEntity> entities = new ArrayList<>(provider.getDevices());
         return entities.stream().map(e -> new YeelightDeviceDTO(e.name(), e.ip(), e.isOnline())).toList();
+    }
+
+    public List<DeviceWithStateDTO> getAllDevicesWithState() {
+        Map<YeelightDeviceEntity, LightConfig> onlineDevices = loadCurrentOnlineConfigs();
+        List<YeelightDeviceEntity> allDevices = new ArrayList<>(provider.getDevices());
+        List<DeviceWithStateDTO> response = new ArrayList<>();
+
+        for (YeelightDeviceEntity device : allDevices) {
+            LightConfig config = onlineDevices.get(device);
+            response.add(new DeviceWithStateDTO(
+                    device.name(),
+                    device.ip(),
+                    device.isOnline(),
+                    config
+            ));
+        }
+
+        return response;
     }
 
     public YeelightDeviceDTO addNewDevice(String name, String ip) {
@@ -206,6 +201,37 @@ public class YeelightDeviceService implements OnAppStartupListener {
         } catch (YeelightSocketException e) {
             logger.log(Level.INFO, "no connection available for device at {0}", ip);
             return null;
+        }
+    }
+
+    private LightConfig loadConfig(YeelightDeviceEntity device) {
+        try {
+            Map<YeelightProperty, String> properties = device.light()
+                    .getProperties(YeelightProperty.POWER, YeelightProperty.BRIGHTNESS, YeelightProperty.RGB);
+
+            int brightness = Integer.parseInt(properties.get(YeelightProperty.BRIGHTNESS));
+            Color color = new Color(Integer.parseInt(properties.get(YeelightProperty.RGB)));
+
+            if("on".equals(properties.get(YeelightProperty.POWER))) {
+                logger.log(Level.INFO, "loaded config of online device {0}", device.name());
+                return new LightConfig(
+                        -1,
+                        "generated",
+                        color.getRed(),
+                        color.getGreen(),
+                        color.getBlue(),
+                        brightness
+                );
+            }
+
+            logger.log(Level.INFO, "device {0} is powered of -> did not load state", device.name());
+            return null;
+        } catch (YeelightResultErrorException | NullPointerException | NumberFormatException e) {
+            logger.log(Level.WARNING, "could not load properties of light at {0}: {1}",
+                    new Object[]{ device.ip(), e.getMessage() });
+            return null;
+        } catch (YeelightSocketException e) {
+            throw new UnexpectedYeeLightException(device.ip(), e);
         }
     }
 

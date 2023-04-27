@@ -111,7 +111,7 @@
   border: none;
   background-color: transparent;
 }
-.devices .device-label #ip {
+.devices .device-label .small-paragraph {
   font-size: 15px;
   font-weight: 200;
   font-style: italic;
@@ -121,7 +121,7 @@
   height: 60px;
 }
 .devices .disconnected-device {
-  background-color: rgba(214, 40, 40, 0.5);
+  background-color: rgba(214, 40, 40, 0.5) !important;
 }
 .devices .connected-device {
   background-color: rgba(0, 48, 73, 0.7);

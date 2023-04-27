@@ -27,15 +27,18 @@
 </div>
 
 <div class="devices">
-    <div class="device-label" *ngFor="let device of devices" [class.connected-device]="device.online" [class.disconnected-device]="!device.online">
+    <div class="device-label"
+         *ngFor="let device of devices"
+         [class.connected-device]="device.online"
+         [class.disconnected-device]="!device.online">
         <app-hidden-input placeholder="Name"
                           [inputStyle]='{ "font-size": "20px", "font-weight": "600", "text-transform": "uppercase" }'
                           [initialValue]="device.name"
                           [lengthLimit]="50"
                           (saveRequest)="renameDevice($event, device)">
         </app-hidden-input>
-        <p id="ip">{{device.ip}}</p>
-        <div id="toggle">
+        <p class="small-paragraph">{{device.ip}}</p>
+        <div id="toggle" *ngIf="device.online">
             <app-fancy-button buttonIcon="bolt"
                               backgroundText="switch"
                               (buttonClicked)="toggleDevicePower(device.name)">
@@ -44,5 +47,12 @@
         <button class="delete" *ngIf="showRemove" (click)="removeDevice(device)">
             <span class="material-symbols-rounded">delete</span>
         </button>
+
+        <app-light-config-preview *ngIf="device.state else deviceNoPower"
+                                  [lightConfig]="device.state">
+        </app-light-config-preview>
+        <ng-template #deviceNoPower >
+            <p class="small-paragraph">Power: OFF</p>
+        </ng-template>
     </div>
 </div>

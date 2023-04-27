@@ -1,6 +1,7 @@
 package ch.micha.automation.room.light.yeelight;
 
 import ch.micha.automation.room.events.Logged;
+import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.yeelight.dtos.RenameYeelightDeviceDTO;
 import ch.micha.automation.room.light.yeelight.dtos.YeelightDeviceDTO;
 import jakarta.enterprise.context.RequestScoped;
@@ -22,7 +23,10 @@ public class YeelightDeviceResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStoredDevices() {
+    public Response getStoredDevices(@QueryParam("includeState") boolean state) {
+        if(state)
+            return Response.status(Response.Status.OK).entity(service.getAllDevicesWithState()).build();
+
         return Response.status(Response.Status.OK).entity(service.getAllDevices()).build();
     }
 
@@ -49,7 +53,10 @@ public class YeelightDeviceResource {
     @PUT
     @Path("{name}")
     public Response toggleDevicePower(@PathParam("name") String name) {
-        service.togglePower(name);
+        LightConfig currentConfig = service.togglePower(name);
+        if(currentConfig != null)
+            return Response.status(Response.Status.OK).entity(currentConfig).build();
+
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

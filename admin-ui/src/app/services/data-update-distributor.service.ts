@@ -5,7 +5,8 @@ export interface DataUpdateListener {
 }
 
 export type DataTopic  = "NEW_SCENE" | "UPDATED_SCENE" | "REMOVED_SCENE" |
-                         "NEW_LIGHT_CONFIG" | "UPDATED_LIGHT_CONFIG" | "REMOVED_LIGHT_CONFIG";
+                         "NEW_LIGHT_CONFIG" | "UPDATED_LIGHT_CONFIG" | "REMOVED_LIGHT_CONFIG" |
+                         "DEVICE_CONFIG_CHANGE";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class DataUpdateDistributorService {
     ["NEW_LIGHT_CONFIG", []],
     ["UPDATED_LIGHT_CONFIG", []],
     ["REMOVED_LIGHT_CONFIG", []],
+    ["DEVICE_CONFIG_CHANGE", []],
   ]);
 
   updateTopic(topic: DataTopic, data: any): void {

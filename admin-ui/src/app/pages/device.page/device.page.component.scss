@@ -135,7 +135,7 @@
       background-color: transparent;
     }
 
-    #ip {
+    .small-paragraph {
       font-size: 15px;
       font-weight: 200;
       font-style: italic;
@@ -148,7 +148,7 @@
   }
 
   .disconnected-device {
-    background-color: rgba(214, 40, 40, 0.5);
+    background-color: rgba(214, 40, 40, 0.5) !important;
   }
 
   .connected-device {

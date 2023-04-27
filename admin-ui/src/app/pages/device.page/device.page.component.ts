@@ -2,13 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {DeviceDTO} from "../../dtos/DeviceDTO";
 import {MessageDistributorService} from "../../services/message-distributor.service";
 import {DevicesService} from "../../services/devices.service";
+import {
+  DataTopic,
+  DataUpdateDistributorService,
+  DataUpdateListener
+} from "../../services/data-update-distributor.service";
 
 @Component({
   selector: 'app-device.page',
   templateUrl: './device.page.component.html',
   styleUrls: ['./device.page.component.scss']
 })
-export class DevicePageComponent implements OnInit{
+export class DevicePageComponent implements OnInit, DataUpdateListener{
   devices: DeviceDTO[] = [];
   nameToAdd: string = "";
   ipToAdd: string = "";
@@ -18,10 +23,19 @@ export class DevicePageComponent implements OnInit{
   constructor(
     private service: DevicesService,
     private messageDistributor: MessageDistributorService,
+    private dataUpdater: DataUpdateDistributorService,
   ) { }
 
   ngOnInit() {
-    this.service.loadAllDevices().subscribe(devices => this.devices = devices);
+    this.dataUpdater.registerListener(this, "DEVICE_CONFIG_CHANGE");
+    this.service.loadAllDevices(true).subscribe(devices => this.devices = devices);
+  }
+
+  updateData(topic: DataTopic, data: any): void {
+    if(topic === "DEVICE_CONFIG_CHANGE") {
+      const changedDevice: DeviceDTO = this.devices.find(d => d.name === data.name!)!;
+      changedDevice.state = data?.state;
+    }
   }
 
   closeAdd() {
@@ -31,7 +45,8 @@ export class DevicePageComponent implements OnInit{
   }
 
   toggleDevicePower(name: string): void {
-    this.service.toggleDevicePower(name);
+    this.service.toggleDevicePower(name).subscribe(config =>
+      this.dataUpdater.updateTopic("DEVICE_CONFIG_CHANGE", { name, state: config }));
   }
 
   addNew() {
