@@ -47,7 +47,7 @@ public class SpotifyApiService {
     private final String deviceName;
     private String deviceId;
 
-    private SpotifyAuthorisationDTO auth;
+    private SpotifyAuthorisationDTO cachedAuth;
     private boolean initialized = false;
 
     @Inject
@@ -63,7 +63,7 @@ public class SpotifyApiService {
     public void init(SpotifyAuthorisationDTO auth) {
         logger.log(Level.INFO, "initializing spotify api");
 
-        this.auth = auth;
+        this.cachedAuth = auth;
         initialized = true;
         this.deviceId = loadDefaultDevice();
 
@@ -111,14 +111,14 @@ public class SpotifyApiService {
     }
 
     public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyClientDTO client) {
-        return refreshTokenIfExpired(auth, client);
+        return refreshTokenIfExpired(cachedAuth, client);
     }
 
-    public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth, SpotifyClientDTO client) {
-        if(auth == null)
+    public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO currentAuth, SpotifyClientDTO client) {
+        if(currentAuth == null)
             throw new SpotifyNotAuthorizedException();
 
-        if(auth.getGeneratedAt() + auth.getExpiresIn() < Instant.now().getEpochSecond()) {
+        if(currentAuth.getGeneratedAt() + currentAuth.getExpiresIn() < Instant.now().getEpochSecond()) {
             logger.log(Level.INFO, "refreshing spotify access token");
             try {
                 HttpResponse<JsonNode> response = Unirest
@@ -126,7 +126,7 @@ public class SpotifyApiService {
                         .basicAuth(client.getClientId(), client.getClientSecret())
                         .header(CONTENT_TYPE_HEADER, CONTENT_TYPE_FORM)
                         .field("grant_type", "refresh_token")
-                        .field("refresh_token", auth.getRefreshToken())
+                        .field("refresh_token", currentAuth.getRefreshToken())
                         .asJson();
 
                 throwUnexpectedIfNeeded(response, "failed to refresh token");
@@ -142,9 +142,10 @@ public class SpotifyApiService {
                 if(!body.isNull("refresh_token")) {
                     createdDto.setRefreshToken(body.getString("refresh_token"));
                 } else {
-                    createdDto.setRefreshToken(auth.getRefreshToken());
+                    createdDto.setRefreshToken(currentAuth.getRefreshToken());
                 }
 
+                this.cachedAuth = createdDto;
                 return createdDto;
             } catch (UnirestException e) {
                 throw new UnexpectedSpotifyException(e);
@@ -330,7 +331,7 @@ public class SpotifyApiService {
 
         if(method.equals("get")) {
             return Unirest.get(endpoint)
-                    .header(SPOTIFY_AUTH_HEADER, auth.getTokenType() +  " " + auth.getAccessToken())
+                    .header(SPOTIFY_AUTH_HEADER, cachedAuth.getTokenType() +  " " + cachedAuth.getAccessToken())
                     .header(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
                     .queryString(queries)
                     .asJson();
@@ -346,7 +347,7 @@ public class SpotifyApiService {
             body = new JSONObject();
 
         return request
-                .header(SPOTIFY_AUTH_HEADER, auth.getTokenType() +  " " + auth.getAccessToken())
+                .header(SPOTIFY_AUTH_HEADER, cachedAuth.getTokenType() +  " " + cachedAuth.getAccessToken())
                 .header(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
                 .queryString(queries)
                 .body(body)
