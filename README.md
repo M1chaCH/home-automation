@@ -5,6 +5,11 @@ My goal is to be able to control the lights, music and maybe alarms via NFC -> A
 ### Initial Plan
 I will place a NFC tag on the door to my room. Then whenever I enter, I'll scan this tag with my iPhone. This will trigger an Apple shortcut that executes a remote ssh script. This script then calls the HTTP Endpoint to toggle the room.
 
+### Result
+This is how the initial plan is implemented at the moment. (activate sound)   
+
+https://user-images.githubusercontent.com/67689103/235185469-c7470b81-1dcb-4d6c-82ed-2b13836663fe.mov
+
 ## Run with docker
 1. clone this repo
 2. fill API properties (docker-compose env vars)
