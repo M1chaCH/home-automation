@@ -126,6 +126,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
         return entities.stream().map(e -> new YeelightDeviceDTO(e.name(), e.ip(), e.isOnline())).toList();
     }
 
+    @RequireLightConnection
     public List<DeviceWithStateDTO> getAllDevicesWithState() {
         Map<YeelightDeviceEntity, LightConfig> onlineDevices = loadCurrentOnlineConfigs();
         List<YeelightDeviceEntity> allDevices = new ArrayList<>(provider.getDevices());
@@ -204,6 +205,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
         }
     }
 
+    @RequireLightConnection
     private LightConfig loadConfig(YeelightDeviceEntity device) {
         try {
             Map<YeelightProperty, String> properties = device.light()

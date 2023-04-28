@@ -41,6 +41,13 @@ public class SpotifyResource {
         return Response.status(Response.Status.OK).entity(service.loadResources()).build();
     }
 
+    @GET
+    @Path("/player")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSpotifyPlayerState() {
+        return Response.status(Response.Status.OK).entity(service.loadCurrentPlayer()).build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response storeConnection(SpotifyCodeDTO dto) {
@@ -54,5 +61,19 @@ public class SpotifyResource {
     public Response togglePlayback() {
         service.togglePlayback();
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @PUT
+    @Path("/playback/next")
+    @SuppressWarnings("java:S1130") // says it never throws interrupt exception -> is not true
+    public Response skipToNextSong() throws InterruptedException {
+        return Response.status(Response.Status.OK).entity(service.skipToNextSong()).build();
+    }
+
+    @PUT
+    @Path("/playback/previous")
+    @SuppressWarnings("java:S1130") // says it never throws interrupt exception -> is not true
+    public Response previousSong() throws InterruptedException {
+        return Response.status(Response.Status.OK).entity(service.previousSong()).build();
     }
 }

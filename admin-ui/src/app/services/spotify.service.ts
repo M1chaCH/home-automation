@@ -5,6 +5,7 @@ import {apiEndpoints, appRoutes} from "../configuration/app.config";
 import {SpotifyClientDTO} from "../dtos/spotify/SpotifyClientDTO";
 import {environment} from "../../environments/environment";
 import {SpotifyResourceDTO} from "../dtos/spotify/SpotifyResourceDTO";
+import {SpotifyPlayerDTO} from "../dtos/spotify/SpotifyPlayerDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +31,24 @@ export class SpotifyService {
     });
   }
 
-  togglePlay(): void {
-    this.api.callApi(
+  loadPlayer(): Observable<SpotifyPlayerDTO> {
+    return this.api.callApi<SpotifyPlayerDTO>(apiEndpoints.SPOTIFY_PLAYER, "GET", undefined);
+  }
+
+  togglePlay(): Observable<void> {
+    return this.api.callApi(
       apiEndpoints.SPOTIFY_PLAYBACK,
       "PUT",
       undefined
-    ).subscribe(() => {});
+    );
+  }
+
+  nextSong(): Observable<SpotifyPlayerDTO> {
+    return this.api.callApi<SpotifyPlayerDTO>(`${apiEndpoints.SPOTIFY_PLAYBACK}/next`, "PUT", undefined);
+  }
+
+  previousSong(): Observable<SpotifyPlayerDTO> {
+    return this.api.callApi<SpotifyPlayerDTO>(`${apiEndpoints.SPOTIFY_PLAYBACK}/previous`, "PUT", undefined);
   }
 
   fetchResources(): Observable<SpotifyResourceDTO[]> {

@@ -5,11 +5,8 @@ import ch.micha.automation.room.cache.EntityCacheFactory;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyException;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyNotAuthorizedException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSpotifyException;
-import ch.micha.automation.room.spotify.dtos.SpotifyPlayerState;
+import ch.micha.automation.room.spotify.dtos.*;
 import ch.micha.automation.room.spotify.interceptor.SpotifyAuthorized;
-import ch.micha.automation.room.spotify.dtos.SpotifyAuthorisationDTO;
-import ch.micha.automation.room.spotify.dtos.SpotifyClientDTO;
-import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -19,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -152,6 +150,78 @@ public class SpotifyApiService {
             }
         }
         return null;
+    }
+
+    @SpotifyAuthorized
+    public SpotifyPlayerDTO getPlayer() {
+        try {
+            logger.log(Level.INFO, "loading current spotify player");
+
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX, "get", null, null);
+            if(response.getStatus() == 204)
+                return null;
+
+            throwUnexpectedIfNeeded(response, "failed to load playback state");
+
+            JSONObject body = response.getBody().getObject();
+            JSONObject item = body.getJSONObject("item");
+            String songName = item.getString("name");
+            String trackUrl = item.getJSONObject("external_urls").getString("spotify");
+
+            JSONObject album = body.getJSONObject("item").getJSONObject("album");
+            String artistName = album.getJSONArray("artists").getJSONObject(0).getString("name");
+            String albumName = album.getString("name");
+
+            JSONArray images = album.getJSONArray("images");
+            String albumCoverUrl = images.getJSONObject(0).getString("url");
+
+            String currentDeviceName = body.getJSONObject("device").getString("name");
+            boolean playing = body.getBoolean("is_playing");
+
+            logger.log(Level.INFO, "successfully fetched spotify player");
+            return new SpotifyPlayerDTO(
+                    songName,
+                    artistName,
+                    albumName,
+                    albumCoverUrl,
+                    currentDeviceName,
+                    trackUrl,
+                    playing
+            );
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        } catch (JSONException e) {
+            logger.log(Level.WARNING, "failed to parse response for spotify player: {0}", e.getMessage());
+            throw new UnexpectedSpotifyException("could not parse json");
+        }
+    }
+
+    @SpotifyAuthorized
+    public void nextSong() {
+        try {
+            logger.log(Level.INFO, "skipping song");
+
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/next", "post", null, Map.of("device_id", deviceId));
+            throwUnexpectedIfNeeded(response, "failed to skip song");
+
+            logger.log(Level.INFO, "successfully skipped song");
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
+    }
+
+    @SpotifyAuthorized
+    public void previousSong() {
+        try {
+            logger.log(Level.INFO, "moving to previous song");
+
+            HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/previous", "post", null, Map.of("device_id", deviceId));
+            throwUnexpectedIfNeeded(response, "failed to go to previous song");
+
+            logger.log(Level.INFO, "successfully moved to next song");
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
     }
 
     @SpotifyAuthorized

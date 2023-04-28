@@ -19,6 +19,7 @@ import java.util.logging.Logger;
  */
 @ApplicationScoped
 public class SpotifyService implements OnAppStartupListener {
+    private static final int CHANGE_SONG_DURATION = 500;
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private final SpotifyProvider provider;
@@ -64,8 +65,24 @@ public class SpotifyService implements OnAppStartupListener {
         api.pausePlayback();
     }
 
+    public SpotifyPlayerDTO skipToNextSong() throws InterruptedException {
+        this.api.nextSong();
+        Thread.sleep(CHANGE_SONG_DURATION);
+        return this.api.getPlayer();
+    }
+
+    public SpotifyPlayerDTO previousSong() throws InterruptedException {
+        this.api.previousSong();
+        Thread.sleep(CHANGE_SONG_DURATION);
+        return this.api.getPlayer();
+    }
+
     public List<SpotifyResourceDTO> loadResources() {
         return api.getSavedSpotifyResources();
+    }
+
+    public SpotifyPlayerDTO loadCurrentPlayer() {
+        return api.getPlayer();
     }
 
     public void addAuthorisation(SpotifyCodeDTO dto) {

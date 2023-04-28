@@ -28,6 +28,8 @@ import { ColorPickerComponent } from './components/color-picker/color-picker.com
 import {RgbsConvertPipe} from "./pipes/light-config-converters/rgba-convert.pipe";
 import { VerifyPopupComponent } from './components/verify-popup/verify-popup.component';
 import { LightConfigPreviewComponent } from './components/light-config-preview/light-config-preview.component';
+import { SpotifyPlayerComponent } from './components/spotify/spotify.player/spotify.player.component';
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -53,6 +55,7 @@ import { LightConfigPreviewComponent } from './components/light-config-preview/l
     ColorPickerComponent,
     VerifyPopupComponent,
     LightConfigPreviewComponent,
+    SpotifyPlayerComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,7 +64,8 @@ import { LightConfigPreviewComponent } from './components/light-config-preview/l
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    ColorPickerModule
+    ColorPickerModule,
+    NgOptimizedImage
   ],
   providers: [ ],
   bootstrap: [AppComponent]

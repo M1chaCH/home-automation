@@ -1,0 +1,83 @@
+.player-container {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+  grid-template-rows: 320px;
+}
+.player-container .album-cover {
+  width: 300px;
+  height: 300px;
+  transition: all 250ms ease-out;
+  justify-self: center;
+}
+.player-container .album-cover img {
+  width: 100%;
+  height: 100%;
+}
+.player-container .album-cover:hover {
+  scale: 1.02;
+  box-shadow: 0 0 20px 0 rgba(255, 255, 255, 0.2);
+}
+.player-container .player {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+}
+.player-container .player .controls {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: calc(33% - 10px) calc(33% - 10px) calc(33% - 10px);
+  grid-template-rows: 70px;
+  width: 100%;
+  margin-top: 5px;
+  justify-items: center;
+  align-items: center;
+  justify-self: center;
+  background: rgb(234, 226, 183);
+  background: linear-gradient(126deg, rgb(234, 226, 183) 0%, rgb(238, 199, 134) 50%, rgb(247, 127, 0) 100%);
+  border-radius: 35px;
+}
+.player-container .player .controls button {
+  all: unset;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 250ms ease-out;
+}
+.player-container .player .controls button span {
+  font-size: 30px;
+}
+.player-container .player .controls button:hover {
+  scale: 1.1;
+  color: #e5e5e5;
+}
+.player-container .player .controls button:active {
+  scale: 1.2;
+  color: #cbcbcb;
+}
+
+.disclaimer {
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 300;
+}
+
+@media (max-width: 750px) {
+  .player-container {
+    display: flex;
+    flex-flow: column;
+  }
+  .player-container .album-cover {
+    width: 80vw;
+    height: 80vw;
+    align-self: center;
+  }
+  .player-container .player h2, .player-container .player h3 {
+    margin: 0;
+  }
+}
+
+/*# sourceMappingURL=spotify.player.component.css.map */
