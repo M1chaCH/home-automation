@@ -2,6 +2,9 @@
     <h1>Spotify connected!</h1>
     <app-spotify-player></app-spotify-player>
     <app-spotify-resources></app-spotify-resources>
+    <div class="restart-speaker">
+        <app-fancy-button backgroundText="speaker" (buttonClicked)="restartSpeaker()" buttonIcon="restart_alt"></app-fancy-button>
+    </div>
 </ng-container>
 <ng-template #unauthorized>
     <app-spotify-authorisation

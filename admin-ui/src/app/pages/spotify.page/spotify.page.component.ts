@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {Observable} from "rxjs";
 import {SpotifyService} from "../../services/spotify.service";
 import {ActivatedRoute} from "@angular/router";
+import {MessageDistributorService} from "../../services/message-distributor.service";
 
 @Component({
   selector: 'app-spotify.page',
@@ -23,6 +24,7 @@ export class SpotifyPageComponent {
   constructor(
     private service: SpotifyService,
     private route: ActivatedRoute,
+    private messageDistributor: MessageDistributorService,
   ) {
     this.spotifyAuthorisation$ = service.isAuthorized();
 
@@ -39,5 +41,10 @@ export class SpotifyPageComponent {
         this.callback = true;
       });
     }
+  }
+
+  restartSpeaker() {
+    this.service.restartSpeaker().subscribe(() =>
+      this.messageDistributor.pushMessage("INFO", "restarted spotify speaker"));
   }
 }

@@ -92,4 +92,8 @@ export class SpotifyService {
       });
     });
   }
+
+  restartSpeaker(): Observable<void> {
+    return this.api.callApi<void>(apiEndpoints.SPEAKER, "PUT", undefined);
+  }
 }

@@ -30,6 +30,13 @@ services:
             - ROOM_AUTOMATION_SPOTIFY_DEVICE=
             - ROOM_AUTOMATION_SPOTIFY_ID=
             - ROOM_AUTOMATION_SPOTIFY_SECRET=
+            - ROOM_AUTOMATION_SPEAKER_HOST=
+            - ROOM_AUTOMATION_SPEAKER_USER=
+            - ROOM_AUTOMATION_SPEAKER_PASSWORD=
+            - ROOM_AUTOMATION_SPEAKER_COMMAND=
+#             in minutes:
+            - ROOM_AUTOMATION_CACHE_LIFETIME=30
+            - ROOM_AUTOMATION_DEVICE_CONNECTION_LIFETIME=60
         depends_on:
             - room-automation-db
         networks:
