@@ -21,6 +21,13 @@ public class LightConnectionVerifier {
         this.deviceService = deviceService;
     }
 
+    /**
+     * executed before all methods annotated with @RequireLightConnection
+     * checks if the device connection is expired, if so reloads all devices
+     * @param invocationContext context with information about the invocation
+     * @return the return value of the annotated method
+     * @throws Exception the exceptions to the annotated method
+     */
     @AroundInvoke
     public Object intercept(InvocationContext invocationContext) throws Exception {
         if(deviceService.isDeviceConnectionExpired()) {

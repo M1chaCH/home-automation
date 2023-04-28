@@ -39,6 +39,11 @@ public class SpeakerService {
         this.speakerRestartCommand = speakerRestartCommand;
     }
 
+    /**
+     * tries to restart the configured speaker device
+     * if no device is configured nothing happens
+     * @throws SpeakerRestartException if an error in the process occurs
+     */
     public void restartSpeaker() {
         if(DEFAULT_PROPERTY_VALUE.equals(speakerHost)
                 || DEFAULT_PROPERTY_VALUE.equals(sshUsername)

@@ -19,18 +19,22 @@ import java.util.logging.Logger;
  */
 @ApplicationScoped
 public class SpotifyService implements OnAppStartupListener {
-    private static final int CHANGE_SONG_DURATION = 500;
+    private static final int CHANGE_SONG_DURATION = 400;
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private final SpotifyProvider provider;
-    private final SpotifyApiService api;
+    private final SpotifyApiWrapper api;
 
     @Inject
-    public SpotifyService(SpotifyProvider provider, SpotifyApiService api) {
+    public SpotifyService(SpotifyProvider provider, SpotifyApiWrapper api) {
         this.provider = provider;
         this.api = api;
     }
 
+    /**
+     * makes sure that the stored auth is refreshed, if no auth stored nothing happens
+     * also makes sure that the SpotifyApiWrapper is initialized with the correct auth
+     */
     @Override
     public void onAppStartup() {
         try {
@@ -41,6 +45,10 @@ public class SpotifyService implements OnAppStartupListener {
         }
     }
 
+    /**
+     * checks if anything is playing, then toggles the player state
+     * if no player is active then nothing happens (only resumes, never starts)
+     */
     public void togglePlayback() {
         if(api.getPlayerState().equals(SpotifyPlayerState.PLAYING))
             api.pausePlayback();
@@ -48,12 +56,21 @@ public class SpotifyService implements OnAppStartupListener {
             api.resumePlayback();
     }
 
+    /**
+     * starts a context, also sets the player to shuffle
+     * @param context the volume and the url to start
+     */
     public void startContext(SpotifyContextDTO context) {
         api.setPlaybackVolume(context.getVolume());
         api.setPlaybackShuffle(true);
         api.playContext(context.getContext());
     }
 
+    /**
+     * checks the current player state, if no player is active then starts at the given context, else just resumes the
+     * player
+     * @param context the volume and the url to start
+     */
     public void resumePlayerOrStartContext(SpotifyContextDTO context) {
         if(api.getPlayerState().equals(SpotifyPlayerState.STOPPED))
             startContext(context);
@@ -61,30 +78,59 @@ public class SpotifyService implements OnAppStartupListener {
             api.resumePlayback();
     }
 
+    /**
+     * does nothing but pauses the playback
+     * if nothing is playing then nothing happens
+     */
     public void pausePlayback() {
         api.pausePlayback();
     }
 
+    /**
+     * skips to the next song and loads the future player. Needs to wait a bit to make sure the player on spotify side
+     * has updated, otherwise the new player won't be updated
+     * @return the player with the next song
+     * @throws InterruptedException if the wait is interrupted
+     */
     public SpotifyPlayerDTO skipToNextSong() throws InterruptedException {
         this.api.nextSong();
         Thread.sleep(CHANGE_SONG_DURATION);
         return this.api.getPlayer();
     }
 
+    /**
+     * moves to the previous song and loads the future player. Needs to wait a bit to make sure the player on spotify side
+     * has updated, otherwise the new player won't be updated
+     * @return the player with the previous song
+     * @throws InterruptedException if the wait is interrupted
+     */
     public SpotifyPlayerDTO previousSong() throws InterruptedException {
         this.api.previousSong();
         Thread.sleep(CHANGE_SONG_DURATION);
         return this.api.getPlayer();
     }
 
+    /**
+     * @return spotify resources (first 50 liked or owned playlists of current user)
+     */
     public List<SpotifyResourceDTO> loadResources() {
         return api.getSavedSpotifyResources();
     }
 
+    /**
+     * @return the current spotify player, null if none active
+     */
     public SpotifyPlayerDTO loadCurrentPlayer() {
         return api.getPlayer();
     }
 
+    /**
+     * configure a new auth token set
+     * only needs to be done once after first authorisation
+     * also re-initializes the api instance
+     * @param dto the new auth token set
+     * @throws SpotifyAlreadyAuthorizedException if a second auth set was tried to be added
+     */
     public void addAuthorisation(SpotifyCodeDTO dto) {
         SpotifyClientDTO client = getClient();
         SpotifyAuthorisationDTO auth = api.requestAccessToken(dto.getCode(), dto.getRedirectUrl(), client);
@@ -94,18 +140,33 @@ public class SpotifyService implements OnAppStartupListener {
             throw new SpotifyAlreadyAuthorizedException();
     }
 
+    /**
+     * @return the current auth token set to access spotify (best to not send this to the client)
+     */
     public SpotifyAuthorisationDTO getAccess() {
         return provider.findAuth().orElseThrow(SpotifyNotAuthorizedException::new);
     }
 
+    /**
+     * @return the "credentials" to the spotify developer account (treat with caution)
+     */
     public SpotifyClientDTO getClient() {
         return provider.getClient();
     }
 
+    /**
+     * wrapper for {@link #refreshTokenIfExpired(SpotifyAuthorisationDTO)}
+     */
     public void refreshTokenIfExpired() {
         refreshTokenIfExpired(null);
     }
 
+    /**
+     * runs the refreshTokenIfExpired method from the API, if an update was done then updates the token in the DB
+     * @param auth the current auth token set (optional - if not present uses cached one from api, used on initialize
+     *             when api has nothing cached)
+     * @return the current & working token set
+     */
     private SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth) {
         SpotifyAuthorisationDTO newAuth;
         if(auth != null)
@@ -120,6 +181,10 @@ public class SpotifyService implements OnAppStartupListener {
         return auth;
     }
 
+    /**
+     * expects the api to always be initialized if auth is configured
+     * @return true: the api is initialized and ready to use
+     */
     public boolean isSpotifyAuthorized() {
         return api.isInitialized();
     }

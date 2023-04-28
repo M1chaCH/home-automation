@@ -62,13 +62,17 @@ public class SceneService implements OnAppStartupListener {
         sceneProvider.addDeviceToScene(id, 0, 0);
     }
 
+    /**
+     * loads the default scene and extracts its spotify context
+     * @return the spotify context from the default scene
+     */
     public SpotifyContextDTO getDefaultSpotifyContext() {
         SceneEntity scene = sceneProvider.loadDefaultScene();
         return new SpotifyContextDTO(scene.spotifyResource(), scene.spotifyVolume());
     }
 
     /**
-     * prepares the room to be left alone. (alarms will also be disabled, will be enabled on the next entry)
+     * prepares the room to be left alone.
      */
     public void shutdown() {
         yeelightDeviceService.powerAllOff();

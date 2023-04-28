@@ -41,7 +41,8 @@ public class YeelightDeviceService implements OnAppStartupListener {
 
     @Inject
     public YeelightDeviceService(YeelightDeviceProvider provider, SceneService sceneService,
-                                 @ConfigProperty(name = "room.automation.device.connection.lifetime") int deviceConnectionLifetimeMin) {
+                                 @ConfigProperty(name = "room.automation.device.connection.lifetime", defaultValue = "60")
+                                 int deviceConnectionLifetimeMin) {
         this.provider = provider;
         this.sceneService = sceneService;
         this.deviceConnectionLifetime = deviceConnectionLifetimeMin > 0 ? deviceConnectionLifetimeMin : 60;
@@ -80,6 +81,11 @@ public class YeelightDeviceService implements OnAppStartupListener {
         }
     }
 
+    /**
+     * loads the device by its name, checks the power state and toggles it
+     * @param name the device name to use
+     * @return the config of the light (if powered on, else if powered of returns "null")
+     */
     @RequireLightConnection
     public LightConfig togglePower(String name) {
         YeelightDeviceEntity entity = provider.findYeelightDevice(name);
@@ -112,6 +118,9 @@ public class YeelightDeviceService implements OnAppStartupListener {
         logger.log(Level.INFO, "powered {0} online devices off", onlineDevices.size());
     }
 
+    /**
+     * @return a map of the online devices with their current configs
+     */
     @RequireLightConnection
     public Map<YeelightDeviceEntity, LightConfig> loadCurrentOnlineConfigs() {
         Map<YeelightDeviceEntity, LightConfig> lights = new HashMap<>();
@@ -126,6 +135,10 @@ public class YeelightDeviceService implements OnAppStartupListener {
         return entities.stream().map(e -> new YeelightDeviceDTO(e.name(), e.ip(), e.isOnline())).toList();
     }
 
+    /**
+     * loads all devices and additionally loads the state of the online devices
+     * @return all devices and if they are online, then their state is included
+     */
     @RequireLightConnection
     public List<DeviceWithStateDTO> getAllDevicesWithState() {
         Map<YeelightDeviceEntity, LightConfig> onlineDevices = loadCurrentOnlineConfigs();
@@ -145,6 +158,12 @@ public class YeelightDeviceService implements OnAppStartupListener {
         return response;
     }
 
+    /**
+     * add a new device to the DB and the default scene
+     * @param name of the new device
+     * @param ip of the new device
+     * @return the created device DTO
+     */
     public YeelightDeviceDTO addNewDevice(String name, String ip) {
         YeelightDeviceEntity createdDevice = provider.saveNewEntity(new YeelightDeviceEntity(0, name, ip, null));
         YeelightDeviceEntity connectedDevice = new YeelightDeviceEntity(
@@ -167,6 +186,10 @@ public class YeelightDeviceService implements OnAppStartupListener {
         provider.deleteDevice(name);
     }
 
+    /**
+     * loads all device from the db and tries to connect to all of them
+     * (also resets the device cache in the provider)
+     */
     public void loadYeelightDevices() {
         List<YeelightDeviceEntity> storedDevices = provider.loadYeelightDeviceEntities();
         Map<Integer, YeelightDeviceEntity> devices = new HashMap<>();
@@ -190,6 +213,11 @@ public class YeelightDeviceService implements OnAppStartupListener {
         return devicesLoaded.plusSeconds(deviceConnectionLifetime * 60L).isBefore(Instant.now());
     }
 
+    /**
+     * tries to connect to a yeelight device (throws nothing)
+     * @param ip to connect to
+     * @return the connection YeelightDevice or null if connection failed
+     */
     private YeelightDevice tryToConnect(String ip) {
         try {
             YeelightDevice device = new YeelightDevice(
@@ -205,6 +233,10 @@ public class YeelightDeviceService implements OnAppStartupListener {
         }
     }
 
+    /**
+     * @param device the device to load from
+     * @return the current config, if device is powered of null is returned
+     */
     @RequireLightConnection
     private LightConfig loadConfig(YeelightDeviceEntity device) {
         try {

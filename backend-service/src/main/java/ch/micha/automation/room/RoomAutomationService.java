@@ -30,6 +30,12 @@ public class RoomAutomationService {
         this.scenes = scenes;
     }
 
+    /**
+     * toggles the room by an internal state.
+     * when first start ever, starts default scene
+     * when stopping, saves the current light state, when restarting after that applies this "saved" light state
+     * spotify either continues at last left of state or starts default scene audio
+     */
     public void toggleRoom() {
         if(!roomOn) {
             logger.log(Level.INFO, "toggling room ON");

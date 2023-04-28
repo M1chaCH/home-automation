@@ -17,6 +17,12 @@ public class SpotifyAuthorisationInterceptor {
         this.spotifyService = spotifyService;
     }
 
+    /**
+     * executed around every method that is annotated with @SpotifyAuthorized
+     * @param invocationContext context containing info about the invocation process
+     * @return the return type of the method that will be invoked
+     * @throws Exception if ever anything goes wrong (: (kind of "redirect all errors, if any occur")
+     */
     @AroundInvoke
     public Object intercept(InvocationContext invocationContext) throws Exception {
         spotifyService.refreshTokenIfExpired();

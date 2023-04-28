@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("java:S1192") // don't care about multiple same strings
 @ApplicationScoped
-public class SpotifyApiService {
+public class SpotifyApiWrapper {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     public static final String SPOTIFY_API = "https://api.spotify.com";
     public static final String SPOTIFY_AUTH_API = "https://accounts.spotify.com/api/token";
@@ -49,7 +49,7 @@ public class SpotifyApiService {
     private boolean initialized = false;
 
     @Inject
-    public SpotifyApiService(EntityCacheFactory cacheFactory,
+    public SpotifyApiWrapper(EntityCacheFactory cacheFactory,
                              @ConfigProperty(name = "room.automation.spotify.device") String deviceName,
                              @ConfigProperty(name = "room.automation.spotify.user") String user) {
         this.deviceName = deviceName;
@@ -58,6 +58,10 @@ public class SpotifyApiService {
         resourceCache = cacheFactory.build();
     }
 
+    /**
+     * caches the given auth and also loads the id of the configured default device from spotify
+     * @param auth a working set of the auth tokens
+     */
     public void init(SpotifyAuthorisationDTO auth) {
         logger.log(Level.INFO, "initializing spotify api");
 
@@ -68,6 +72,13 @@ public class SpotifyApiService {
         logger.log(Level.INFO, "successfully initialized spotify api");
     }
 
+    /**
+     * request a new token for the entire application
+     * @param code the code provided by spotify, basically says, user has granted access
+     * @param redirectUri the URL to be redirected to (just a security thing)
+     * @param client the "spotify dev account credentials"
+     * @return a new set of authentication tokens
+     */
     public SpotifyAuthorisationDTO requestAccessToken(String code, String redirectUri, SpotifyClientDTO client) {
         logger.log(Level.INFO, "requesting spotify access token");
 
@@ -108,10 +119,22 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * wrapper for {@link #refreshTokenIfExpired(SpotifyAuthorisationDTO, SpotifyClientDTO)}, will use cached auth
+     * @param client the configured client secrets
+     * @return the refreshed auth token set or null if not expired
+     */
     public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyClientDTO client) {
         return refreshTokenIfExpired(cachedAuth, client);
     }
 
+    /**
+     * checks if the token is expired, if so refreshes it and returns it
+     * @param currentAuth the auth token set to check if it expired
+     * @param client the configured client secrets
+     * @return the refreshed auth token set or null if not expired
+     * @throws SpotifyNotAuthorizedException if given auth was null
+     */
     public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO currentAuth, SpotifyClientDTO client) {
         if(currentAuth == null)
             throw new SpotifyNotAuthorizedException();
@@ -152,6 +175,9 @@ public class SpotifyApiService {
         return null;
     }
 
+    /**
+     * @return the current player, null if player stopped
+     */
     @SpotifyAuthorized
     public SpotifyPlayerDTO getPlayer() {
         try {
@@ -196,6 +222,9 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * tells spotify to move to the next song
+     */
     @SpotifyAuthorized
     public void nextSong() {
         try {
@@ -210,6 +239,9 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * tells spotify to move to the previous song
+     */
     @SpotifyAuthorized
     public void previousSong() {
         try {
@@ -224,6 +256,9 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * @return the state of the current player
+     */
     @SpotifyAuthorized
     public SpotifyPlayerState getPlayerState() {
         try {
@@ -245,6 +280,9 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * tells spotify to pause the playback
+     */
     @SpotifyAuthorized
     public void pausePlayback() {
         try {
@@ -263,6 +301,9 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * resumes the playback, if player is stopped nothing happens
+     */
     @SpotifyAuthorized
     public void resumePlayback() {
         try {
@@ -277,6 +318,10 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * starts or plays the given context uri
+     * @param contextUri the "thing" to play
+     */
     @SpotifyAuthorized
     public void playContext(String contextUri) {
         try {
@@ -294,6 +339,10 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * sets the volume of the current spotify player
+     * @param volume the volume in percent to apply
+     */
     @SpotifyAuthorized
     public void setPlaybackVolume(int volume) {
         try {
@@ -309,6 +358,10 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * sets to shuffle of the player
+     * @param shuffle the state of the shuffle to apply
+     */
     @SpotifyAuthorized
     public void setPlaybackShuffle(boolean shuffle) {
         try {
@@ -323,6 +376,12 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * loads the first 50 saved playlists from spotify
+     * these playlists are cached. this means they are only loaded from spotify after the cache expires.
+     * the cache is automatically updated
+     * @return the first 50 saved playlists
+     */
     @SpotifyAuthorized
     public List<SpotifyResourceDTO> getSavedSpotifyResources() {
         try {
@@ -366,6 +425,9 @@ public class SpotifyApiService {
         }
     }
 
+    /**
+     * @return the spotify device id to the configured default device
+     */
     private String loadDefaultDevice() {
         try {
             logger.log(Level.INFO, "loading configured device: {0}", deviceName);
@@ -424,6 +486,12 @@ public class SpotifyApiService {
                 .asJson();
     }
 
+    /**
+     * if the response status is an error (> 206) then logs the error, including the error body and throws an unexpected
+     * spotify exception
+     * @param response the response from the spotify api call
+     * @param message the message to give to the thrown error
+     */
     private void throwUnexpectedIfNeeded(HttpResponse<JsonNode> response, String message){
         if(response.getStatus() > 206) {
             try {

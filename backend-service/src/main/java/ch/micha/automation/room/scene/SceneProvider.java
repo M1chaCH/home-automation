@@ -136,10 +136,14 @@ public class SceneProvider {
             int generatedId = generatedIdKeys.getInt(ID_COLUMN);
             logger.log(Level.INFO, "created new scene: {0}-{1}", new Object[]{generatedId, name});
 
-            if(defaultScene)
-                unsetOldDefaultScene(generatedId);
+            if(defaultScene) {
+                unsetOldDefaultScene();
+                this.defaultSceneId = generatedId;
+                logger.log(Level.INFO, "new default scene is: {0}", defaultSceneId);
+            }
 
             saveChangedLightConfigs(generatedId, newLightConfigs);
+            logger.log(Level.INFO, "successfully created new scene and saved configs {0}-{1}", new Object[]{generatedId, name});
             return new SceneEntity(generatedId, name, defaultScene, newLightConfigs, spotifyResource, spotifyVolume);
         } catch (PSQLException e) {
             throwKnownAlreadyExists(e, name);
@@ -149,6 +153,14 @@ public class SceneProvider {
         }
     }
 
+    /**
+     * updates a scene, also runs {@link #saveChangedLightConfigs(int, Map)}
+     * @param id the id of the scene to update
+     * @param name the new name
+     * @param spotifyResource the new resource
+     * @param spotifyVolume the new volume
+     * @param lightConfigs the new lights and their configs
+     */
     public void updateScene(int id, String name, String spotifyResource, int spotifyVolume, Map<YeelightDeviceEntity, LightConfig> lightConfigs) {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "UPDATE scene SET name = ?, spotify_resource = ?, spotify_volume = ? where id = ?;"
@@ -222,6 +234,12 @@ public class SceneProvider {
         }
     }
 
+    /**
+     * adds a device to a scene (inserts into device_light_scene table)
+     * @param deviceId the device to add to the scene
+     * @param configId if 0 -> uses default configId, if no default config exists -> its created
+     * @param sceneId if 0 -> uses default sceneId, if no default scene exists -> default scene is created
+     */
     public void addDeviceToScene(int deviceId, int configId, int sceneId){
         logger.log(Level.INFO, "adding device {0} to default scene", deviceId);
         if(configId < 1) {
@@ -251,6 +269,12 @@ public class SceneProvider {
         }
     }
 
+    /**
+     * selects all scenes from their db and resolves the light configs in one query
+     * because its only one query we need to handle the result set weired. there are duplicated rows because of the
+     * device_light_config resolution.
+     * @return all scene entities from the DB
+     */
     public List<SceneEntity> loadScenes() {
         final String query = """
                  SELECT
@@ -303,6 +327,11 @@ public class SceneProvider {
         }
     }
 
+    /**
+     * resolves the devices and their configs of a given scene
+     * @param sceneId the scene to search for
+     * @return all devices and their configs (of the scene)
+     */
     private Map<YeelightDeviceEntity, LightConfig> loadDeviceLightConfigs(int sceneId) {
         Map<YeelightDeviceEntity, LightConfig> deviceLightConfigs = new HashMap<>();
         String query = "SELECT * FROM device_light_scene WHERE scene_id=?;";
@@ -337,7 +366,7 @@ public class SceneProvider {
     /**
      * expects the new default scene to be saved already (with default scene set to true)
      */
-    private void unsetOldDefaultScene(int newDefaultSceneId) {
+    private void unsetOldDefaultScene() {
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
                 "UPDATE scene " +
                         "SET default_scene = false " +
@@ -346,7 +375,7 @@ public class SceneProvider {
             statement.setInt(1, defaultSceneId);
             statement.execute();
 
-            logger.log(Level.INFO, "saved new default scene: {0}", newDefaultSceneId);
+            logger.log(Level.INFO, "{0} is set to no longer be default scene", defaultSceneId);
         } catch (SQLException e) {
             throw new UnexpectedSqlException(e);
         }
