@@ -6,10 +6,10 @@ import {DeviceDTO} from "../../dtos/DeviceDTO";
 import {firstValueFrom, Observable} from "rxjs";
 import {DevicesService} from "../../services/devices.service";
 import {LightConfigDTO} from "../../dtos/scene/LightConfigDTO";
-import {SceneDTO} from "../../dtos/scene/SceneDTO";
 import {SceneLightConfigDTO} from "../../dtos/scene/SceneLightConfigDTO";
 import {DataUpdateDistributorService} from "../../services/data-update-distributor.service";
 import {MessageDistributorService} from "../../services/message-distributor.service";
+import {ChangeSceneDTO} from "../../dtos/scene/ChangeSceneDTO";
 
 @Component({
   selector: 'app-add-scene',
@@ -19,9 +19,9 @@ import {MessageDistributorService} from "../../services/message-distributor.serv
 })
 export class AddSceneComponent {
   active: boolean = false;
-  scene: SceneDTO = this.createEmptyScene();
+  scene: ChangeSceneDTO = this.createEmptyScene();
 
-  readonly addStages: string[] = [ "SCENE_NAME", "DEVICES", "DEVICES_X_CONFIGS", "SPOTIFY", "ALARM", "OVERVIEW" ];
+  readonly addStages: string[] = [ "SCENE_NAME", "DEVICES", "DEVICES_X_CONFIGS", "SPOTIFY", "OVERVIEW" ];
   currentAddStageIndex: number = 0;
 
   sceneNameControl: FormControl = new FormControl("");
@@ -94,7 +94,7 @@ export class AddSceneComponent {
     return this.scene.name.length >= 1 && this.scene.lights.length >= 1;
   }
 
-  private createEmptyScene(): SceneDTO {
+  private createEmptyScene(): ChangeSceneDTO {
     return {
       id: -1,
       name: "",

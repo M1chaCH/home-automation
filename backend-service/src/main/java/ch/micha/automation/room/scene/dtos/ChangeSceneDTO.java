@@ -1,6 +1,5 @@
 package ch.micha.automation.room.scene.dtos;
 
-import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
 import lombok.*;
 
 import java.util.List;
@@ -10,11 +9,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SceneDTO {
+public class ChangeSceneDTO {
     private int id;
     private String name;
     private boolean defaultScene;
-    private SpotifyResourceDTO spotifyResource;
+    private String spotifyResource;
     private int spotifyVolume;
     private List<SceneLightConfigDTO> lights;
 }

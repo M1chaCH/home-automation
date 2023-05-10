@@ -21,10 +21,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -393,25 +390,10 @@ public class SpotifyApiWrapper {
 
                 JSONObject body = response.getBody().getObject();
                 JSONArray jsonPlaylists = body.getJSONArray("items");
-                for (int i = 0; i < jsonPlaylists.length(); i++) {
-                    SpotifyResourceDTO playlist = new SpotifyResourceDTO();
-                    playlist.setName(jsonPlaylists.getJSONObject(i).getString("name"));
-                    playlist.setDescription(jsonPlaylists.getJSONObject(i).getString("description"));
-                    playlist.setSpotifyURI(jsonPlaylists.getJSONObject(i).getString("uri"));
-                    playlist.setHref(jsonPlaylists
-                            .getJSONObject(i)
-                            .getJSONObject("external_urls")
-                            .getString("spotify")
-                    );
-                    playlist.setImageUrl(jsonPlaylists
-                            .getJSONObject(i)
-                            .getJSONArray("images")
-                            .getJSONObject(0)
-                            .getString("url")
-                    );
 
-                    playlists.add(playlist);
-                }
+                for (int i = 0; i < jsonPlaylists.length(); i++)
+                    playlists.add(parseResource(jsonPlaylists.getJSONObject(i)));
+
                 resourceCache.store(playlists);
             } else {
                 logger.log(Level.INFO, "loading playlists from cache");
@@ -420,6 +402,46 @@ public class SpotifyApiWrapper {
 
             logger.log(Level.INFO, "successfully loaded {0} playlists", playlists.size());
             return playlists;
+        } catch (UnirestException e) {
+            throw new UnexpectedSpotifyException(e);
+        }
+    }
+
+    /**
+     * loads a specific playlist
+     * the playlists are cached. this means they are only loaded from spotify after the cache expires.
+     * the cache is automatically updated
+     * @return the searched playlist
+     */
+    @SpotifyAuthorized
+    public Optional<SpotifyResourceDTO> getSavedSpotifyResource(String resourceUri) {
+        logger.log(Level.INFO, "searching for playlist: {0}", resourceUri);
+
+        if(resourceUri == null || resourceUri.isBlank() || resourceUri.isEmpty())
+            return Optional.empty();
+
+        if(resourceCache.isValid()) {
+            Optional<SpotifyResourceDTO> cachedPlaylist = resourceCache.load().stream()
+                    .filter(p -> p.getSpotifyURI().equals(resourceUri))
+                    .findFirst();
+            if(cachedPlaylist.isPresent()) {
+                logger.log(Level.INFO, "found playlist in cache");
+                return cachedPlaylist;
+            }
+        }
+
+        try {
+            String playlistId = resourceUri.substring("spotify:playlist:".length());
+            logger.log(Level.INFO, "playlist not found in cache, searching spotify for playlist with id {0}", playlistId);
+            HttpResponse<JsonNode> response = callApi(String.format("/v1/playlists/%s", playlistId), "get", null,
+                    Map.of("fields", "name,description,uri,external_urls(spotify),images"));
+
+            if(response.getStatus() == 404)
+                return Optional.empty();
+            throwUnexpectedIfNeeded(response, "could not load playlist");
+
+            logger.log(Level.INFO, "successfully loaded playlist from spotify");
+            return Optional.of(parseResource(response.getBody().getObject()));
         } catch (UnirestException e) {
             throw new UnexpectedSpotifyException(e);
         }
@@ -484,6 +506,24 @@ public class SpotifyApiWrapper {
                 .queryString(queries)
                 .body(body)
                 .asJson();
+    }
+
+    private SpotifyResourceDTO parseResource(JSONObject spotifyPlaylist) {
+        SpotifyResourceDTO playlist = new SpotifyResourceDTO();
+        playlist.setName(spotifyPlaylist.getString("name"));
+        playlist.setDescription(spotifyPlaylist.getString("description"));
+        playlist.setSpotifyURI(spotifyPlaylist.getString("uri"));
+        playlist.setHref(spotifyPlaylist
+                .getJSONObject("external_urls")
+                .getString("spotify")
+        );
+        playlist.setImageUrl(spotifyPlaylist
+                .getJSONArray("images")
+                .getJSONObject(0)
+                .getString("url")
+        );
+
+        return playlist;
     }
 
     /**

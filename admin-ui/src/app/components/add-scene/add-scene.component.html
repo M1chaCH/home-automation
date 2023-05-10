@@ -64,14 +64,10 @@
             <div *ngSwitchCase="'SPOTIFY'" class="stage">
                 <p>spotify not implemented</p>
             </div>
-            <div *ngSwitchCase="'ALARM'" class="stage">
-                <p>alarm not implements</p>
-            </div>
             <div *ngSwitchCase="'OVERVIEW'" class="stage">
                 <p>Create new scene - <strong>{{scene.name}}</strong></p>
-                <p>With <strong>{{scene.lights.length}}</strong> devices,</p>
-                <p>no spotify integration</p>
-                <p>and no alarm.</p>
+                <p>With <strong>{{scene.lights.length}}</strong> devices</p>
+                <p>and no spotify integration</p>
             </div>
         </form>
     </div>
