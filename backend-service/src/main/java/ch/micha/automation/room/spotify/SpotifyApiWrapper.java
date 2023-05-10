@@ -135,7 +135,7 @@ public class SpotifyApiWrapper {
      * @return the refreshed auth token set or null if not expired
      * @throws SpotifyNotAuthorizedException if given auth was null
      */
-    public SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO currentAuth, SpotifyClientDTO client) {
+    public synchronized SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO currentAuth, SpotifyClientDTO client) {
         if(currentAuth == null)
             throw new SpotifyNotAuthorizedException();
 
