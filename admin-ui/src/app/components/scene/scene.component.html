@@ -42,23 +42,9 @@
         </div>
     </div>
 
-    <div *ngIf="scene.spotifyResource" class="spotify-resources">
-        <a class="image-container" [href]="scene.spotifyResource.href" target="_blank">
-            <img [src]="scene.spotifyResource.imageUrl" alt="😢"/>
-        </a>
-        <div class="info">
-            <h2>{{scene.spotifyResource.name}}</h2>
-            <div class="volume">
-                <label for="volume-range">{{scene.spotifyVolume}}%</label>
-                <input type="range" min="0" max="100" id="volume-range"
-                       class="fancy-slider"
-                       [style.--progress-start]="scene.spotifyVolume - 2 + '%'"
-                       [style.--progress-end]="scene.spotifyVolume + 2 + '%'"
-                       [(ngModel)]="scene.spotifyVolume"
-                       (ngModelChange)="edited = true"/>
-            </div>
-        </div>
-    </div>
+    <app-scene-audio [(activeResource)]="scene.spotifyResource" (activeResourceChange)="edited = true"
+                     [(activeVolume)]="scene.spotifyVolume" (activeVolumeChange)="edited = true">
+    </app-scene-audio>
 
     <div class="controls">
         <app-fancy-button *ngIf="edited else notChanged"

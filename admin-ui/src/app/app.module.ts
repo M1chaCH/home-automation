@@ -30,6 +30,8 @@ import { VerifyPopupComponent } from './components/verify-popup/verify-popup.com
 import { LightConfigPreviewComponent } from './components/light-config-preview/light-config-preview.component';
 import { SpotifyPlayerComponent } from './components/spotify/spotify.player/spotify.player.component';
 import {NgOptimizedImage} from "@angular/common";
+import { SceneAudioComponent } from './components/scene-audio/scene-audio.component';
+import { SpotifyResourceSelectorComponent } from './components/spotify/spotify.resource-selector/spotify.resource-selector.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import {NgOptimizedImage} from "@angular/common";
     VerifyPopupComponent,
     LightConfigPreviewComponent,
     SpotifyPlayerComponent,
+    SceneAudioComponent,
+    SpotifyResourceSelectorComponent,
   ],
   imports: [
     BrowserModule,

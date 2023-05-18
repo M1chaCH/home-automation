@@ -1,0 +1,15 @@
+<button class="header-button" [class.no-resource-selected]="!selectedResource" (click)="toggleDialog()">
+    {{selectedResource ? selectedResource.name : "Select resource"}}
+</button>
+<dialog id="resources-dialog">
+    <div class="resource-selector">
+        <input placeholder="Search"
+               [(ngModel)]="query"
+               (ngModelChange)="queryChanged($event)" autofocus
+               (keydown.enter)="resourceSelected()"/>
+        <button *ngFor="let resource of filteredResources" class="resource" (click)="resourceSelected(resource)">
+            <div class="image" [style.background-image]="'url(' + resource.imageUrl + ')'"></div>
+            <span>{{resource.name}}</span>
+        </button>
+    </div>
+</dialog>

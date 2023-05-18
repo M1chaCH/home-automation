@@ -1,0 +1,112 @@
+.header-button {
+  all: unset;
+  display: block;
+  width: 100%;
+  margin: 10px 0 10px 0;
+  font-size: 1.5em;
+  color: white;
+  font-weight: 700;
+  transition: all 250ms ease-out;
+}
+.header-button:hover {
+  cursor: pointer;
+  scale: 1.02;
+}
+
+.no-resource-selected {
+  opacity: 0.6;
+}
+
+#resources-dialog {
+  z-index: 100;
+  padding: 20px;
+  border: none;
+  border-radius: 20px;
+  background: rgb(0, 13, 20);
+  background: linear-gradient(155deg, rgb(0, 13, 20) 0%, rgb(2, 13, 27) 70%, rgb(5, 13, 35) 100%);
+  overflow: hidden;
+}
+#resources-dialog .resource-selector {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+  min-width: 200px;
+  width: 80vw;
+  max-width: 400px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+#resources-dialog .resource-selector input {
+  outline: none;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(234, 226, 183, 0.5);
+  font-family: "Work Sans", sans-serif;
+  font-size: 18px;
+  color: var(--black);
+  transition: all 250ms ease-out;
+}
+#resources-dialog .resource-selector input:hover {
+  background-color: rgba(234, 226, 183, 0.65);
+}
+#resources-dialog .resource-selector input:active, #resources-dialog .resource-selector input:focus {
+  background-color: rgba(234, 226, 183, 0.8);
+}
+#resources-dialog .resource-selector input::placeholder {
+  color: rgba(0, 13, 20, 0.5);
+}
+#resources-dialog .resource-selector input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(0, 13, 20, 0.5);
+}
+#resources-dialog .resource-selector .resource {
+  all: unset;
+  display: grid;
+  width: 100%;
+  grid-template-rows: 50px;
+  grid-template-columns: 25% 75%;
+}
+#resources-dialog .resource-selector .resource .image {
+  object-fit: cover;
+  width: 160%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  border-radius: 8px 0 0 8px;
+  mask: linear-gradient(to right, rgb(0, 0, 0) 0, rgb(0, 0, 0) 25%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
+  transition: all 250ms ease-out;
+}
+#resources-dialog .resource-selector .resource span {
+  align-self: center;
+  font-size: 25px;
+  font-weight: 600;
+  color: var(--white);
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+#resources-dialog .resource-selector .resource:hover {
+  cursor: pointer;
+}
+#resources-dialog .resource-selector .resource:hover .image {
+  transform: scale(1.1);
+}
+
+#resources-dialog[open] {
+  animation: show-dialog 300ms ease-out normal;
+}
+
+@keyframes show-dialog {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    height: 50px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+    height: 400px;
+  }
+}
+
+/*# sourceMappingURL=spotify.resource-selector.component.css.map */

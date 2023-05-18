@@ -1,0 +1,24 @@
+<div *ngIf="activeResource else noneActive" class="scene-audio-container">
+    <a class="image-container" [href]="activeResource.href" target="_blank">
+        <img [src]="activeResource.imageUrl" alt="😢"/>
+    </a>
+    <div class="info">
+        <app-spotify-resource-selector [(selectedResource)]="activeResource"
+                                       (selectedResourceChange)="activeResourceChange.emit($event)">
+        </app-spotify-resource-selector>
+        <div class="volume">
+            <label for="volume-range">{{activeVolume}}%</label>
+            <input type="range" min="0" max="100" id="volume-range"
+                   class="fancy-slider"
+                   [style.--progress-start]="activeVolume - 2 + '%'"
+                   [style.--progress-end]="activeVolume + 2 + '%'"
+                   [(ngModel)]="activeVolume"
+                   (ngModelChange)="activeVolumeChange.emit($event)"/>
+        </div>
+    </div>
+</div>
+<ng-template #noneActive>
+    <app-spotify-resource-selector [(selectedResource)]="activeResource"
+                                   (selectedResourceChange)="activeResourceChange.emit($event)">
+    </app-spotify-resource-selector>
+</ng-template>
