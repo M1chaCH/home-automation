@@ -28,7 +28,15 @@ export class SceneComponent {
   ) { }
 
   applyScene() {
-    this.service.applyScene(this.scene.id);
+    this.service.applyScene(this.scene.id).subscribe(response => {
+      if(response.failed)
+        this.messageDistributor.pushMessage("ERROR", "applied scene WITH ERRORS", {
+          type: "SCENE",
+          details: response
+        });
+      else
+        this.messageDistributor.pushMessage("INFO", "applied scene");
+    });
   }
 
   toggleOpen(index: number) {

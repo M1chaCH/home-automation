@@ -17,8 +17,13 @@ public class SpeakerRestartException extends AppException{
     public Response getResponse() {
         return Response
                 .status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorMessageDTO(message,
-                        String.format("could not restart speaker at %s: %s", host, message), ""))
+                .entity(getErrorMessage())
                 .build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO(message,
+            String.format("could not restart speaker at %s: %s", host, message), "");
     }
 }

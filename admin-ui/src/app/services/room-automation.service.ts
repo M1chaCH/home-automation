@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core";
 import {ApiService} from "./api.service";
 import {apiEndpoints} from "../configuration/app.config";
+import {Observable} from "rxjs";
+import {ToggleRoomResponseDTO} from "../dtos/ApplyResponseDTOs";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,7 @@ export class RoomAutomationService {
     private api: ApiService,
   ) { }
 
-  toggleRoom(): void {
-    this.api.callApi(apiEndpoints.AUTOMATION, "PUT", {}).subscribe();
+  toggleRoom(): Observable<ToggleRoomResponseDTO> {
+    return this.api.callApi<ToggleRoomResponseDTO>(apiEndpoints.AUTOMATION, "PUT", {});
   }
 }

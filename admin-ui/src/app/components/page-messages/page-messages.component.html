@@ -1,6 +1,9 @@
 <div class="messages-container">
   <ng-container *ngFor="let message of messageValues()">
-    <div class="message" [id]="'message-' + message.id">
+    <a class="message"
+       [routerLink]="messageRoute"
+       [state]="{ activeMessage: message }"
+       [id]="'message-' + message.id">
       <span *ngIf="message.type === 'INFO'"
             class="material-symbols-rounded"
             style="color: var(--prussian-blue); font-size: 25px;">info</span>
@@ -8,6 +11,6 @@
             class="material-symbols-rounded"
             style="color: var(--maximum-red); font-size: 25px;">error</span>
       <span>{{message.message}}</span>
-    </div>
+    </a>
   </ng-container>
 </div>

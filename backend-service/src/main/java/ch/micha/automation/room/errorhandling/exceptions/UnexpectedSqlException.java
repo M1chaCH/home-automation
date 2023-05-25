@@ -22,9 +22,14 @@ public class UnexpectedSqlException extends AppException {
     public Response getResponse() {
         return Response
                 .status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorMessageDTO("internal database error", String.format("{code:%s} {state:%s} {message:%s}",
-                        exception.getErrorCode(), exception.getSQLState(), exception.getMessage()),
-                        super.formatStackTraceToHtml(exception.getStackTrace())))
+                .entity(getErrorMessage())
                 .build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO("internal database error", String.format("{code:%s} {state:%s} {message:%s}",
+            exception.getErrorCode(), exception.getSQLState(), exception.getMessage()),
+            super.formatStackTraceToHtml(exception.getStackTrace()));
     }
 }

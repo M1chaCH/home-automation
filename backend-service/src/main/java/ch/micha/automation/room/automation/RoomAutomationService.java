@@ -1,5 +1,6 @@
-package ch.micha.automation.room;
+package ch.micha.automation.room.automation;
 
+import ch.micha.automation.room.errorhandling.SceneApplyResponseDTO;
 import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
@@ -36,22 +37,38 @@ public class RoomAutomationService {
      * when stopping, saves the current light state, when restarting after that applies this "saved" light state
      * spotify either continues at last left of state or starts default scene audio
      */
-    public void toggleRoom() {
+    public ToggleRoomResponseDTO toggleRoom() {
+        ToggleRoomResponseDTO response = new ToggleRoomResponseDTO();
         if(!roomOn) {
             logger.log(Level.INFO, "toggling room ON");
 
             if(currentLightConfigs == null) {
-                scenes.applyDefaultScene();
+                SceneApplyResponseDTO sceneResponse = scenes.applyDefaultScene();
+                response.setSuccess(!sceneResponse.isFailed());
             } else {
-                currentLightConfigs.forEach(devices::applyConfigToLight);
-                spotify.resumePlayerOrStartContext(scenes.getDefaultSpotifyContext());
+                try {
+                    currentLightConfigs.forEach(devices::applyConfigToLight);
+                    spotify.resumePlayerOrStartContext(scenes.getDefaultSpotifyContext());
+                    response.setSuccess(true);
+                } catch (Exception e) {
+                    response.setSuccess(false);
+                    logger.log(Level.INFO, "failed to 'resume' room", e);
+                }
             }
         } else {
             logger.log(Level.INFO, "toggling room OFF");
             currentLightConfigs = devices.loadCurrentOnlineConfigs();
 
-            scenes.shutdown();
+            try {
+                scenes.shutdown();
+                response.setSuccess(true);
+            } catch (Exception e) {
+                response.setSuccess(false);
+                logger.log(Level.INFO, "failed to shutdown room", e);
+            }
         }
         roomOn = !roomOn;
+        response.setOn(roomOn);
+        return response;
     }
 }

@@ -13,9 +13,14 @@ public class SpotifyAlreadyAuthorizedException extends AppException{
     public Response getResponse() {
         return Response
                 .status(Response.Status.FORBIDDEN)
-                .entity(new ErrorMessageDTO("spotify already authorized",
-                        "You already have access to spotify, this step is redundant",
-                        ""))
+                .entity(getErrorMessage())
                 .build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO("spotify already authorized",
+            "You already have access to spotify, this step is redundant",
+            "");
     }
 }

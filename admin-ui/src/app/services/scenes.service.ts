@@ -5,6 +5,7 @@ import {SceneDTO} from "../dtos/scene/SceneDTO";
 import {apiEndpoints} from "../configuration/app.config";
 import {LightConfigDTO} from "../dtos/scene/LightConfigDTO";
 import {ChangeSceneDTO} from "../dtos/scene/ChangeSceneDTO";
+import {SceneApplyResponseDTO} from "../dtos/ApplyResponseDTOs";
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,8 @@ export class ScenesService {
     private api: ApiService,
   ) { }
 
-  applyScene(id: number): void {
-    this.api.callApi<void>(`${apiEndpoints.SCENE}/${id}`, "POST", undefined).subscribe();
+  applyScene(id: number): Observable<SceneApplyResponseDTO> {
+    return this.api.callApi<SceneApplyResponseDTO>(`${apiEndpoints.SCENE}/${id}`, "POST", undefined);
   }
 
   loadScenes(): Observable<SceneDTO[]> {

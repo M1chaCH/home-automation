@@ -16,6 +16,7 @@
   pointer-events: none;
 }
 .messages-container .message {
+  text-decoration: none;
   height: 75px;
   width: 100%;
   background-color: var(--yellow-red);
@@ -43,6 +44,7 @@
 .messages-container .message:hover {
   box-shadow: 10px 10px 0 var(--lemon-meringue);
   transform: translateX(-2.5px) translateY(-2.5px);
+  cursor: pointer;
 }
 .messages-container .hide-message {
   animation: fly-out var(--message-animation-duration) ease-out forwards;

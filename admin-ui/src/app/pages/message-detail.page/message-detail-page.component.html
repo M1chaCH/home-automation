@@ -1,0 +1,45 @@
+<ng-container *ngIf="activeMessage else noMessage">
+    <p>TODO select from last 5 messages & fix message colors</p>
+    <h2>
+        <span class="message-type-badge" [class.error]="activeMessage.type === 'ERROR'">{{activeMessage.type}}</span>
+        {{activeMessage.message}}
+    </h2>
+
+    <div [ngSwitch]="activeMessage.data?.type" class="details">
+        <ng-template ngSwitchCase="SCENE">
+            <h3><span class="message-type-badge">{{activeMessage.data?.details.name}}</span> Scene</h3>
+            <div class="scene-responses">
+                <div class="response" *ngFor="let response of activeMessage.data?.details.responses">
+                    <p *ngIf="!response.failed else applyFailed"><strong>{{response.identifier}}</strong> success</p>
+                    <ng-template #applyFailed>
+                        <p>
+                            <strong>{{response.identifier}}</strong>
+                            <span class="message-type-badge error" style="margin-left: 5px;">failed</span>
+                        </p>
+
+                        <div class="failed-response">
+                            <p><strong>Error message: </strong> {{response.failCause.message}}</p>
+                            <p><strong>Details: </strong> {{response.failCause.details}}</p>
+                            <p *ngIf="response.failCause.htmlStack"><strong>Stack</strong></p>
+                            <p *ngIf="response.failCause.htmlStack"
+                               class="stack"
+                               [innerHTML]="response.failCause.htmlStack">
+                            </p>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template ngSwitchCase="ERROR">
+            <h3>Detailed message: </h3>
+            <p>{{activeMessage.data?.details.details}}</p>
+            <h3>Stack</h3>
+            <p *ngIf="activeMessage.data?.details.htmlStack"
+               class="stack" [innerHTML]="activeMessage.data?.details.htmlStack">
+            </p>
+        </ng-template>
+    </div>
+</ng-container>
+<ng-template #noMessage>
+    <p style="font-size: 17px;"><strong>404</strong> - No message could be found.</p>
+</ng-template>

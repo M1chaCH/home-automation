@@ -13,10 +13,15 @@ public class SpotifyException extends AppException{
 
     @Override
     public Response getResponse() {
-        return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessageDTO(
-                "failed to call spotify",
-                String.format("got with message %s", message),
-                ""
-        )).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(getErrorMessage()).build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO(
+            "failed to call spotify",
+            String.format("got with message %s", message),
+            ""
+        );
     }
 }

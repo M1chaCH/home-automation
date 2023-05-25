@@ -15,10 +15,15 @@ public class ResourceAlreadyExistsException extends AppException{
 
     @Override
     public Response getResponse() {
-        return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessageDTO(
-                String.format("given %s already exists", resourceName),
-                String.format("%s like '%s' already exists", resourceName, resourceValue),
-                ""
-        )).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(getErrorMessage()).build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO(
+            String.format("given %s already exists", resourceName),
+            String.format("%s like '%s' already exists", resourceName, resourceValue),
+            ""
+        );
     }
 }

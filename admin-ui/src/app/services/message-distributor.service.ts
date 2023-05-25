@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {MessageData} from "../pages/message-detail.page/message-detail-page.component";
 
 export interface MessageChangeListener {
   messageActivated(activatedMessage: ActiveMessage): void;
@@ -9,6 +10,7 @@ export type ActiveMessage = {
   id?: number,
   message: string,
   type: "ERROR" | "INFO",
+  data?: MessageData,
 };
 
 /**
@@ -31,9 +33,10 @@ export class MessageDistributorService {
    * Use this to display a message on the screen. The "page-messages" component will listen for it
    * @param type the type of the message
    * @param message the message
+   * @param data an optional parameter that can be used to add additional data to the message
    */
-  pushMessage(type: "ERROR" | "INFO", message: string) {
-    const activeMessage: ActiveMessage = { type, message };
+  pushMessage(type: "ERROR" | "INFO", message: string, data?: MessageData) {
+    const activeMessage: ActiveMessage = { type, message, data };
     this.messageIdIncrementor++;
     activeMessage.id = this.messageIdIncrementor;
     this.activeMessages.set(this.messageIdIncrementor, activeMessage);

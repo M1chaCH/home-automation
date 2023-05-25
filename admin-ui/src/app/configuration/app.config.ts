@@ -6,6 +6,7 @@ export const appRoutes = {
     SPOTIFY: "spotify",
     SPOTIFY_CALLBACK: "spotify/callback",
     DEVICES: "devices",
+    MESSAGE_DETAILS: "message",
 }
 
 export const apiEndpoints = {

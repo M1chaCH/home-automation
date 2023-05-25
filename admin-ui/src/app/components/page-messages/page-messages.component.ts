@@ -4,6 +4,7 @@ import {
   MessageChangeListener,
   MessageDistributorService
 } from "../../services/message-distributor.service";
+import {appRoutes} from "../../configuration/app.config";
 
 @Component({
   selector: 'app-page-messages',
@@ -17,6 +18,8 @@ export class PageMessagesComponent implements MessageChangeListener, OnInit {
   private readonly listenerId: number;
 
   messages: Map<number, ActiveMessage> = new Map<number, ActiveMessage>();
+
+  public readonly messageRoute: string = `/${appRoutes.ROOT}/${appRoutes.MESSAGE_DETAILS}`;
 
   constructor(
     private service: MessageDistributorService,

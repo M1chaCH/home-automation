@@ -18,10 +18,15 @@ public class UnexpectedSpotifyException extends AppException{
 
     @Override
     public Response getResponse() {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorMessageDTO(
-                "failed to call spotify",
-                String.format("got %s with message %s", exception.getClass().getSimpleName(), exception.getMessage()),
-                super.formatStackTraceToHtml(exception.getStackTrace())
-        )).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(getErrorMessage()).build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO(
+            "failed to call spotify",
+            String.format("got %s with message %s", exception.getClass().getSimpleName(), exception.getMessage()),
+            super.formatStackTraceToHtml(exception.getStackTrace())
+        );
     }
 }

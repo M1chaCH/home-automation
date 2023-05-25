@@ -1,4 +1,4 @@
-package ch.micha.automation.room;
+package ch.micha.automation.room.automation;
 
 import ch.micha.automation.room.events.Logged;
 import jakarta.enterprise.context.RequestScoped;
@@ -22,7 +22,6 @@ public class RoomAutomationResource {
     @PUT()
     @Produces(MediaType.APPLICATION_JSON)
     public Response toggleRoom() {
-        service.toggleRoom();
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.OK).entity(service.toggleRoom()).build();
     }
 }

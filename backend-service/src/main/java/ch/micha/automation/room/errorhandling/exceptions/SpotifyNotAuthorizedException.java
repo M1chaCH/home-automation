@@ -13,9 +13,14 @@ public class SpotifyNotAuthorizedException extends AppException{
     public Response getResponse() {
         return Response
                 .status(Response.Status.UNAUTHORIZED)
-                .entity(new ErrorMessageDTO("spotify not authorized",
-                        "you need to authorize spotify using the POST endpoint or the UI.",
-                        ""))
+                .entity(getErrorMessage())
                 .build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO("spotify not authorized",
+            "you need to authorize spotify using the POST endpoint or the UI.",
+            "");
     }
 }

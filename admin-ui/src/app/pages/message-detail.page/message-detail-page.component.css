@@ -1,0 +1,30 @@
+.message-type-badge {
+  padding: 5px;
+  margin-right: 10px;
+  border-radius: 5px;
+  width: fit-content;
+  background-color: color-mix(in srgb, var(--lemon-meringue) 40%, transparent);
+}
+.message-type-badge.error {
+  background-color: color-mix(in srgb, var(--maximum-red) 50%, transparent);
+}
+
+.details {
+  display: flex;
+  flex-flow: column;
+  margin-left: 5vw;
+}
+.details .scene-responses {
+  margin-left: 5vw;
+}
+.details .scene-responses .response .failed-response {
+  margin-left: 5vw;
+}
+.details h3 {
+  margin: 10px 0 0 0;
+}
+.details .stack {
+  word-break: break-all;
+}
+
+/*# sourceMappingURL=message-detail-page.component.css.map */

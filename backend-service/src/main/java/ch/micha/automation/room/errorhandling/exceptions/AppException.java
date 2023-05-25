@@ -1,5 +1,6 @@
 package ch.micha.automation.room.errorhandling.exceptions;
 
+import ch.micha.automation.room.errorhandling.ErrorMessageDTO;
 import jakarta.ws.rs.core.Response;
 
 /**
@@ -17,6 +18,8 @@ public abstract class AppException extends RuntimeException{
      * @return the response that will be sent to the client if the exception is thrown during an HTTP request.
      */
     public abstract Response getResponse();
+
+    public abstract ErrorMessageDTO getErrorMessage();
 
     protected AppException(String internalLogMessage, Throwable throwable, boolean serverError) {
         super(internalLogMessage, throwable);

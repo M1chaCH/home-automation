@@ -21,6 +21,7 @@
   pointer-events: none;
 
   .message {
+    text-decoration: none;
     height: 75px;
     width: 100%;
 
@@ -55,6 +56,7 @@
   .message:hover {
     box-shadow: 10px 10px 0 var(--lemon-meringue);
     transform: translateX(-2.5px) translateY(-2.5px);
+    cursor: pointer;
   }
 
   .hide-message {

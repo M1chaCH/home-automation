@@ -25,8 +25,13 @@ public class ResourceNotFoundException extends AppException{
     public Response getResponse() {
         return Response
                 .status(Response.Status.NOT_FOUND)
-                .entity(new ErrorMessageDTO(String.format("did not find %s with id '%s'", resourceName, resourceId),
-                        "", ""))
+                .entity(getErrorMessage())
                 .build();
+    }
+
+    @Override
+    public ErrorMessageDTO getErrorMessage() {
+        return new ErrorMessageDTO(String.format("did not find %s with id '%s'", resourceName, resourceId),
+            "", "");
     }
 }

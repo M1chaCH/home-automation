@@ -58,10 +58,9 @@ public class SceneResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response applyScene(@PathParam("sceneId") int sceneId) {
-        service.applyScene(sceneId);
-
         return Response
-                .status(Response.Status.NO_CONTENT)
-                .build();
+            .status(Response.Status.OK)
+            .entity(service.applyScene(sceneId))
+            .build();
     }
 }
