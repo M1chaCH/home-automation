@@ -17,7 +17,34 @@
   opacity: 0.6;
 }
 
-#resources-dialog {
+.resources-dialog-container {
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  gap: 10px;
+  display: none;
+  transition: all 200ms ease-out;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  backdrop-filter: blur(0);
+  z-index: 996;
+}
+.resources-dialog-container .header {
+  min-width: 200px;
+  width: 80vw;
+  max-width: 400px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  gap: 10px;
+}
+.resources-dialog-container .header .close-button {
+  aspect-ratio: 1/1;
+}
+.resources-dialog-container .resources-dialog {
   z-index: 100;
   padding: 20px;
   border: none;
@@ -26,7 +53,7 @@
   background: linear-gradient(155deg, rgb(0, 13, 20) 0%, rgb(2, 13, 27) 70%, rgb(5, 13, 35) 100%);
   overflow: hidden;
 }
-#resources-dialog .resource-selector {
+.resources-dialog-container .resources-dialog .resource-selector {
   display: flex;
   flex-flow: column;
   gap: 10px;
@@ -36,7 +63,7 @@
   max-height: 400px;
   overflow-y: auto;
 }
-#resources-dialog .resource-selector input {
+.resources-dialog-container .resources-dialog .resource-selector input {
   outline: none;
   border: none;
   padding: 8px;
@@ -47,26 +74,26 @@
   color: var(--black);
   transition: all 250ms ease-out;
 }
-#resources-dialog .resource-selector input:hover {
+.resources-dialog-container .resources-dialog .resource-selector input:hover {
   background-color: rgba(234, 226, 183, 0.65);
 }
-#resources-dialog .resource-selector input:active, #resources-dialog .resource-selector input:focus {
+.resources-dialog-container .resources-dialog .resource-selector input:active, .resources-dialog-container .resources-dialog .resource-selector input:focus {
   background-color: rgba(234, 226, 183, 0.8);
 }
-#resources-dialog .resource-selector input::placeholder {
+.resources-dialog-container .resources-dialog .resource-selector input::placeholder {
   color: rgba(0, 13, 20, 0.5);
 }
-#resources-dialog .resource-selector input::-ms-input-placeholder { /* Microsoft Edge */
+.resources-dialog-container .resources-dialog .resource-selector input::-ms-input-placeholder { /* Microsoft Edge */
   color: rgba(0, 13, 20, 0.5);
 }
-#resources-dialog .resource-selector .resource {
+.resources-dialog-container .resources-dialog .resource-selector .resource {
   all: unset;
   display: grid;
   width: 100%;
   grid-template-rows: 50px;
   grid-template-columns: 25% 75%;
 }
-#resources-dialog .resource-selector .resource .image {
+.resources-dialog-container .resources-dialog .resource-selector .resource .image {
   object-fit: cover;
   width: 160%;
   background-repeat: no-repeat;
@@ -76,7 +103,7 @@
   mask: linear-gradient(to right, rgb(0, 0, 0) 0, rgb(0, 0, 0) 25%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
   transition: all 250ms ease-out;
 }
-#resources-dialog .resource-selector .resource span {
+.resources-dialog-container .resources-dialog .resource-selector .resource span {
   align-self: center;
   font-size: 25px;
   font-weight: 600;
@@ -85,14 +112,24 @@
   overflow-x: hidden;
   white-space: nowrap;
 }
-#resources-dialog .resource-selector .resource:hover {
+.resources-dialog-container .resources-dialog .resource-selector .resource:hover {
   cursor: pointer;
 }
-#resources-dialog .resource-selector .resource:hover .image {
+.resources-dialog-container .resources-dialog .resource-selector .resource:hover .image {
   transform: scale(1.1);
 }
+.resources-dialog-container .delete-button {
+  min-width: 200px;
+  width: 80vw;
+  max-width: 400px;
+  height: 50px;
+}
 
-#resources-dialog[open] {
+.resources-dialog-container-open {
+  display: flex;
+  backdrop-filter: blur(20px);
+}
+.resources-dialog-container-open .resources-dialog {
   animation: show-dialog 300ms ease-out normal;
 }
 

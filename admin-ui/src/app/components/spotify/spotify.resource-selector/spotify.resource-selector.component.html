@@ -1,15 +1,30 @@
 <button class="header-button" [class.no-resource-selected]="!selectedResource" (click)="toggleDialog()">
     {{selectedResource ? selectedResource.name : "Select resource"}}
 </button>
-<dialog id="resources-dialog">
-    <div class="resource-selector">
-        <input placeholder="Search"
-               [(ngModel)]="query"
-               (ngModelChange)="queryChanged($event)" autofocus
-               (keydown.enter)="resourceSelected()"/>
-        <button *ngFor="let resource of filteredResources" class="resource" (click)="resourceSelected(resource)">
-            <div class="image" [style.background-image]="'url(' + resource.imageUrl + ')'"></div>
-            <span>{{resource.name}}</span>
-        </button>
+<div class="resources-dialog-container" [class.resources-dialog-container-open]="open">
+    <div class="header">
+        <h2>Select playlist</h2>
+        <app-fancy-button buttonIcon="close"
+                          backgroundText="X"
+                          (buttonClicked)="closeDialog()"
+                          class="close-button">
+        </app-fancy-button>
     </div>
-</dialog>
+    <div class="resources-dialog">
+        <div class="resource-selector">
+            <input placeholder="Search"
+                   [(ngModel)]="query"
+                   (ngModelChange)="queryChanged($event)" autofocus
+                   (keydown.enter)="resourceSelected()"/>
+            <button *ngFor="let resource of filteredResources" class="resource" (click)="resourceSelected(resource)">
+                <div class="image" [style.background-image]="'url(' + resource.imageUrl + ')'"></div>
+                <span>{{resource.name}}</span>
+            </button>
+        </div>
+    </div>
+    <app-fancy-button buttonIcon="delete"
+                      backgroundText="remove"
+                      (buttonClicked)="removeResource()"
+                      class="delete-button">
+    </app-fancy-button>
+</div>

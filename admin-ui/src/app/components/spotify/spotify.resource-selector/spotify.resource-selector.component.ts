@@ -16,10 +16,9 @@ export class SpotifyResourceSelectorComponent implements OnInit{
 
   filteredResources: SpotifyResourceDTO[] = [];
   query: string = "";
+  open: boolean = false;
 
-  private dialogElement!: HTMLDialogElement;
   private resources: SpotifyResourceDTO[] = [];
-  private open: boolean = false;
 
    constructor(
     private service: SpotifyService,
@@ -28,7 +27,6 @@ export class SpotifyResourceSelectorComponent implements OnInit{
   async ngOnInit(): Promise<void> {
      this.resources = await firstValueFrom(this.service.fetchResources());
      this.filteredResources = this.resources.slice(0, this.MAX_SHOWN_RESOURCES);
-     this.dialogElement = document.getElementById("resources-dialog") as HTMLDialogElement;
   }
 
   @HostListener('document:keydown.escape')
@@ -45,7 +43,6 @@ export class SpotifyResourceSelectorComponent implements OnInit{
      if(this.open) {
        this.closeDialog()
      } else {
-       this.dialogElement.show();
        this.open = true;
      }
   }
@@ -69,10 +66,15 @@ export class SpotifyResourceSelectorComponent implements OnInit{
      this.closeDialog();
   }
 
-  private closeDialog() {
+  removeResource(): void {
+     this.selectedResource = undefined;
+     this.selectedResourceChange.emit(undefined);
+     this.closeDialog();
+  }
+
+  closeDialog() {
     this.query = "";
     this.queryChanged("");
-    this.dialogElement.close();
     this.open = false;
   }
 }
