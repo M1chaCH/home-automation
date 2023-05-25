@@ -1,0 +1,174 @@
+.header-button {
+  all: unset;
+
+  display: block;
+  width: 100%;
+  margin: 10px 0 10px 0;
+  font-size: 1.5em;
+  color: white;
+  font-weight: 700;
+  transition: all 250ms ease-out;
+
+  &:hover {
+    cursor: pointer;
+    scale: 1.02;
+  }
+}
+
+.no-resource-selected {
+  opacity: 0.6;
+}
+
+.resources-dialog-container {
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  gap: 10px;
+
+  display: none;
+  transition: all 200ms ease-out;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  backdrop-filter: blur(0);
+  z-index: 996;
+
+  .header {
+    min-width: 200px;
+    width: 80vw;
+    max-width: 400px;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 10px;
+
+    .close-button {
+      aspect-ratio: 1/1;
+    }
+  }
+
+  .resources-dialog {
+    z-index: 100;
+    padding: 20px;
+    border: none;
+    border-radius: 20px;
+    background: rgb(0,13,20);
+    background: linear-gradient(155deg, rgba(0,13,20,1) 0%, rgba(2,13,27,1) 70%, rgba(5,13,35,1) 100%);
+    overflow: hidden;
+
+    .resource-selector {
+      display: flex;
+      flex-flow: column;
+      gap: 10px;
+
+      min-width: 200px;
+      width: 80vw;
+      max-width: 400px;
+      max-height: 400px;
+
+      overflow-y: auto;
+
+      input {
+        outline: none;
+        border: none;
+
+        padding: 8px;
+        border-radius: 8px;
+        background-color: rgba(234, 226, 183, 0.5);
+        font-family: 'Work Sans', sans-serif;
+        font-size: 18px;
+        color: var(--black);
+
+        transition: all 250ms ease-out;
+
+        &:hover {
+          background-color: rgba(234, 226, 183, 0.65);
+        }
+        &:active, &:focus {
+          background-color: rgba(234, 226, 183, 0.8);
+        }
+      }
+
+      input::placeholder {
+        color: rgba(0,13,20,0.5);
+      }
+      input::-ms-input-placeholder { /* Microsoft Edge */
+        color: rgba(0,13,20,0.5);
+      }
+
+      .resource {
+        all: unset;
+        display: grid;
+        width: 100%;
+        grid-template-rows: 50px;
+        grid-template-columns: 25% 75%;
+
+
+        .image {
+          object-fit: cover;
+          width: 160%;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 100%;
+          border-radius: 8px 0 0 8px;
+
+          mask: linear-gradient(to right,
+                  rgba(0,0,0, 1) 0, rgba(0,0,0, 1) 25%, rgba(0,0,0, 0.5) 60%, rgba(0,0,0, 0) 100%
+          ) 100% 50% / 100% 100% repeat-x;
+          transition: all 250ms ease-out;
+        }
+
+        span {
+          align-self: center;
+          font-size: 25px;
+          font-weight: 600;
+          color: var(--white);
+          text-overflow: ellipsis;
+          overflow-x: hidden;
+          white-space: nowrap;
+        }
+
+        &:hover {
+          cursor: pointer;
+          .image {
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+  }
+
+  .delete-button {
+    min-width: 200px;
+    width: 80vw;
+    max-width: 400px;
+    height: 50px;
+  }
+}
+
+.resources-dialog-container-open {
+  display: flex;
+  backdrop-filter: blur(20px);
+
+  .resources-dialog {
+    animation: show-dialog 300ms ease-out normal;
+  }
+}
+
+@keyframes show-dialog {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    height: 50px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+    height: 400px;
+  }
+}

@@ -5,6 +5,7 @@ import {DataUpdateDistributorService} from "../../services/data-update-distribut
 import {ScenesService} from "../../services/scenes.service";
 import {MessageDistributorService} from "../../services/message-distributor.service";
 import {LightConfigDTO} from "../../dtos/scene/LightConfigDTO";
+import {ChangeSceneDTO} from "../../dtos/scene/ChangeSceneDTO";
 
 @Component({
   selector: 'app-scene',
@@ -39,7 +40,7 @@ export class SceneComponent {
 
   renameScene(newName: string): void {
     this.scene.name = newName.toUpperCase();
-    this.service.updateScene(this.scene).subscribe(() => {
+    this.service.updateScene(this.parseToChangeScene(this.scene)).subscribe(() => {
       this.dataUpdater.updateTopic("UPDATED_SCENE", this.scene);
       this.messageDistributor.pushMessage("INFO", "Scene renamed.");
     });
@@ -54,10 +55,11 @@ export class SceneComponent {
     this.edited = true;
   }
 
-  saveChangedConfigs() {
-    this.service.updateScene(this.scene).subscribe(() => {
+  saveChanges() {
+    this.service.updateScene(this.parseToChangeScene(this.scene)).subscribe(() => {
       this.dataUpdater.updateTopic("UPDATED_SCENE", this.scene);
       this.messageDistributor.pushMessage("INFO", "Scene changes saved.");
+      this.edited = false;
     });
   }
 
@@ -72,5 +74,16 @@ export class SceneComponent {
         this.messageDistributor.pushMessage("INFO", `Deleted scene '${this.scene.name}.'`)
       });
     }
+  }
+
+  private parseToChangeScene(scene: SceneDTO): ChangeSceneDTO {
+    return {
+      id: scene.id,
+      name: scene.name,
+      defaultScene: scene.defaultScene,
+      lights: scene.lights,
+      spotifyResource: scene.spotifyResource?.spotifyURI,
+      spotifyVolume: scene.spotifyVolume
+    };
   }
 }

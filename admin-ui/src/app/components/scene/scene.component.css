@@ -1,8 +1,6 @@
 .scene {
   padding: 20px;
-  min-width: 250px;
-  width: 100%;
-  max-width: 450px;
+  width: 450px;
   border-radius: 20px;
   box-sizing: border-box;
 }
@@ -49,6 +47,12 @@
 
 .default-scene {
   background-color: rgba(234, 226, 183, 0.2);
+}
+
+@media (max-width: 500px) {
+  .scene {
+    width: 90vw;
+  }
 }
 
 /*# sourceMappingURL=scene.component.css.map */

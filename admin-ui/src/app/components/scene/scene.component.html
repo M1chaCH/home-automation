@@ -42,10 +42,14 @@
         </div>
     </div>
 
+    <app-scene-audio [(activeResource)]="scene.spotifyResource" (activeResourceChange)="edited = true"
+                     [(activeVolume)]="scene.spotifyVolume" (activeVolumeChange)="edited = true">
+    </app-scene-audio>
+
     <div class="controls">
         <app-fancy-button *ngIf="edited else notChanged"
                           backgroundText="save"
-                          (buttonClicked)="saveChangedConfigs()"
+                          (buttonClicked)="saveChanges()"
                           buttonIcon="save">
         </app-fancy-button>
         <ng-template #notChanged>

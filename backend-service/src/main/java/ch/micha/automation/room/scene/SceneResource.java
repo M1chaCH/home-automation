@@ -1,7 +1,7 @@
 package ch.micha.automation.room.scene;
 
 import ch.micha.automation.room.events.Logged;
-import ch.micha.automation.room.scene.dtos.SceneDTO;
+import ch.micha.automation.room.scene.dtos.ChangeSceneDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -32,7 +32,7 @@ public class SceneResource {
     @Path("/crud")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createScene(SceneDTO scene) {
+    public Response createScene(ChangeSceneDTO scene) {
         return Response.status(Response.Status.CREATED).entity(crudService.createScene(scene)).build();
     }
 
@@ -40,7 +40,7 @@ public class SceneResource {
     @Path("/crud")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateScene(SceneDTO scene) {
+    public Response updateScene(ChangeSceneDTO scene) {
         crudService.updateScene(scene);
         return Response.status(Response.Status.NO_CONTENT).build();
     }

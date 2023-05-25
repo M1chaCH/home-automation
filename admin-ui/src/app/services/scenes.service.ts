@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {SceneDTO} from "../dtos/scene/SceneDTO";
 import {apiEndpoints} from "../configuration/app.config";
 import {LightConfigDTO} from "../dtos/scene/LightConfigDTO";
+import {ChangeSceneDTO} from "../dtos/scene/ChangeSceneDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +23,11 @@ export class ScenesService {
     return this.api.callApi<SceneDTO[]>(apiEndpoints.SCENE_CRUD, "GET", undefined);
   }
 
-  createScene(scene: SceneDTO): Observable<SceneDTO> {
+  createScene(scene: ChangeSceneDTO): Observable<SceneDTO> {
     return this.api.callApi<SceneDTO>(apiEndpoints.SCENE_CRUD, "POST", scene);
   }
 
-  updateScene(scene: SceneDTO): Observable<void> {
+  updateScene(scene: ChangeSceneDTO): Observable<void> {
     return this.api.callApi(apiEndpoints.SCENE_CRUD, "PUT", scene);
   }
 

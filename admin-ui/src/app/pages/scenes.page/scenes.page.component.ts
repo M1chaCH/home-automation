@@ -8,6 +8,7 @@ import {
 } from "../../services/data-update-distributor.service";
 import {LightConfigDTO} from "../../dtos/scene/LightConfigDTO";
 import {Observable} from "rxjs";
+import {SpotifyService} from "../../services/spotify.service";
 
 @Component({
   selector: 'app-scenes.page',
@@ -21,8 +22,13 @@ export class ScenesPageComponent implements DataUpdateListener{
 
   constructor(
     private service: ScenesService,
+    private spotifyService: SpotifyService,
     private dataUpdater: DataUpdateDistributorService,
   ) {
+    // load playlists into cache -> if not done here it might happen that every scene loads it from the api, this way
+    // we can be sure that the cache is loaded
+    spotifyService.fetchResources().subscribe();
+
     service.loadScenes().subscribe(scenes => this.scenes = scenes);
     dataUpdater.registerListener(this, "NEW_SCENE", "REMOVED_SCENE");
     this.lightConfigs$ = service.loadLightConfigs();

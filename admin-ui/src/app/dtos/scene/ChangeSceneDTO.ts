@@ -1,11 +1,10 @@
 import {SceneLightConfigDTO} from "./SceneLightConfigDTO";
-import {SpotifyResourceDTO} from "../spotify/SpotifyResourceDTO";
 
-export type SceneDTO = {
+export type ChangeSceneDTO = {
   id: number,
   name: string,
   defaultScene: boolean,
-  spotifyResource: SpotifyResourceDTO,
+  spotifyResource: string | undefined,
   spotifyVolume: number,
   lights: SceneLightConfigDTO[],
 };
