@@ -4,7 +4,7 @@ export type ChangeSceneDTO = {
   id: number,
   name: string,
   defaultScene: boolean,
-  spotifyResource: string,
+  spotifyResource: string | undefined,
   spotifyVolume: number,
   lights: SceneLightConfigDTO[],
 };

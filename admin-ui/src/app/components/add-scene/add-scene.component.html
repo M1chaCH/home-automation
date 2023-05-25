@@ -1,4 +1,4 @@
-<div class="add-scene-container">
+<div class="add-scene-container" [class.add-scene-container-open]="active">
     <div *ngIf="active else placeholder" class="add-scene">
         <button class="control"
                 (click)="cancel()"
@@ -52,7 +52,7 @@
                     <p><strong>{{light.device.name}}</strong> • </p>
                     <select class="simple-select"
                             [value]="light.lightConfig.name"
-                            (change)="selectChanged($event, light)">
+                            (change)="selectedDeviceConfigChange($event, light)">
                         <option *ngFor="let lightConfigOption of (lightConfigs$ | async)"
                                 [value]="lightConfigOption.name" [defaultSelected]="light.lightConfig.name === lightConfigOption.name">
                             {{lightConfigOption.name}}
@@ -62,12 +62,20 @@
                 </div>
             </div>
             <div *ngSwitchCase="'SPOTIFY'" class="stage">
-                <p>spotify not implemented</p>
+                <p>Select the resource to play on scene start</p>
+                <app-scene-audio [(activeResource)]="selectedResource"
+                                 (activeResourceChange)="selectedResourceChanged($event)"
+                                 [(activeVolume)]="scene.spotifyVolume">
+                </app-scene-audio>
             </div>
             <div *ngSwitchCase="'OVERVIEW'" class="stage">
                 <p>Create new scene - <strong>{{scene.name}}</strong></p>
-                <p>With <strong>{{scene.lights.length}}</strong> devices</p>
-                <p>and no spotify integration</p>
+                <p>with <strong>{{scene.lights.length}}</strong> devices</p>
+                <p *ngIf="selectedResource else noSpotify">and <strong>{{selectedResource.name}}</strong> will be
+                    started on volume <strong>{{scene.spotifyVolume}}%</strong> once the scene is triggered.</p>
+                <ng-template #noSpotify>
+                    <p>and no spotify integration</p>
+                </ng-template>
             </div>
         </form>
     </div>

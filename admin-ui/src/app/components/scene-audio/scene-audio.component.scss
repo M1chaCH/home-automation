@@ -37,7 +37,6 @@
       display: grid;
       grid-template-rows: 100%;
       grid-template-columns: 50px calc(100% - 50px);
-      box-sizing: border-box;
 
       label {
         text-align: center;
@@ -56,6 +55,7 @@
         border: 2px var(--prussian-blue) solid;
         cursor: pointer;
         transition: all ease-out 250ms;
+        box-sizing: border-box;
 
         &:hover {
           scale: 1.02;

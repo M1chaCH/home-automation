@@ -33,7 +33,6 @@
   display: grid;
   grid-template-rows: 100%;
   grid-template-columns: 50px calc(100% - 50px);
-  box-sizing: border-box;
 }
 .scene-audio-container .info .volume label {
   text-align: center;
@@ -51,6 +50,7 @@
   border: 2px var(--prussian-blue) solid;
   cursor: pointer;
   transition: all ease-out 250ms;
+  box-sizing: border-box;
 }
 .scene-audio-container .info .volume .fancy-slider:hover {
   scale: 1.02;

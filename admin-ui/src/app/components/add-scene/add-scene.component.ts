@@ -10,6 +10,7 @@ import {SceneLightConfigDTO} from "../../dtos/scene/SceneLightConfigDTO";
 import {DataUpdateDistributorService} from "../../services/data-update-distributor.service";
 import {MessageDistributorService} from "../../services/message-distributor.service";
 import {ChangeSceneDTO} from "../../dtos/scene/ChangeSceneDTO";
+import {SpotifyResourceDTO} from "../../dtos/spotify/SpotifyResourceDTO";
 
 @Component({
   selector: 'app-add-scene',
@@ -25,6 +26,7 @@ export class AddSceneComponent {
   currentAddStageIndex: number = 0;
 
   sceneNameControl: FormControl = new FormControl("");
+  selectedResource: SpotifyResourceDTO | undefined;
 
   devices$: Observable<DeviceDTO[]>;
   lightConfigs$: Observable<LightConfigDTO[]>;
@@ -61,11 +63,18 @@ export class AddSceneComponent {
     }
   }
 
-  async selectChanged(e: Event, light: SceneLightConfigDTO) {
+  async selectedDeviceConfigChange(e: Event, light: SceneLightConfigDTO) {
     // @ts-ignore
     // noinspection UnnecessaryLocalVariableJS
     const selectedLightConfig: LightConfigDTO = (await firstValueFrom(this.lightConfigs$)).find(config => config.name === e.target!.value)!;
     this.scene.lights.find(l => l.device.name === light.device.name)!.lightConfig = selectedLightConfig;
+  }
+
+  selectedResourceChanged(change: SpotifyResourceDTO | undefined): void {
+    if(change)
+      this.scene.spotifyResource = change.spotifyURI;
+    else
+      this.scene.spotifyResource = undefined;
   }
 
   isDeviceSelected(device: DeviceDTO): boolean {
@@ -99,7 +108,7 @@ export class AddSceneComponent {
       id: -1,
       name: "",
       defaultScene: false,
-      spotifyResource: "",
+      spotifyResource: undefined,
       spotifyVolume: 30,
       lights: [],
     };
