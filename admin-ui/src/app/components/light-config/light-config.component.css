@@ -24,6 +24,9 @@
 .light-config .controls #save {
   grid-column: 1/3;
 }
+.light-config #color-picker {
+  display: none;
+}
 
 .light-config:hover:not(.open-editor) {
   transform: rotate(1deg) rotateY(5deg);
@@ -35,6 +38,9 @@
   flex-direction: column;
   gap: 10px;
   height: 400px;
+}
+.open-editor #color-picker {
+  display: unset;
 }
 
 /*# sourceMappingURL=light-config.component.css.map */

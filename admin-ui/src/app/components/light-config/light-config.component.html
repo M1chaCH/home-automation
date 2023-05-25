@@ -13,7 +13,7 @@
         <span style="font-size: 20px; font-weight: normal;">{{lightConfig.name}}</span>
     </ng-template>
 
-    <app-color-picker [value]="lightConfig | rgbsConvert" (valueChange)="colorPickerChange($event)"></app-color-picker>
+    <app-color-picker id="color-picker" [value]="lightConfig | rgbsConvert" (valueChange)="colorPickerChange($event)"></app-color-picker>
     <div class="controls">
         <app-fancy-button id="save"
                           buttonIcon="check"
