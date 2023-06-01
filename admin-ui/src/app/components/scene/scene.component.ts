@@ -27,8 +27,8 @@ export class SceneComponent {
     private messageDistributor: MessageDistributorService,
   ) { }
 
-  applyScene() {
-    this.service.applyScene(this.scene.id).subscribe(response => {
+  applyScene(audio: boolean = true) {
+    this.service.applyScene(this.scene.id, audio).subscribe(response => {
       if(response.failed)
         this.messageDistributor.pushMessage("ERROR", "applied scene WITH ERRORS", {
           type: "SCENE",

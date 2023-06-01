@@ -39,21 +39,21 @@ public class SceneService implements OnAppStartupListener {
         sceneProvider.loadDefaultScene();
     }
 
-    public SceneApplyResponseDTO applyScene(int sceneId){
+    public SceneApplyResponseDTO applyScene(int sceneId, boolean playAudio){
         Optional<SceneEntity> scene = sceneProvider.findSceneById(sceneId);
         if(scene.isEmpty())
             throw new ResourceNotFoundException("scene", String.valueOf(sceneId));
 
-        return applyScene(scene.get());
+        return applyScene(scene.get(), playAudio);
     }
 
     public SceneApplyResponseDTO applyDefaultScene() {
-        return applyScene(sceneProvider.loadDefaultScene());
+        return applyScene(sceneProvider.loadDefaultScene(), true);
     }
 
-    public SceneApplyResponseDTO applyScene(SceneEntity scene) {
+    public SceneApplyResponseDTO applyScene(SceneEntity scene, boolean playAudio) {
         SceneApplyResponseDTO response = new SceneApplyResponseDTO(scene.name());
-        logger.log(Level.INFO, "applying scene {0}-{1}", new Object[]{ scene.id(), scene.name()});
+        logger.log(Level.INFO, "applying scene {0}-{1}, including audio:{2}", new Object[]{ scene.id(), scene.name(), playAudio});
 
         for (Entry<YeelightDeviceEntity, LightConfig> lightEntry : scene.lights().entrySet()) {
             YeelightDeviceEntity device = lightEntry.getKey();
@@ -67,7 +67,7 @@ public class SceneService implements OnAppStartupListener {
             }
         }
 
-        if(scene.spotifyResource() != null && !scene.spotifyResource().isEmpty()) {
+        if(playAudio && scene.spotifyResource() != null && !scene.spotifyResource().isEmpty()) {
             try {
                 spotifyService.startContext(new SpotifyContextDTO(scene.spotifyResource(), scene.spotifyVolume()));
                 response.addResponse("spotify", null);

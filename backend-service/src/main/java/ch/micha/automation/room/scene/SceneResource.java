@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.Optional;
 
 @Logged
 @Path("/automation/scene")
@@ -57,10 +58,10 @@ public class SceneResource {
     @Path("/{sceneId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response applyScene(@PathParam("sceneId") int sceneId) {
+    public Response applyScene(@PathParam("sceneId") int sceneId, @QueryParam("audio") Optional<Boolean> playAudio) {
         return Response
             .status(Response.Status.OK)
-            .entity(service.applyScene(sceneId))
+            .entity(service.applyScene(sceneId, playAudio.orElse(true)))
             .build();
     }
 }

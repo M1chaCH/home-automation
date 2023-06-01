@@ -47,6 +47,19 @@
     </app-scene-audio>
 
     <div class="controls">
+        <app-fancy-button backgroundText="run"
+                          (buttonClicked)="applyScene(false)"
+                          buttonIcon="bolt">
+        </app-fancy-button>
+        <app-fancy-button *ngIf="scene.spotifyResource else noAudio"
+                          backgroundText="audio"
+                          (buttonClicked)="applyScene()"
+                          buttonIcon="headphones">
+        </app-fancy-button>
+        <ng-template #noAudio>
+            <div></div>
+        </ng-template>
+
         <app-fancy-button *ngIf="edited else notChanged"
                           backgroundText="save"
                           (buttonClicked)="saveChanges()"
@@ -55,7 +68,6 @@
         <ng-template #notChanged>
             <div></div>
         </ng-template>
-        <app-fancy-button backgroundText="run" (buttonClicked)="applyScene()" buttonIcon="bolt"></app-fancy-button>
     </div>
 </div>
 

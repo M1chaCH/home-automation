@@ -44,6 +44,9 @@
   grid-template-rows: 50px;
   margin-top: 20px;
 }
+.scene .controls app-fancy-button {
+  min-height: 50px;
+}
 
 .default-scene {
   background-color: rgba(234, 226, 183, 0.2);

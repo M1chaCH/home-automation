@@ -53,6 +53,10 @@
     grid-template-rows: 50px;
 
     margin-top: 20px;
+
+    app-fancy-button {
+      min-height: 50px;
+    }
   }
 }
 

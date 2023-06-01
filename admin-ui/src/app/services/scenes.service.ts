@@ -16,8 +16,8 @@ export class ScenesService {
     private api: ApiService,
   ) { }
 
-  applyScene(id: number): Observable<SceneApplyResponseDTO> {
-    return this.api.callApi<SceneApplyResponseDTO>(`${apiEndpoints.SCENE}/${id}`, "POST", undefined);
+  applyScene(id: number, playAudio: boolean): Observable<SceneApplyResponseDTO> {
+    return this.api.callApi<SceneApplyResponseDTO>(`${apiEndpoints.SCENE}/${id}?audio=${playAudio}`, "POST", undefined);
   }
 
   loadScenes(): Observable<SceneDTO[]> {
