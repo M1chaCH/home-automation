@@ -1,0 +1,24 @@
+.page {
+  display: flex;
+  flex-flow: column;
+  gap: 20px;
+
+  .link {
+    color: var(--white);
+    text-decoration: none;
+    width: fit-content;
+
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid;
+    border-color: color-mix(in srgb, var(--lemon-meringue) 30%, transparent);
+    opacity: 75%;
+    transition: all ease-out 250ms;
+
+    &:hover {
+      cursor: pointer;
+      scale: 1.03;
+      opacity: 1;
+    }
+  }
+}

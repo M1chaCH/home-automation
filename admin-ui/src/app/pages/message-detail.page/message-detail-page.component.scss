@@ -35,3 +35,58 @@
     word-break: break-all;
   }
 }
+
+.previous-messages-container {
+  overflow-x: auto;
+
+  .previous-messages {
+    display: flex;
+    flex-flow: row nowrap;
+    width: fit-content;
+    margin-top: 7vh;
+    gap: 20px;
+
+    .message {
+      all: unset;
+      display: flex;
+      flex-flow: column;
+      gap: 5px;
+
+      margin: 5px 0;
+      width: 200px;
+      padding: 20px;
+      border-radius: 20px;
+      transition: all 250ms ease-out;
+
+      background-color: color-mix(in srgb, var(--lemon-meringue) 20%, transparent);
+      &.error {
+        background-color: color-mix(in srgb, var(--maximum-red) 30%, transparent);
+      }
+
+      &:hover {
+        cursor: pointer;
+        scale: 1.05;
+
+        background-color: color-mix(in srgb, var(--lemon-meringue) 40%, transparent);
+        &.error {
+          background-color: color-mix(in srgb, var(--maximum-red) 50%, transparent);
+        }
+      }
+
+      span {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+
+.date {
+  font-size: 14px;
+  font-weight: 300;
+  font-style: italic;
+  opacity: 60%;
+}

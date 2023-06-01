@@ -27,4 +27,51 @@
   word-break: break-all;
 }
 
+.previous-messages-container {
+  overflow-x: auto;
+}
+.previous-messages-container .previous-messages {
+  display: flex;
+  flex-flow: row nowrap;
+  width: fit-content;
+  margin-top: 7vh;
+  gap: 20px;
+}
+.previous-messages-container .previous-messages .message {
+  all: unset;
+  display: flex;
+  flex-flow: column;
+  gap: 5px;
+  margin: 5px 0;
+  width: 200px;
+  padding: 20px;
+  border-radius: 20px;
+  transition: all 250ms ease-out;
+  background-color: color-mix(in srgb, var(--lemon-meringue) 20%, transparent);
+}
+.previous-messages-container .previous-messages .message.error {
+  background-color: color-mix(in srgb, var(--maximum-red) 30%, transparent);
+}
+.previous-messages-container .previous-messages .message:hover {
+  cursor: pointer;
+  scale: 1.05;
+  background-color: color-mix(in srgb, var(--lemon-meringue) 40%, transparent);
+}
+.previous-messages-container .previous-messages .message:hover.error {
+  background-color: color-mix(in srgb, var(--maximum-red) 50%, transparent);
+}
+.previous-messages-container .previous-messages .message span {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+.date {
+  font-size: 14px;
+  font-weight: 300;
+  font-style: italic;
+  opacity: 60%;
+}
+
 /*# sourceMappingURL=message-detail-page.component.css.map */

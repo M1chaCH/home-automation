@@ -1,8 +1,8 @@
 <ng-container *ngIf="activeMessage else noMessage">
-    <p>TODO select from last 5 messages & fix message colors</p>
     <h2>
         <span class="message-type-badge" [class.error]="activeMessage.type === 'ERROR'">{{activeMessage.type}}</span>
         {{activeMessage.message}}
+        <span class="date">{{activeMessage.timestamp | date:"dd.MM.YY hh:mm:ss" }}</span>
     </h2>
 
     <div [ngSwitch]="activeMessage.data?.type" class="details">
@@ -41,5 +41,17 @@
     </div>
 </ng-container>
 <ng-template #noMessage>
-    <p style="font-size: 17px;"><strong>404</strong> - No message could be found.</p>
+    <p style="font-size: 17px;"><strong>404</strong> - No message is selected.</p>
 </ng-template>
+
+<div class="previous-messages-container">
+    <div class="previous-messages">
+        <button *ngFor="let lastMessage of messageService.lastMessages"
+                (click)="activeMessage = lastMessage"
+                class="message"
+                [class.error]="lastMessage.type === 'ERROR'">
+            <span>{{lastMessage.message}}</span>
+            <span class="date">{{lastMessage.timestamp | date:"dd.MM.YY hh:mm:ss" }}</span>
+        </button>
+    </div>
+</div>

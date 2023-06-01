@@ -8,6 +8,7 @@ export interface MessageChangeListener {
 
 export type ActiveMessage = {
   id?: number,
+  timestamp?: Date,
   message: string,
   type: "ERROR" | "INFO",
   data?: MessageData,
@@ -24,6 +25,8 @@ export class MessageDistributorService {
   private readonly MESSAGE_DISPLAY_TIME: number = 7 * 1000;
 
   activeMessages: Map<number, ActiveMessage> = new Map<number, ActiveMessage>();
+  keepMessagesCount: number = 10;
+  lastMessages: ActiveMessage[] = []
 
   private messageIdIncrementor: number = 0;
   private listenerIncrementor: number = 0;
@@ -39,6 +42,8 @@ export class MessageDistributorService {
     const activeMessage: ActiveMessage = { type, message, data };
     this.messageIdIncrementor++;
     activeMessage.id = this.messageIdIncrementor;
+    activeMessage.timestamp = new Date();
+    this.addToLastMessages(activeMessage);
     this.activeMessages.set(this.messageIdIncrementor, activeMessage);
     setTimeout(() => this.expireMessage(activeMessage), this.MESSAGE_DISPLAY_TIME);
 
@@ -74,5 +79,11 @@ export class MessageDistributorService {
   // noinspection JSUnusedGlobalSymbols (could be of use in future)
   unregisterListener(id: number) {
     this.listeners.delete(id);
+  }
+
+  private addToLastMessages(message: ActiveMessage): void {
+    this.lastMessages.unshift(message);
+    if(this.lastMessages.length >= this.keepMessagesCount)
+      this.lastMessages.splice(this.keepMessagesCount);
   }
 }
