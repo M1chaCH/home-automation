@@ -26,10 +26,8 @@
     overflow: auto;
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
-    outline: 1px solid black;
 
     .message {
-      outline: 1px solid blue;
       text-decoration: none;
       height: 75px;
       width: 100%;
@@ -75,7 +73,6 @@
       display: flex;
       align-items: center;
       min-width: 100%;
-      outline: 1px solid red;
     }
   }
 
