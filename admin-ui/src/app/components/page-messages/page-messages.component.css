@@ -15,10 +15,20 @@
   padding: 20px;
   pointer-events: none;
 }
-.messages-container .message {
+.messages-container .swipe-container {
+  pointer-events: all;
+  display: flex;
+  overflow: auto;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  outline: 1px solid black;
+}
+.messages-container .swipe-container .message {
+  outline: 1px solid blue;
   text-decoration: none;
   height: 75px;
   width: 100%;
+  min-width: 100%;
   color: var(--white);
   background-color: var(--yellow-red);
   border-radius: 8px;
@@ -27,25 +37,35 @@
   grid-template-columns: 35px auto;
   gap: 10px;
   align-items: center;
+  scroll-snap-align: start;
   box-shadow: 5px 5px 0 var(--lemon-meringue);
   transition: all var(--message-animation-duration) ease-out;
   animation: fly-in var(--message-animation-duration) ease-out;
   pointer-events: all;
 }
-.messages-container .message span {
+.messages-container .swipe-container .message span {
   margin-left: 10px;
   font-size: 15px;
 }
-.messages-container .message p {
+.messages-container .swipe-container .message p {
   margin: 5px 0;
   display: block;
   height: 65px;
   overflow-y: auto;
 }
-.messages-container .message:hover {
+.messages-container .swipe-container .message:hover {
   box-shadow: 10px 10px 0 var(--lemon-meringue);
   transform: translateX(-2.5px) translateY(-2.5px);
   cursor: pointer;
+}
+.messages-container .swipe-container .swipe-space {
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  outline: 1px solid red;
+}
+.messages-container .swipe-container::-webkit-scrollbar {
+  display: none;
 }
 .messages-container .hide-message {
   animation: fly-out var(--message-animation-duration) ease-out forwards;

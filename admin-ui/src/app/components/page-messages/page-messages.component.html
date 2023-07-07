@@ -1,16 +1,19 @@
 <div class="messages-container">
   <ng-container *ngFor="let message of messageValues()">
-    <a class="message"
-       [routerLink]="messageRoute"
-       [state]="{ activeMessage: message }"
-       [id]="'message-' + message.id">
+    <div #swipeContainer class="swipe-container" (touchend)="messageSwiped(swipeContainer, message)">
+      <div class="swipe-space"></div>
+      <a class="message"
+         [routerLink]="messageRoute"
+         [state]="{ activeMessage: message }"
+         [id]="'message-' + message.id">
       <span *ngIf="message.type === 'INFO'"
             class="material-symbols-rounded"
             style="color: var(--prussian-blue); font-size: 25px;">info</span>
-      <span *ngIf="message.type === 'ERROR'"
-            class="material-symbols-rounded"
-            style="color: var(--maximum-red); font-size: 25px;">error</span>
-      <span>{{message.message}}</span>
-    </a>
+        <span *ngIf="message.type === 'ERROR'"
+              class="material-symbols-rounded"
+              style="color: var(--maximum-red); font-size: 25px;">error</span>
+        <span>{{message.message}}</span>
+      </a>
+    </div>
   </ng-container>
 </div>

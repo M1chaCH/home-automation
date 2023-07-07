@@ -20,44 +20,67 @@
   padding: 20px;
   pointer-events: none;
 
-  .message {
-    text-decoration: none;
-    height: 75px;
-    width: 100%;
-
-    color: var(--white);
-    background-color: var(--yellow-red);
-    border-radius: 8px;
-
-    display: grid;
-    grid-template-rows: auto;
-    grid-template-columns: 35px auto;
-    gap: 10px;
-    align-items: center;
-
-    box-shadow: 5px 5px 0 var(--lemon-meringue);
-    transition: all var(--message-animation-duration) ease-out;
-    animation: fly-in var(--message-animation-duration) ease-out;
-
+  .swipe-container {
     pointer-events: all;
+    display: flex;
+    overflow: auto;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    outline: 1px solid black;
 
-    span {
-      margin-left: 10px;
-      font-size: 15px;
+    .message {
+      outline: 1px solid blue;
+      text-decoration: none;
+      height: 75px;
+      width: 100%;
+      min-width: 100%;
+
+      color: var(--white);
+      background-color: var(--yellow-red);
+      border-radius: 8px;
+
+      display: grid;
+      grid-template-rows: auto;
+      grid-template-columns: 35px auto;
+      gap: 10px;
+      align-items: center;
+      scroll-snap-align: start;
+
+      box-shadow: 5px 5px 0 var(--lemon-meringue);
+      transition: all var(--message-animation-duration) ease-out;
+      animation: fly-in var(--message-animation-duration) ease-out;
+
+      pointer-events: all;
+
+      span {
+        margin-left: 10px;
+        font-size: 15px;
+      }
+
+      p {
+        margin: 5px 0;
+        display: block;
+        height: 65px;
+        overflow-y: auto;
+      }
     }
 
-    p {
-      margin: 5px 0;
-      display: block;
-      height: 65px;
-      overflow-y: auto;
+    .message:hover {
+      box-shadow: 10px 10px 0 var(--lemon-meringue);
+      transform: translateX(-2.5px) translateY(-2.5px);
+      cursor: pointer;
+    }
+
+    .swipe-space {
+      display: flex;
+      align-items: center;
+      min-width: 100%;
+      outline: 1px solid red;
     }
   }
 
-  .message:hover {
-    box-shadow: 10px 10px 0 var(--lemon-meringue);
-    transform: translateX(-2.5px) translateY(-2.5px);
-    cursor: pointer;
+  .swipe-container::-webkit-scrollbar {
+    display: none;
   }
 
   .hide-message {

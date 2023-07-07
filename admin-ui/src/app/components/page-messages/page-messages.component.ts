@@ -16,6 +16,7 @@ export class PageMessagesComponent implements MessageChangeListener, OnInit {
   private readonly MESSAGE_ANIM_VAR_NAME: string = "--message-animation-duration";
   private readonly HIDE_MESSAGE_CLASS: string = "hide-message";
   private readonly listenerId: number;
+  private readonly minSwipePercent: number = 50;
 
   messages: Map<number, ActiveMessage> = new Map<number, ActiveMessage>();
 
@@ -46,4 +47,9 @@ export class PageMessagesComponent implements MessageChangeListener, OnInit {
     setTimeout(() => this.messages.delete(expiredMessage.id || -1), this.MESSAGE_ANIM_DURATION_MS);
   }
 
+  messageSwiped(element: HTMLElement, message: ActiveMessage): void {
+    const swipePercent: number = 100 / element.clientWidth * (element.clientWidth - element.scrollLeft);
+    if(swipePercent >= this.minSwipePercent)
+      this.messages.delete(message.id || -1);
+  }
 }
