@@ -1,0 +1,51 @@
+<div class="alarms-container">
+    <div *ngFor="let alarm of alarms"
+         class="alarm">
+
+        <button *ngIf="alarm.id !== alarmTimeEditing else editTimeTemplate"
+                (click)="markAlarmForEditing(alarm)"
+                class="time">
+            {{alarm.time}}
+        </button>
+        <ng-template #editTimeTemplate>
+            <div class="edit-time">
+                <app-fancy-button buttonIcon="cancel"
+                                  (buttonClicked)="alarmTimeEditing = -1">
+                </app-fancy-button>
+                <input type="time" [(ngModel)]="editedTime" autofocus/>
+                <app-fancy-button buttonIcon="check"
+                                  (buttonClicked)="changeTimeOfAlarm(alarm)">
+                </app-fancy-button>
+            </div>
+        </ng-template>
+
+        <div class="day-container">
+            <button *ngFor="let day of AlarmService.DAYS"
+                    class="day"
+                    (click)="AlarmService.toggleScheduleDay(alarm, day.id)"
+                    [style.background-color]="AlarmService.computeAlarmBadgeColor(alarm, day.id)">
+                {{day.name}}
+            </button>
+        </div>
+
+        <app-scene-audio [(activeVolume)]="alarm.maxVolume"
+                         [(activeResource)]="alarm.spotifyResource">
+        </app-scene-audio>
+
+        <div class="horizontal-controls">
+            <app-fancy-button [backgroundText]="alarm.active ? 'Enabled' : 'Disabled'"
+                              [buttonIcon]="alarm.active ? 'toggle_on' : 'toggle_off'"
+                              (buttonClicked)="alarm.active = !alarm.active"
+                              [style.opacity]="alarm.active ? 1 : 0.75">
+            </app-fancy-button>
+            <app-fancy-button buttonIcon="delete"
+                              backgroundText="delete"
+                              (buttonClicked)="markAlarmForDeletion(alarm)">
+            </app-fancy-button>
+        </div>
+    </div>
+</div>
+
+<app-verify-popup [(open)]="deleting" (responded)="deleteAlarmIfApproved($event)">
+    <p>Do you really want to delete alarm at {{alarmToDelete?.time}}?</p>
+</app-verify-popup>

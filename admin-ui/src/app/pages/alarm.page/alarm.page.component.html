@@ -1,2 +1,8 @@
-<app-alarms-large [alarms]="alarmService.alarms">
-</app-alarms-large>
+<ng-container *ngIf="!mobileView else mobile">
+    <app-alarms-large [alarms]="alarmService.alarms">
+    </app-alarms-large>
+</ng-container>
+<ng-template #mobile>
+    <app-alarms-mobile [alarms]="alarmService.alarms">
+    </app-alarms-mobile>
+</ng-template>
