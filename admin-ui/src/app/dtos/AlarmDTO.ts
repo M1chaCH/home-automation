@@ -1,12 +1,11 @@
+import {SpotifyResourceDTO} from "./spotify/SpotifyResourceDTO";
+import {WeekDayIndex} from "../services/alarm.service";
 
 export type AlarmDTO = {
   id: number,
-  cronSchedule: string,
+  days: WeekDayIndex[],
+  time: string,
   active: boolean,
-  sceneName: string,
-  audio: {
-    name: string,
-    imageUrl: string,
-    volume: number
-  },
+  spotifyResource: SpotifyResourceDTO,
+  maxVolume: number,
 }

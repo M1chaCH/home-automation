@@ -34,6 +34,7 @@ import { SceneAudioComponent } from './components/scene-audio/scene-audio.compon
 import { SpotifyResourceSelectorComponent } from './components/spotify/spotify.resource-selector/spotify.resource-selector.component';
 import { MessageDetailPageComponent } from './pages/message-detail.page/message-detail-page.component';
 import { AlarmPageComponent } from './pages/alarm.page/alarm.page.component';
+import { AlarmsLargeComponent } from './components/alarms-large/alarms-large.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { AlarmPageComponent } from './pages/alarm.page/alarm.page.component';
     SpotifyResourceSelectorComponent,
     MessageDetailPageComponent,
     AlarmPageComponent,
+    AlarmsLargeComponent,
   ],
   imports: [
     BrowserModule,
