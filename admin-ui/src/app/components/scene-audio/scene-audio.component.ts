@@ -9,6 +9,7 @@ import {SpotifyResourceDTO} from "../../dtos/spotify/SpotifyResourceDTO";
 export class SceneAudioComponent {
   @Input() activeResource: SpotifyResourceDTO | undefined;
   @Input() activeVolume: number = 0;
+  @Input() small: boolean = false;
 
   @Output() activeResourceChange: EventEmitter<SpotifyResourceDTO> = new EventEmitter<SpotifyResourceDTO>();
   @Output() activeVolumeChange: EventEmitter<number> = new EventEmitter<number>();

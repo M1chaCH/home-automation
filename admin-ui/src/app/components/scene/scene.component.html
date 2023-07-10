@@ -42,9 +42,11 @@
         </div>
     </div>
 
-    <app-scene-audio [(activeResource)]="scene.spotifyResource" (activeResourceChange)="edited = true"
-                     [(activeVolume)]="scene.spotifyVolume" (activeVolumeChange)="edited = true">
-    </app-scene-audio>
+    <div style="margin-top: 50px;">
+        <app-scene-audio [(activeResource)]="scene.spotifyResource" (activeResourceChange)="edited = true"
+                         [(activeVolume)]="scene.spotifyVolume" (activeVolumeChange)="edited = true">
+        </app-scene-audio>
+    </div>
 
     <div class="controls">
         <app-fancy-button backgroundText="run"

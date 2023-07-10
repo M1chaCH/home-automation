@@ -1,5 +1,8 @@
+.scene-audio-container.small {
+  display: inline-block;
+}
+
 .scene-audio-container {
-  margin-top: 50px;
   display: grid;
   grid-template-rows: 100%;
   grid-template-columns: 80px calc(100% - 80px - 20px);
@@ -22,7 +25,9 @@
   scale: 1.1;
 }
 .scene-audio-container .info {
+  width: 100%;
   display: grid;
+  grid-template-columns: 100%;
   grid-template-rows: 50% 50%;
   align-items: center;
 }
@@ -47,7 +52,7 @@
   width: calc(100% - 4px);
   background: linear-gradient(to right, var(--lemon-meringue) 0%, var(--lemon-meringue) var(--progress-start), transparent var(--progress-end), transparent 100%);
   border-radius: 5px;
-  border: 2px var(--prussian-blue) solid;
+  border: none;
   cursor: pointer;
   transition: all ease-out 250ms;
   box-sizing: border-box;

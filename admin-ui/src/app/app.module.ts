@@ -33,6 +33,7 @@ import {NgOptimizedImage} from "@angular/common";
 import { SceneAudioComponent } from './components/scene-audio/scene-audio.component';
 import { SpotifyResourceSelectorComponent } from './components/spotify/spotify.resource-selector/spotify.resource-selector.component';
 import { MessageDetailPageComponent } from './pages/message-detail.page/message-detail-page.component';
+import { AlarmPageComponent } from './pages/alarm.page/alarm.page.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { MessageDetailPageComponent } from './pages/message-detail.page/message-
     SceneAudioComponent,
     SpotifyResourceSelectorComponent,
     MessageDetailPageComponent,
+    AlarmPageComponent,
   ],
   imports: [
     BrowserModule,

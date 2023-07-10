@@ -1,4 +1,4 @@
-<button class="header-button" [class.no-resource-selected]="!selectedResource" (click)="toggleDialog()">
+<button class="header-button" [class.no-resource-selected]="!selectedResource" [class.small]="small" (click)="toggleDialog()">
     {{selectedResource ? selectedResource.name : "Select resource"}}
 </button>
 <div class="resources-dialog-container" [class.resources-dialog-container-open]="open">

@@ -1,0 +1,27 @@
+<div class="alarm-week">
+    <div></div>
+    <div></div>
+    <ng-template ngFor let-day [ngForOf]="DAYS">
+        <div class="alarm-day">
+            <p class="day">{{day.name}}</p>
+        </div>
+    </ng-template>
+    <ng-template ngFor let-alarm [ngForOf]="alarms">
+        <button class="alarm-day-value"
+                [style.opacity]="alarm.active ? '100%' : '50%'"
+                (click)="alarm.active = !alarm.active">
+            <p class="alarm-time">{{extractTime(alarm)}}</p>
+        </button>
+        <app-scene-audio class="alarm-day-value"
+                         [small]="true">
+        </app-scene-audio>
+
+        <ng-template ngFor let-day [ngForOf]="DAYS">
+            <button class="alarm-day-value"
+                    style="width: 90%; height: 90%;"
+                    (click)="toggleScheduleDay(alarm, day.id)"
+                    [style.background-color]="computeAlarmBadgeColor(alarm, day.id)">
+            </button>
+        </ng-template>
+    </ng-template>
+</div>

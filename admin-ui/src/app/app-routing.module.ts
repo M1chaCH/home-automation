@@ -7,6 +7,7 @@ import {SpotifyPageComponent} from "./pages/spotify.page/spotify.page.component"
 import {DevicePageComponent} from "./pages/device.page/device.page.component";
 import {LightConfigsPageComponent} from "./pages/light-configs.page/light-configs.page.component";
 import {MessageDetailPageComponent} from "./pages/message-detail.page/message-detail-page.component";
+import {AlarmPageComponent} from "./pages/alarm.page/alarm.page.component";
 
 const routes: Routes = [
   { path: "", redirectTo: `/${appRoutes.ROOT}/${appRoutes.HOME}`, pathMatch: "full" },
@@ -21,6 +22,7 @@ const routes: Routes = [
       { path: appRoutes.SPOTIFY_CALLBACK, component: SpotifyPageComponent, data: { animation: "SpotifyPage" } },
       { path: appRoutes.DEVICES, component: DevicePageComponent, data: { animation: "DevicesPage" } },
       { path: appRoutes.MESSAGE_DETAILS, component: MessageDetailPageComponent, data: { animation: "MessageDetailsPage" } },
+      { path: appRoutes.ALARM, component: AlarmPageComponent, data: { animation: "AlarmPageComponent" } },
     ]
   }
 ];

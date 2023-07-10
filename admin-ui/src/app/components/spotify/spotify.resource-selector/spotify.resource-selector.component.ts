@@ -12,6 +12,7 @@ export class SpotifyResourceSelectorComponent implements OnInit{
   private readonly MAX_SHOWN_RESOURCES: number = 8;
 
   @Input() selectedResource: SpotifyResourceDTO | undefined;
+  @Input() small: boolean = false;
   @Output() selectedResourceChange: EventEmitter<SpotifyResourceDTO> = new EventEmitter<SpotifyResourceDTO>();
 
   filteredResources: SpotifyResourceDTO[] = [];

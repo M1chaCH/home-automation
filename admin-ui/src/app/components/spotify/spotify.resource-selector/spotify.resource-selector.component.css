@@ -1,3 +1,11 @@
+.header-button.small {
+  font-size: 17px !important;
+  font-weight: 400 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .header-button {
   all: unset;
   display: block;
