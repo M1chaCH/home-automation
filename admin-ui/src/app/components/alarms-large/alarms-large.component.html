@@ -1,6 +1,10 @@
 <div class="alarm-week">
-    <div></div>
-    <div></div>
+    <div class="alarm-day">
+        <p class="day">time</p>
+    </div>
+    <div class="alarm-day">
+        <p class="day">audio</p>
+    </div>
     <ng-template ngFor let-day [ngForOf]="AlarmService.DAYS">
         <div class="alarm-day">
             <p class="day">{{day.name}}</p>
@@ -22,10 +26,10 @@
             <div class="alarm-time-container">
                 <div class="alarm-time-controls">
                     <ng-container *ngIf="alarm.id !== editing else editTimeControls">
-                        <button class="icon-button" (click)="aboutToDelete = alarm.id">
+                        <button class="icon-button" (click)="aboutToDelete = alarm.id || -1">
                             <span class="material-symbols-rounded" style="color: var(--maximum-red)">delete</span>
                         </button>
-                        <button class="icon-button" (click)="openTimeEditor(alarm.id, alarm.time)">
+                        <button class="icon-button" (click)="openTimeEditor(alarm.id || -1, alarm.time)">
                             <span class="material-symbols-rounded" style="color: var(--lemon-meringue)">edit</span>
                         </button>
                     </ng-container>

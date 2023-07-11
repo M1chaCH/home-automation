@@ -28,7 +28,7 @@ export class AlarmService {
   }
 
   // TODO
-  // - implement auto save
+  // - implement auto save / generally save
   // - implement add alarm
   constructor() {
     this.alarms = [
@@ -37,39 +37,18 @@ export class AlarmService {
         time: "07:30",
         days: [ 1,2,4 ],
         active: true,
-        spotifyResource: {
-          name: "Worship",
-          imageUrl: "",
-          description: "",
-          href: "",
-          spotifyURI: ""
-        },
         maxVolume: 30
       },{
         id: 1,
         time: "09:00",
         days: [ 5,6,0 ],
         active: true,
-        spotifyResource: {
-          name: "Worship",
-          imageUrl: "",
-          description: "",
-          href: "",
-          spotifyURI: ""
-        },
         maxVolume: 30
       },{
         id: 2,
         time: "06:45",
         days: [ 3 ],
         active: false,
-        spotifyResource: {
-          name: "Worship",
-          imageUrl: "",
-          description: "",
-          href: "",
-          spotifyURI: ""
-        },
         maxVolume: 30
       },
     ];

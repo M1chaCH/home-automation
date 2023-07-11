@@ -36,6 +36,7 @@ import { MessageDetailPageComponent } from './pages/message-detail.page/message-
 import { AlarmPageComponent } from './pages/alarm.page/alarm.page.component';
 import { AlarmsLargeComponent } from './components/alarms-large/alarms-large.component';
 import { AlarmsMobileComponent } from './components/alarms-mobile/alarms-mobile.component';
+import { AddAlarmComponent } from './components/add-alarm/add-alarm.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { AlarmsMobileComponent } from './components/alarms-mobile/alarms-mobile.
     AlarmPageComponent,
     AlarmsLargeComponent,
     AlarmsMobileComponent,
+    AddAlarmComponent,
   ],
   imports: [
     BrowserModule,

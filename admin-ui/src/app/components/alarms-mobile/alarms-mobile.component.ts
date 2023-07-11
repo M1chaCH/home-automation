@@ -24,7 +24,7 @@ export class AlarmsMobileComponent {
 
   markAlarmForEditing(alarm: AlarmDTO) {
     this.editedTime = alarm.time;
-    this.alarmTimeEditing = alarm.id;
+    this.alarmTimeEditing = alarm.id || -1;
   }
 
   deleteAlarmIfApproved(approved: boolean): void {

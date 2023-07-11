@@ -1,0 +1,39 @@
+<div class="add-alarm-container">
+    <div class="add-alarm" *ngIf="open else addButton">
+        <input type="time" [(ngModel)]="alarmToCreate.time" />
+
+        <div class="days">
+            <button *ngFor="let day of AlarmService.DAYS"
+                    (click)="AlarmService.toggleScheduleDay(alarmToCreate, day.id)"
+                    class="day"
+                    [style.background-color]="AlarmService.computeAlarmBadgeColor(alarmToCreate, day.id)">
+                {{day.name}}
+            </button>
+        </div>
+
+        <app-scene-audio [(activeResource)]="alarmToCreate.spotifyResource"
+                         [(activeVolume)]="alarmToCreate.maxVolume">
+        </app-scene-audio>
+
+        <div class="controls">
+            <app-fancy-button style="flex: 2 1 auto;"
+                              [style.opacity]="isValid() ? 1 : 0.6"
+                              backgroundText="save"
+                              buttonIcon="save"
+                              (buttonClicked)="createAlarm()">
+            </app-fancy-button>
+            <app-fancy-button style="flex: 1 1 auto;"
+                              backgroundText="cancel"
+                              buttonIcon="cancel"
+                              (buttonClicked)="cancel()">
+            </app-fancy-button>
+        </div>
+    </div>
+
+    <ng-template #addButton>
+        <div style="height: 7.5vh; position: relative;">
+            <app-fancy-button backgroundText="add" buttonIcon="add" (buttonClicked)="open = !open"></app-fancy-button>
+            <p style="position: absolute; top: -36px; left: 0; font-size: 16px; font-weight: 200;">Create new alarm</p>
+        </div>
+    </ng-template>
+</div>

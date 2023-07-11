@@ -2,10 +2,10 @@ import {SpotifyResourceDTO} from "./spotify/SpotifyResourceDTO";
 import {WeekDayIndex} from "../services/alarm.service";
 
 export type AlarmDTO = {
-  id: number,
+  id?: number,
   days: WeekDayIndex[],
   time: string,
   active: boolean,
-  spotifyResource: SpotifyResourceDTO,
+  spotifyResource?: SpotifyResourceDTO,
   maxVolume: number,
 }
