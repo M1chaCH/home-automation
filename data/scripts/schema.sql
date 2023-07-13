@@ -47,6 +47,16 @@ create table spotify_authorisation
     refresh_token varchar(250) not null unique
 );
 
+drop table if exists alarm cascade;
+create table alarm
+(
+    id serial primary key,
+    cron_schedule varchar(50) not null,
+    active bool not null default true,
+    spotify_resource varchar(250) not null,
+    max_volume int not null default 30
+);
+
 drop function if exists validate_single_spotify_authorisation;
 create function validate_single_spotify_authorisation()
     returns trigger
