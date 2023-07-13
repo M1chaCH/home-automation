@@ -3,15 +3,15 @@
         <input type="time" [(ngModel)]="alarmToCreate.time" />
 
         <div class="days">
-            <button *ngFor="let day of AlarmService.DAYS"
-                    (click)="AlarmService.toggleScheduleDay(alarmToCreate, day.id)"
+            <button *ngFor="let day of service.DAYS"
+                    (click)="service.toggleScheduleDay(alarmToCreate, day.id)"
                     class="day"
-                    [style.background-color]="AlarmService.computeAlarmBadgeColor(alarmToCreate, day.id)">
+                    [style.background-color]="service.computeAlarmBadgeColor(alarmToCreate, day.id)">
                 {{day.name}}
             </button>
         </div>
 
-        <app-scene-audio [(activeResource)]="alarmToCreate.spotifyResource"
+        <app-scene-audio [(activeResource)]="alarmToCreate.audio"
                          [(activeVolume)]="alarmToCreate.maxVolume">
         </app-scene-audio>
 
@@ -25,7 +25,7 @@
             <app-fancy-button style="flex: 1 1 auto;"
                               backgroundText="cancel"
                               buttonIcon="cancel"
-                              (buttonClicked)="cancel()">
+                              (buttonClicked)="reset()">
             </app-fancy-button>
         </div>
     </div>

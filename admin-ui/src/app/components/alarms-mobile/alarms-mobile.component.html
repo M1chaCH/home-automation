@@ -20,16 +20,16 @@
         </ng-template>
 
         <div class="day-container">
-            <button *ngFor="let day of AlarmService.DAYS"
+            <button *ngFor="let day of service.DAYS"
                     class="day"
-                    (click)="AlarmService.toggleScheduleDay(alarm, day.id)"
-                    [style.background-color]="AlarmService.computeAlarmBadgeColor(alarm, day.id)">
+                    (click)="service.toggleScheduleDay(alarm, day.id)"
+                    [style.background-color]="service.computeAlarmBadgeColor(alarm, day.id)">
                 {{day.name}}
             </button>
         </div>
 
         <app-scene-audio [(activeVolume)]="alarm.maxVolume"
-                         [(activeResource)]="alarm.spotifyResource">
+                         [(activeResource)]="alarm.audio">
         </app-scene-audio>
 
         <div class="horizontal-controls">

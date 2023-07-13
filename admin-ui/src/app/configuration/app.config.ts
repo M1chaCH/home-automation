@@ -22,5 +22,6 @@ export const apiEndpoints = {
     SPOTIFY_RESOURCES: "automation/spotify/resources",
     SPOTIFY_PLAYER: "automation/spotify/player",
     DEVICES: "automation/device",
+    ALARMS: "automation/alarm",
 }
 export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';

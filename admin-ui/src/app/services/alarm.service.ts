@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import {AlarmDTO} from "../dtos/AlarmDTO";
+import {Observable, of} from "rxjs";
+import {ApiService} from "./api.service";
+import {apiEndpoints} from "../configuration/app.config";
 
 export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -7,7 +10,7 @@ export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
   providedIn: 'root'
 })
 export class AlarmService {
-  static readonly DAYS: {id: WeekDayIndex, name: string}[] = [
+  public readonly DAYS: { id: WeekDayIndex, name: string }[] = [
     {id: 1, name: "monday"},
     {id: 2, name: "tuesday"},
     {id: 3, name: "wednesday"},
@@ -17,44 +20,64 @@ export class AlarmService {
     {id: 0, name: "sunday"},
   ];
 
-  private _alarms: AlarmDTO[] = [];
+  private alarms?: AlarmDTO[];
 
-  get alarms(): AlarmDTO[] {
-    return this._alarms;
+  constructor(
+      private api: ApiService,
+  ) { }
+
+  loadAlarms(): Observable<AlarmDTO[]> {
+    if(this.alarms)
+      return of(this.alarms);
+
+    return new Observable<AlarmDTO[]>(subscriber => {
+      this.api.callApi<AlarmDTO[]>(apiEndpoints.ALARMS, "GET", undefined).subscribe(response => {
+        this.alarms = this.sortByTime(response);
+        subscriber.next(this.alarms);
+      })
+    });
   }
 
-  set alarms(newAlarms: AlarmDTO[]) {
-    this._alarms = this.sortByTime(newAlarms);
+  createAlarm(alarm: AlarmDTO): Observable<AlarmDTO> {
+    return this.api.callApi<AlarmDTO>(apiEndpoints.ALARMS, "POST", alarm);
   }
 
-  // TODO
-  // - implement auto save / generally save
-  // - implement add alarm
-  constructor() {
-    this.alarms = [
-      { // use the setter (:
-        id: 3,
-        time: "07:30",
-        days: [ 1,2,4 ],
-        active: true,
-        maxVolume: 30
-      },{
-        id: 1,
-        time: "09:00",
-        days: [ 5,6,0 ],
-        active: true,
-        maxVolume: 30
-      },{
-        id: 2,
-        time: "06:45",
-        days: [ 3 ],
-        active: false,
-        maxVolume: 30
-      },
-    ];
+  editAlarm(alarm: AlarmDTO): Observable<any> {
+    return this.api.callApi(apiEndpoints.ALARMS, "PUT", alarm);
   }
 
-  public static computeAlarmBadgeColor(alarm: AlarmDTO, day: WeekDayIndex): string {
+  deleteAlarm(id: number): Observable<any> {
+    return this.api.callApi(`${apiEndpoints.ALARMS}/${id}`, "DELETE", undefined);
+  }
+
+  handleAddAlarm(toAdd: AlarmDTO): AlarmDTO[] {
+    if(!this.alarms)
+      this.alarms = [];
+    this.alarms.push(toAdd);
+    this.alarms = this.sortByTime(this.alarms);
+    return this.alarms;
+  }
+
+  handleChangeAlarm(toChange: AlarmDTO): AlarmDTO[] {
+    if(!this.alarms)
+      this.alarms = [];
+
+    const toChangeIndex: number = this.alarms.findIndex(alarm => alarm.id === toChange.id);
+    this.alarms[toChangeIndex] = toChange;
+    this.alarms = this.sortByTime(this.alarms);
+
+    return this.alarms;
+  }
+
+  handleRemoveAlarm(id: number): AlarmDTO[] {
+    if(!this.alarms)
+      this.alarms = [];
+
+    this.alarms.splice(this.alarms.findIndex(alarm => alarm.id === id), 1);
+    return this.alarms;
+  }
+
+  public computeAlarmBadgeColor(alarm: AlarmDTO, day: WeekDayIndex): string {
     if(alarm.days.includes(day)) {
       if(alarm.active)
         return "color-mix(in srgb,var(--lemon-meringue) 40%, transparent)";
@@ -65,7 +88,7 @@ export class AlarmService {
     }
   }
 
-  public static toggleScheduleDay(alarm: AlarmDTO, day: WeekDayIndex): void {
+  public toggleScheduleDay(alarm: AlarmDTO, day: WeekDayIndex): void {
     if(alarm.days.includes(day) && alarm.days.length > 1)
       alarm.days.splice(alarm.days.indexOf(day), 1);
     else

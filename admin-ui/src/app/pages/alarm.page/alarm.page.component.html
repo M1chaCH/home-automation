@@ -1,10 +1,14 @@
 <div class="alarm-page">
     <ng-container *ngIf="!mobileView else mobile">
-        <app-alarms-large [alarms]="alarmService.alarms">
+        <app-alarms-large [alarms]="alarms"
+                          (updateAlarmRequest)="updateAlarm($event)"
+                          (deleteAlarmRequest)="deleteAlarm($event)">
         </app-alarms-large>
     </ng-container>
     <ng-template #mobile>
-        <app-alarms-mobile [alarms]="alarmService.alarms">
+        <app-alarms-mobile [alarms]="alarms"
+                           (updateAlarmRequest)="updateAlarm($event)"
+                           (deleteAlarmRequest)="deleteAlarm($event)">
         </app-alarms-mobile>
     </ng-template>
     <app-add-alarm style="align-self: center"></app-add-alarm>

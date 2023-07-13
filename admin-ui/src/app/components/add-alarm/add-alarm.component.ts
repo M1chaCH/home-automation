@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {AlarmDTO} from "../../dtos/AlarmDTO";
 import {AlarmService} from "../../services/alarm.service";
+import {DataUpdateDistributorService} from "../../services/data-update-distributor.service";
 
 @Component({
   selector: 'app-add-alarm',
@@ -16,15 +17,22 @@ export class AddAlarmComponent {
     maxVolume: 30,
   };
 
-  protected readonly AlarmService = AlarmService;
+  constructor(
+    public service: AlarmService,
+    private dataDistributor: DataUpdateDistributorService
+  ) { }
 
   createAlarm() {
     if(this.isValid()) {
-      console.warn("create alarm is not yet implemented")
+      console.log(this.alarmToCreate)
+      this.service.createAlarm(this.alarmToCreate).subscribe(createdAlarm => {
+        this.dataDistributor.updateTopic("NEW_ALARM", createdAlarm);
+        this.reset();
+      });
     }
   }
 
-  cancel() {
+  reset() {
     this.open = false;
     this.alarmToCreate = {
       time: "",
@@ -35,6 +43,6 @@ export class AddAlarmComponent {
   }
 
   isValid(): boolean {
-    return !!this.alarmToCreate.time && this.alarmToCreate.days.length > 0 && !!this.alarmToCreate.spotifyResource;
+    return !!this.alarmToCreate.time && this.alarmToCreate.days.length > 0 && !!this.alarmToCreate.audio;
   }
 }

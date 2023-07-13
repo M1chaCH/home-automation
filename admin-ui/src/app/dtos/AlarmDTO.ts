@@ -6,6 +6,6 @@ export type AlarmDTO = {
   days: WeekDayIndex[],
   time: string,
   active: boolean,
-  spotifyResource?: SpotifyResourceDTO,
+  audio?: SpotifyResourceDTO,
   maxVolume: number,
 }

@@ -5,7 +5,7 @@
     <div class="alarm-day">
         <p class="day">audio</p>
     </div>
-    <ng-template ngFor let-day [ngForOf]="AlarmService.DAYS">
+    <ng-template ngFor let-day [ngForOf]="service.DAYS">
         <div class="alarm-day">
             <p class="day">{{day.name}}</p>
         </div>
@@ -54,17 +54,17 @@
                 </ng-template>
             </div>
             <app-scene-audio class="alarm-day-value"
-                             [(activeResource)]="alarm.spotifyResource"
+                             [(activeResource)]="alarm.audio"
                              [(activeVolume)]="alarm.maxVolume"
                              [small]="true">
             </app-scene-audio>
         </ng-template>
 
-        <ng-template ngFor let-day [ngForOf]="AlarmService.DAYS">
+        <ng-template ngFor let-day [ngForOf]="service.DAYS">
             <button class="alarm-day-value"
                     style="width: 90%; height: 90%;"
-                    (click)="AlarmService.toggleScheduleDay(alarm, day.id)"
-                    [style.background-color]="AlarmService.computeAlarmBadgeColor(alarm, day.id)">
+                    (click)="service.toggleScheduleDay(alarm, day.id)"
+                    [style.background-color]="service.computeAlarmBadgeColor(alarm, day.id)">
             </button>
         </ng-template>
     </ng-template>

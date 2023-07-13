@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {AlarmDTO} from "../../dtos/AlarmDTO";
 import {AlarmService} from "../../services/alarm.service";
 
@@ -9,12 +9,16 @@ import {AlarmService} from "../../services/alarm.service";
 })
 export class AlarmsLargeComponent {
   @Input() alarms: AlarmDTO[] = [];
+  @Output() deleteAlarmRequest: EventEmitter<number> = new EventEmitter<number>();
+  @Output() updateAlarmRequest: EventEmitter<AlarmDTO> = new EventEmitter<AlarmDTO>();
 
   aboutToDelete: number = -1;
   editing: number = -1;
   editedTime: string = "";
 
-  protected readonly AlarmService = AlarmService;
+  constructor(
+      public service: AlarmService,
+  ) { }
 
   openTimeEditor(id: number, currentTime: string) {
     this.editedTime = currentTime;
@@ -23,11 +27,12 @@ export class AlarmsLargeComponent {
 
   editAlarmTime(alarm: AlarmDTO): void {
     this.editing = -1;
-    console.warn("alarm edit not implemented yet")
+    alarm.time = this.editedTime;
+    this.updateAlarmRequest.emit(alarm);
   }
 
   deleteAlarm(alarm: AlarmDTO): void {
     this.aboutToDelete = -1;
-    console.warn("alarm delete not implemented yet")
+    this.deleteAlarmRequest.emit(alarm.id);
   }
 }
