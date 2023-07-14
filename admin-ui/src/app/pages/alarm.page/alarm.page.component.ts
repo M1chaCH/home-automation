@@ -15,8 +15,11 @@ import {MessageDistributorService} from "../../services/message-distributor.serv
 export class AlarmPageComponent implements DataUpdateListener{
   alarms: AlarmDTO[] = [];
   mobileView: boolean = true;
+  readonly AUTO_SAVE_WAIT: number = 5 * 1000;
 
   private readonly MOBILE_BREAKPOINT = 900;
+  private alarmsToAutoSave: Map<number, AlarmDTO> = new Map<number, AlarmDTO>();
+  private autoSaveTimer: number = -1;
 
   constructor(
     private service: AlarmService,
@@ -42,6 +45,12 @@ export class AlarmPageComponent implements DataUpdateListener{
     }
   }
 
+  registerAlarmForAutoUpdate(alarm: AlarmDTO): void {
+    clearTimeout(this.autoSaveTimer);
+    this.alarmsToAutoSave.set(alarm.id!, alarm);
+    this.autoSaveTimer = setTimeout(() => this.updateAlarms(this.alarmsToAutoSave), this.AUTO_SAVE_WAIT);
+  }
+
   updateAlarm(toUpdate: AlarmDTO) {
     this.service.editAlarm(toUpdate).subscribe(() =>
       this.dataDistributor.updateTopic("UPDATED_ALARM", toUpdate)
@@ -58,5 +67,14 @@ export class AlarmPageComponent implements DataUpdateListener{
   @HostListener("window:resize")
   onWindowResize(): void {
     this.mobileView = window.innerWidth <= this.MOBILE_BREAKPOINT;
+  }
+
+  private updateAlarms(toUpdate: Map<number, AlarmDTO>): void {
+    for (let toUpdateElement of toUpdate.entries()) {
+      this.service.editAlarm(toUpdateElement[1]).subscribe(() => {
+        this.dataDistributor.updateTopic("UPDATED_ALARM", toUpdate);
+      });
+    }
+    this.messageDistributor.pushMessage("INFO", "saved alarm changes");
   }
 }

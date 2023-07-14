@@ -46,24 +46,23 @@
                 <button *ngIf="alarm.id !== editing else editTime"
                         class="alarm-day-value"
                         [style.opacity]="alarm.active ? '100%' : '50%'"
-                        (click)="alarm.active = !alarm.active">
+                        (click)="changeActive(alarm, !alarm.active)">
                     <p class="alarm-time">{{alarm.time}}</p>
                 </button>
                 <ng-template #editTime>
                     <input type="time" [(ngModel)]="editedTime" autofocus/>
                 </ng-template>
             </div>
-            <app-scene-audio class="alarm-day-value"
-                             [(activeResource)]="alarm.audio"
-                             [(activeVolume)]="alarm.maxVolume"
-                             [small]="true">
+            <app-scene-audio [small]="true"
+                             [activeVolume]="alarm.maxVolume" (activeVolumeChange)="changeVolume(alarm, $event)"
+                             [activeResource]="alarm.audio" (activeResourceChange)="changeResource(alarm, $event)">
             </app-scene-audio>
         </ng-template>
 
         <ng-template ngFor let-day [ngForOf]="service.DAYS">
             <button class="alarm-day-value"
                     style="width: 90%; height: 90%;"
-                    (click)="service.toggleScheduleDay(alarm, day.id)"
+                    (click)="changeDay(alarm, day.id)"
                     [style.background-color]="service.computeAlarmBadgeColor(alarm, day.id)">
             </button>
         </ng-template>

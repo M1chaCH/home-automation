@@ -1,12 +1,15 @@
 <div class="alarm-page">
+    <p id="autoSave">Saves automatically after {{AUTO_SAVE_WAIT / 1000}} seconds</p>
     <ng-container *ngIf="!mobileView else mobile">
         <app-alarms-large [alarms]="alarms"
+                          (autoSaveAlarmRequest)="registerAlarmForAutoUpdate($event)"
                           (updateAlarmRequest)="updateAlarm($event)"
                           (deleteAlarmRequest)="deleteAlarm($event)">
         </app-alarms-large>
     </ng-container>
     <ng-template #mobile>
         <app-alarms-mobile [alarms]="alarms"
+                           (autoSaveAlarmRequest)="registerAlarmForAutoUpdate($event)"
                            (updateAlarmRequest)="updateAlarm($event)"
                            (deleteAlarmRequest)="deleteAlarm($event)">
         </app-alarms-mobile>

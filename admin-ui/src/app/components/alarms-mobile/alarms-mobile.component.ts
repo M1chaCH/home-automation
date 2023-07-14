@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {AlarmDTO} from "../../dtos/AlarmDTO";
-import {AlarmService} from "../../services/alarm.service";
+import {AlarmService, WeekDayIndex} from "../../services/alarm.service";
+import {SpotifyResourceDTO} from "../../dtos/spotify/SpotifyResourceDTO";
 
 @Component({
   selector: 'app-alarms-mobile',
@@ -11,6 +12,7 @@ export class AlarmsMobileComponent {
   @Input() alarms: AlarmDTO[] = [];
   @Output() deleteAlarmRequest: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateAlarmRequest: EventEmitter<AlarmDTO> = new EventEmitter<AlarmDTO>();
+  @Output() autoSaveAlarmRequest: EventEmitter<AlarmDTO> = new EventEmitter<AlarmDTO>();
 
   deleting: boolean = false;
   alarmToDelete: AlarmDTO | undefined;
@@ -41,5 +43,25 @@ export class AlarmsMobileComponent {
     this.alarmTimeEditing = -1;
     alarm.time = this.editedTime;
     this.updateAlarmRequest.emit(alarm);
+  }
+
+  changeDay(alarm: AlarmDTO, day: WeekDayIndex): void {
+    this.service.toggleScheduleDay(alarm, day);
+    this.autoSaveAlarmRequest.emit(alarm);
+  }
+
+  changeVolume(alarm: AlarmDTO, volume: number): void {
+    alarm.maxVolume = volume;
+    this.autoSaveAlarmRequest.emit(alarm);
+  }
+
+  changeResource(alarm: AlarmDTO, resource: SpotifyResourceDTO): void {
+    alarm.audio = resource;
+    this.autoSaveAlarmRequest.emit(alarm);
+  }
+
+  changeActive(alarm: AlarmDTO, active: boolean): void {
+    alarm.active = active;
+    this.autoSaveAlarmRequest.emit(alarm);
   }
 }

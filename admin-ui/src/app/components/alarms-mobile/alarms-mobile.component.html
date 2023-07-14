@@ -22,20 +22,20 @@
         <div class="day-container">
             <button *ngFor="let day of service.DAYS"
                     class="day"
-                    (click)="service.toggleScheduleDay(alarm, day.id)"
+                    (click)="changeDay(alarm, day.id)"
                     [style.background-color]="service.computeAlarmBadgeColor(alarm, day.id)">
                 {{day.name}}
             </button>
         </div>
 
-        <app-scene-audio [(activeVolume)]="alarm.maxVolume"
-                         [(activeResource)]="alarm.audio">
+        <app-scene-audio [activeVolume]="alarm.maxVolume" (activeVolumeChange)="changeVolume(alarm, $event)"
+                         [activeResource]="alarm.audio" (activeResourceChange)="changeResource(alarm, $event)">
         </app-scene-audio>
 
         <div class="horizontal-controls">
             <app-fancy-button [backgroundText]="alarm.active ? 'Enabled' : 'Disabled'"
                               [buttonIcon]="alarm.active ? 'toggle_on' : 'toggle_off'"
-                              (buttonClicked)="alarm.active = !alarm.active"
+                              (buttonClicked)="changeActive(alarm, !alarm.active)"
                               [style.opacity]="alarm.active ? 1 : 0.75">
             </app-fancy-button>
             <app-fancy-button buttonIcon="delete"
