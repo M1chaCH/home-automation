@@ -42,8 +42,8 @@ export class PageMessagesComponent implements MessageChangeListener, OnInit {
   }
 
   messageExpired(expiredMessage: ActiveMessage): void {
-    const messageElement: HTMLElement = document.getElementById("message-" + expiredMessage.id)!;
-    messageElement.classList.add(this.HIDE_MESSAGE_CLASS);
+    const messageElement: HTMLElement | null = document.getElementById("message-" + expiredMessage.id)!; // might be null due to swipe removal
+    messageElement?.classList.add(this.HIDE_MESSAGE_CLASS);
     setTimeout(() => this.messages.delete(expiredMessage.id || -1), this.MESSAGE_ANIM_DURATION_MS);
   }
 
