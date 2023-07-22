@@ -34,9 +34,10 @@ import { SceneAudioComponent } from './components/scene-audio/scene-audio.compon
 import { SpotifyResourceSelectorComponent } from './components/spotify/spotify.resource-selector/spotify.resource-selector.component';
 import { MessageDetailPageComponent } from './pages/message-detail.page/message-detail-page.component';
 import { AlarmPageComponent } from './pages/alarm.page/alarm.page.component';
-import { AlarmsLargeComponent } from './components/alarms-large/alarms-large.component';
-import { AlarmsMobileComponent } from './components/alarms-mobile/alarms-mobile.component';
 import { AddAlarmComponent } from './components/add-alarm/add-alarm.component';
+import { SceneSelectorComponent } from './components/scene-selector/scene-selector.component';
+import { AlarmDaysComponent } from './components/alarm-days/alarm-days.component';
+import { SubstringPipe } from './pipes/substring.pipe';
 
 @NgModule({
   declarations: [
@@ -67,9 +68,10 @@ import { AddAlarmComponent } from './components/add-alarm/add-alarm.component';
     SpotifyResourceSelectorComponent,
     MessageDetailPageComponent,
     AlarmPageComponent,
-    AlarmsLargeComponent,
-    AlarmsMobileComponent,
     AddAlarmComponent,
+    SceneSelectorComponent,
+    AlarmDaysComponent,
+    SubstringPipe,
   ],
   imports: [
     BrowserModule,

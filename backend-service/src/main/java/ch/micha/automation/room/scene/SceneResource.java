@@ -29,6 +29,13 @@ public class SceneResource {
         return Response.status(Response.Status.OK).entity(crudService.loadScenes()).build();
     }
 
+    @GET
+    @Path("/crud/simple")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSimpleScenes() {
+        return Response.status(Response.Status.OK).entity(crudService.loadSimpleScenes()).build();
+    }
+
     @POST
     @Path("/crud")
     @Consumes(MediaType.APPLICATION_JSON)

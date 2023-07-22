@@ -21,8 +21,7 @@ public class AlarmProvider {
     public static final String ID_COLUMN = "id";
     public static final String CRON_SCHEDULE_COLUMN = "cron_schedule";
     public static final String ACTIVE_COLUMN = "active";
-    public static final String SPOTIFY_RESOURCE_COLUMN = "spotify_resource";
-    public static final String MAX_VOLUME_COLUMN = "max_volume";
+    public static final String SCENE_ID_COLUMN = "scene";
 
     @Inject
     public AlarmProvider(SQLService sql) {
@@ -43,8 +42,7 @@ public class AlarmProvider {
                     result.getInt(ID_COLUMN),
                     result.getString(CRON_SCHEDULE_COLUMN),
                     result.getBoolean(ACTIVE_COLUMN),
-                    result.getString(SPOTIFY_RESOURCE_COLUMN),
-                    result.getInt(MAX_VOLUME_COLUMN)
+                    result.getInt(SCENE_ID_COLUMN)
                 ));
             }
 
@@ -55,16 +53,15 @@ public class AlarmProvider {
         }
     }
 
-    public AlarmEntity createAlarm(String cronSchedule, String spotifyResource, int maxVolume) {
+    public AlarmEntity createAlarm(String cronSchedule, int sceneId) {
         LOGGER.log(Level.INFO, "creating alarm at {0}", new Object[]{ cronSchedule });
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
-            "INSERT INTO alarm (cron_schedule, spotify_resource, max_volume) " +
-                    "VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS
+            "INSERT INTO alarm (cron_schedule, scene) " +
+                    "VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS
         )) {
             statement.setString(1, cronSchedule);
-            statement.setString(2, spotifyResource);
-            statement.setInt(3, maxVolume);
+            statement.setInt(2, sceneId);
 
             statement.execute();
 
@@ -76,8 +73,7 @@ public class AlarmProvider {
                 generatedId,
                 cronSchedule,
                  true,
-                spotifyResource,
-                maxVolume
+                sceneId
             );
 
             LOGGER.log(Level.INFO, "created alarm {0}", entity);
@@ -87,19 +83,18 @@ public class AlarmProvider {
         }
     }
 
-    public void updateAlarm(int id, String cronSchedule, boolean active, String spotifyResource, int maxVolume) {
+    public void updateAlarm(int id, String cronSchedule, boolean active, int sceneId) {
         LOGGER.log(Level.INFO, "updating alarm {0}", new Object[]{ id });
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
             "UPDATE alarm " +
-                "SET cron_schedule = ?, active = ?, spotify_resource = ?, max_volume = ?" +
+                "SET cron_schedule = ?, active = ?, scene = ?" +
                 "WHERE id = ?;"
         )) {
             statement.setString(1, cronSchedule);
             statement.setBoolean(2, active);
-            statement.setString(3, spotifyResource);
-            statement.setInt(4, maxVolume);
-            statement.setInt(5, id);
+            statement.setInt(3, sceneId);
+            statement.setInt(4, id);
             statement.executeUpdate();
             LOGGER.log(Level.INFO, "updated alarms with id {0}", id);
         } catch (SQLException e) {

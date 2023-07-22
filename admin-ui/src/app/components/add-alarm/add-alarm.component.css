@@ -1,7 +1,7 @@
 .add-alarm-container {
   min-width: 250px;
   width: 100%;
-  max-width: 500px;
+  max-width: 350px;
 }
 .add-alarm-container .add-alarm {
   display: flex;

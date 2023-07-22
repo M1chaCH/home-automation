@@ -1,0 +1,62 @@
+.alarm-days-container {
+  --container-width: 100%;
+  --container-height: 100%;
+
+  display: block;
+  min-height: 100px;
+  min-width: 250px;
+  width: var(--container-width);
+  height: var(--container-height);
+  container: alarm-days / size;
+
+  .alarm-days {
+    display: grid;
+    grid-auto-rows: clamp(25px, 40cqh, 80px);
+    grid-template-columns: repeat(8, 12.5%);
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    align-items: center;
+    justify-items: center;
+
+    .day {
+      text-transform: uppercase;
+      font-size: max(11px, 2.1cqw);
+      font-weight: 300;
+      margin: 0;
+      padding: 0 5px;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      align-self: end;
+      opacity: 75%;
+      color: var(--white);
+    }
+
+    .alarm-disable-button {
+      all: unset;
+      transition: all 250ms ease-out;
+      align-self: center;
+      font-weight: 600;
+      font-size: max(11px, 2.1cqw);
+      cursor: pointer;
+
+      opacity: 75%;
+      color: var(--white);
+    }
+
+
+    .alarm-disable-button:hover {
+      opacity: 90%;
+      scale: 1.05;
+    }
+
+    .day-selector {
+      all: unset;
+      margin: 5px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: all 200ms ease-out;
+    }
+  }
+}

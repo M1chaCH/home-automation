@@ -53,8 +53,7 @@ create table alarm
     id serial primary key,
     cron_schedule varchar(50) not null,
     active bool not null default true,
-    spotify_resource varchar(250) not null,
-    max_volume int not null default 30
+    scene int not null references scene(id)
 );
 
 drop function if exists validate_single_spotify_authorisation;

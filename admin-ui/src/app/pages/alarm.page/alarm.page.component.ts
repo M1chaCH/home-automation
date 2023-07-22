@@ -1,11 +1,13 @@
-import {Component, HostListener} from '@angular/core';
-import {AlarmService} from "../../services/alarm.service";
+import {Component} from '@angular/core';
+import {AlarmService, WeekDayIndex} from "../../services/alarm.service";
 import {AlarmDTO} from "../../dtos/AlarmDTO";
 import {
   DataTopic,
   DataUpdateDistributorService, DataUpdateListener
 } from "../../services/data-update-distributor.service";
 import {MessageDistributorService} from "../../services/message-distributor.service";
+import {SimpleSceneDTO} from "../../dtos/scene/SceneDTO";
+import {ScenesService} from "../../services/scenes.service";
 
 @Component({
   selector: 'app-alarm.page',
@@ -14,21 +16,27 @@ import {MessageDistributorService} from "../../services/message-distributor.serv
 })
 export class AlarmPageComponent implements DataUpdateListener{
   alarms: AlarmDTO[] = [];
-  mobileView: boolean = true;
-  readonly AUTO_SAVE_WAIT: number = 5 * 1000;
+  simpleScenes: SimpleSceneDTO[] = [];
+  readonly AUTO_SAVE_WAIT: number = 3 * 1000;
 
-  private readonly MOBILE_BREAKPOINT = 900;
+  deleting: boolean = false;
+  alarmToDelete: AlarmDTO | undefined;
+
+  alarmTimeEditing: number = -1;
+  editedTime: string = "";
+
   private alarmsToAutoSave: Map<number, AlarmDTO> = new Map<number, AlarmDTO>();
   private autoSaveTimer: number = -1;
 
   constructor(
-    private service: AlarmService,
+    public service: AlarmService,
+    private sceneService: ScenesService,
     private dataDistributor: DataUpdateDistributorService,
     private messageDistributor: MessageDistributorService,
   ) {
     dataDistributor.registerListener(this, "NEW_ALARM", "UPDATED_ALARM", "REMOVED_ALARM");
-    this.onWindowResize();
     service.loadAlarms().subscribe(response => this.alarms = response);
+    this.sceneService.loadSimpleScenes().subscribe(response => this.simpleScenes = response);
   }
 
   updateData(topic: DataTopic, data: any): void {
@@ -48,13 +56,10 @@ export class AlarmPageComponent implements DataUpdateListener{
   registerAlarmForAutoUpdate(alarm: AlarmDTO): void {
     clearTimeout(this.autoSaveTimer);
     this.alarmsToAutoSave.set(alarm.id!, alarm);
-    this.autoSaveTimer = setTimeout(() => this.updateAlarms(this.alarmsToAutoSave), this.AUTO_SAVE_WAIT);
-  }
-
-  updateAlarm(toUpdate: AlarmDTO) {
-    this.service.editAlarm(toUpdate).subscribe(() =>
-      this.dataDistributor.updateTopic("UPDATED_ALARM", toUpdate)
-    );
+    this.autoSaveTimer = setTimeout(() => {
+      this.updateAlarms(this.alarmsToAutoSave);
+      this.alarmsToAutoSave.clear();
+    }, this.AUTO_SAVE_WAIT);
   }
 
   deleteAlarm(id: number): void {
@@ -64,9 +69,41 @@ export class AlarmPageComponent implements DataUpdateListener{
     });
   }
 
-  @HostListener("window:resize")
-  onWindowResize(): void {
-    this.mobileView = window.innerWidth <= this.MOBILE_BREAKPOINT;
+  markAlarmForDeletion(alarm: AlarmDTO) {
+    this.alarmToDelete = alarm;
+    this.deleting = true;
+  }
+
+  markAlarmForEditing(alarm: AlarmDTO) {
+    this.editedTime = alarm.time;
+    this.alarmTimeEditing = alarm.id || -1;
+  }
+
+  deleteAlarmIfApproved(approved: boolean): void {
+    if(approved)
+      this.deleteAlarm(this.alarmToDelete!.id!);
+  }
+
+  changeTimeOfAlarm(alarm: AlarmDTO) {
+    this.alarmTimeEditing = -1;
+    alarm.time = this.editedTime;
+    this.registerAlarmForAutoUpdate(alarm);
+  }
+
+  changeDay(alarm: AlarmDTO, day: WeekDayIndex): void {
+    this.service.toggleScheduleDay(alarm, day);
+    this.registerAlarmForAutoUpdate(alarm);
+  }
+
+  changeScene(alarm: AlarmDTO, scene: SimpleSceneDTO): void {
+    alarm.sceneId = scene.id;
+    alarm.sceneName = scene.name;
+    this.registerAlarmForAutoUpdate(alarm);
+  }
+
+  changeActive(alarm: AlarmDTO, active: boolean): void {
+    alarm.active = active;
+    this.registerAlarmForAutoUpdate(alarm);
   }
 
   private updateAlarms(toUpdate: Map<number, AlarmDTO>): void {

@@ -4,6 +4,5 @@ public record AlarmEntity(
     int id,
     String cronSchedule,
     boolean active,
-    String spotifyResource,
-    int maxVolume
+    int sceneId
 ) { }

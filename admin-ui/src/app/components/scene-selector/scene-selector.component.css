@@ -1,28 +1,79 @@
-.header-button.small {
-  font-size: 17px !important;
-  font-weight: 400 !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.header-button {
+.preview-container {
   all: unset;
-  display: block;
-  width: 100%;
-  margin: 10px 0 10px 0;
-  font-size: 1.5em;
-  color: white;
-  font-weight: 700;
-  transition: all 250ms ease-out;
-}
-.header-button:hover {
   cursor: pointer;
-  scale: 1.02;
+  display: flex;
+  flex-flow: column;
+  min-width: 120px;
+  width: 100%;
+  max-width: 350px;
+  container: scene-preview/inline-size;
+  transition: all 200ms ease-out;
+}
+.preview-container p {
+  margin: 0;
+  padding: 0;
+}
+.preview-container .row {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.preview-container .row .scene-name {
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.preview-container .row .resource-name {
+  font-weight: 700;
+  text-transform: lowercase;
+  font-size: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  padding: 0 5cqw;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+  position: absolute;
+  top: 10px;
+  filter: drop-shadow(0 4px 10px var(--black));
+}
+.preview-container .row .resource-image {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0 0 2cqw 2cqw;
+  opacity: 60%;
+  mask: linear-gradient(0deg, rgb(0, 0, 0) 0, rgb(0, 0, 0) 15%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
+}
+.preview-container .row .volume-indicator {
+  --volume: 50%;
+  height: 5px;
+  border-radius: 2.5px;
+  width: var(--volume);
+  background-color: var(--yellow-red);
+}
+.preview-container .devices {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3cqw;
+  padding: 3cqw;
+  border-radius: 1.5cqw;
+  background-color: color-mix(in srgb, var(--lemon-meringue) 20%, transparent);
+}
+.preview-container .devices span:not(.material-symbols-rounded) {
+  font-weight: 300;
+  font-size: 18px;
 }
 
-.no-resource-selected {
-  opacity: 0.6;
+.preview-container:hover {
+  scale: 102%;
 }
 
 .scene-dialog-container {
@@ -68,7 +119,7 @@
   min-width: 200px;
   width: 80vw;
   max-width: 400px;
-  max-height: 400px;
+  height: 300px;
   overflow-y: auto;
 }
 .scene-dialog-container .scene-dialog .scene-selector input {
@@ -111,6 +162,21 @@
   mask: linear-gradient(to right, rgb(0, 0, 0) 0, rgb(0, 0, 0) 25%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
   transition: all 250ms ease-out;
 }
+.scene-dialog-container .scene-dialog .scene-selector .scene .scene-details {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene .scene-details .device-count .material-symbols-rounded {
+  font-size: 18px;
+  overflow-y: hidden;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene .scene-details .device-count span:not(.material-symbols-rounded) {
+  margin-right: 5px;
+  font-weight: 300;
+  font-size: 18px;
+}
 .scene-dialog-container .scene-dialog .scene-selector .scene span {
   align-self: center;
   font-size: 25px;
@@ -150,8 +216,8 @@
   to {
     opacity: 1;
     transform: translateY(0%);
-    height: 400px;
+    height: 300px;
   }
 }
 
-/*# sourceMappingURL=spotify.resource-selector.component.css.map */
+/*# sourceMappingURL=scene-selector.component.css.map */

@@ -1,6 +1,5 @@
 package ch.micha.automation.room.alarm.dtos;
 
-import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +16,6 @@ public class AlarmDTO {
     private String time;
     private byte[] days;
     private boolean active;
-    private SpotifyResourceDTO audio;
-    private int maxVolume;
+    private int sceneId;
+    private String sceneName;
 }

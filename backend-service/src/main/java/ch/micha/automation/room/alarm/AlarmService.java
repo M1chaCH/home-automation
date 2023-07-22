@@ -2,8 +2,8 @@ package ch.micha.automation.room.alarm;
 
 import ch.micha.automation.room.alarm.dtos.AlarmDTO;
 import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
-import ch.micha.automation.room.spotify.SpotifyService;
-import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
+import ch.micha.automation.room.scene.SceneEntity;
+import ch.micha.automation.room.scene.SceneProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -12,33 +12,32 @@ import java.util.StringJoiner;
 @ApplicationScoped
 public class AlarmService {
     private final AlarmProvider provider;
-    private final SpotifyService spotifyService;
+    private final SceneProvider sceneProvider;
 
     @Inject
-    public AlarmService(AlarmProvider provider, SpotifyService spotifyService) {
+    public AlarmService(AlarmProvider provider, SceneProvider sceneProvider) {
         this.provider = provider;
-        this.spotifyService = spotifyService;
+        this.sceneProvider = sceneProvider;
     }
 
     public List<AlarmDTO> loadAlarms() {
         List<AlarmEntity> entities = provider.loadAlarms();
-        List<SpotifyResourceDTO> spotifyResources = spotifyService.loadResources();
+        List<SceneEntity> sceneNames = sceneProvider.loadSimpleScenes();
 
         return entities.stream()
-            .map(entity -> parseEntityToDto(entity, spotifyResources))
+            .map(entity -> parseEntityToDto(entity, sceneNames))
             .toList();
     }
 
     public AlarmDTO createAlarm(AlarmDTO toCreate) {
-        List<SpotifyResourceDTO> spotifyResources = spotifyService.loadResources();
+        List<SceneEntity> sceneNames = sceneProvider.loadSimpleScenes();
         AlarmEntity toCreateEntity = parseDtoToEntity(toCreate);
         AlarmEntity createdAlarm = provider.createAlarm(
             toCreateEntity.cronSchedule(),
-            toCreateEntity.spotifyResource(),
-            toCreateEntity.maxVolume()
+            toCreateEntity.sceneId()
         );
 
-        return parseEntityToDto(createdAlarm, spotifyResources);
+        return parseEntityToDto(createdAlarm, sceneNames);
     }
 
     public void updateAlarm(AlarmDTO toUpdate) {
@@ -47,8 +46,7 @@ public class AlarmService {
             toUpdateEntity.id(),
             toUpdateEntity.cronSchedule(),
             toUpdateEntity.active(),
-            toUpdateEntity.spotifyResource(),
-            toUpdateEntity.maxVolume()
+            toUpdateEntity.sceneId()
         );
     }
 
@@ -56,11 +54,11 @@ public class AlarmService {
         provider.deleteAlarm(id);
     }
 
-    private AlarmDTO parseEntityToDto(AlarmEntity entity, List<SpotifyResourceDTO> spotifyResources){
-        SpotifyResourceDTO spotifyResource = spotifyResources.stream()
-            .filter(resource -> resource.getSpotifyURI().equals(entity.spotifyResource()))
-            .findAny()
-            .orElseThrow(() -> new ResourceNotFoundException("alarm audio", entity.spotifyResource()));
+    private AlarmDTO parseEntityToDto(AlarmEntity entity, List<SceneEntity> sceneNames){
+        SceneEntity sceneName = sceneNames.stream()
+            .filter(scene -> scene.id() == entity.sceneId())
+            .findFirst()
+            .orElseThrow(() -> new ResourceNotFoundException("scene for alarm", String.valueOf(entity.sceneId())));
 
         String[] scheduleParts = entity.cronSchedule().split("\\s+");
         String formattedTime = String.format("%02d:%02d", Integer.parseInt(scheduleParts[1]), Integer.parseInt(scheduleParts[0]));
@@ -75,8 +73,8 @@ public class AlarmService {
             formattedTime,
             days,
             entity.active(),
-            spotifyResource,
-            entity.maxVolume()
+            sceneName.id(),
+            sceneName.name()
         );
     }
 
@@ -92,8 +90,7 @@ public class AlarmService {
             dto.getId(),
             String.format("%s %s * * %s", minute, hour, dayJoiner),
             dto.isActive(),
-            dto.getAudio().getSpotifyURI(),
-            dto.getMaxVolume()
+            dto.getSceneId()
         );
     }
 }

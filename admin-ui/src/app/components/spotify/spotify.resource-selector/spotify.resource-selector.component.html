@@ -10,13 +10,13 @@
                           class="close-button">
         </app-fancy-button>
     </div>
-    <div class="resources-dialog">
-        <div class="resource-selector">
+    <div class="scene-dialog">
+        <div class="scene-selector">
             <input placeholder="Search"
                    [(ngModel)]="query"
                    (ngModelChange)="queryChanged($event)" autofocus
                    (keydown.enter)="resourceSelected()"/>
-            <button *ngFor="let resource of filteredResources" class="resource" (click)="resourceSelected(resource)">
+            <button *ngFor="let resource of filteredResources" class="scene" (click)="resourceSelected(resource)">
                 <div class="image" [style.background-image]="'url(' + resource.imageUrl + ')'"></div>
                 <span>{{resource.name}}</span>
             </button>

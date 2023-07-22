@@ -1,0 +1,25 @@
+<div class="alarm-days-container" [style.--container-width]="width" [style.--container-height]="height">
+    <div class="alarm-days">
+        <!-- headers -->
+        <div class="header"></div>
+        <ng-container *ngIf="windowWidth >= 650 else smallDays">
+            <p class="day" *ngFor="let day of service.DAYS">{{day.name}}</p>
+        </ng-container>
+        <ng-template #smallDays>
+            <p class="day" *ngFor="let day of service.DAYS">{{day.name | substring:0: 3}}</p>
+        </ng-template>
+
+        <!-- alarms -->
+        <ng-container *ngFor="let alarm of alarms">
+            <button class="alarm-disable-button" (click)="disableAlarm.emit(alarm)">
+                {{alarm.time}}
+            </button>
+            <button *ngFor="let day of service.DAYS"
+                    class="day-selector"
+                    style="width: 90%; height: 90%;"
+                    (click)="dayClicked.emit({ alarm, day: day.id })"
+                    [style.background-color]="service.computeAlarmBadgeColor(alarm, day.id)">
+            </button>
+        </ng-container>
+    </div>
+</div>

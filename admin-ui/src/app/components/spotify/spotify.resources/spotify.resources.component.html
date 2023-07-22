@@ -1,7 +1,7 @@
 <h1>Available resources</h1>
 <h3>Max. 50</h3>
 <div class="spotify-resources" *ngFor="let resource of (resources$ | async)">
-    <a class="resource" [href]="resource.href" target="_blank">
+    <a class="scene" [href]="resource.href" target="_blank">
         <img [src]="resource.imageUrl" alt="😢"/>
         <div class="info">
             <p class="name">{{resource.name}}</p>
