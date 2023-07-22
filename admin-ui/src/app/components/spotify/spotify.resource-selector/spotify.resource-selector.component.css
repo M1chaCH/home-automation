@@ -25,7 +25,7 @@
   opacity: 0.6;
 }
 
-.scene-dialog-container {
+.resources-dialog-container {
   justify-content: center;
   align-items: center;
   flex-flow: column;
@@ -40,7 +40,7 @@
   backdrop-filter: blur(0);
   z-index: 996;
 }
-.scene-dialog-container .header {
+.resources-dialog-container .header {
   min-width: 200px;
   width: 80vw;
   max-width: 400px;
@@ -49,10 +49,10 @@
   justify-content: space-between;
   gap: 10px;
 }
-.scene-dialog-container .header .close-button {
+.resources-dialog-container .header .close-button {
   aspect-ratio: 1/1;
 }
-.scene-dialog-container .scene-dialog {
+.resources-dialog-container .resources-dialog {
   z-index: 100;
   padding: 20px;
   border: none;
@@ -61,7 +61,7 @@
   background: linear-gradient(155deg, rgb(0, 13, 20) 0%, rgb(2, 13, 27) 70%, rgb(5, 13, 35) 100%);
   overflow: hidden;
 }
-.scene-dialog-container .scene-dialog .scene-selector {
+.resources-dialog-container .resources-dialog .resources-selector {
   display: flex;
   flex-flow: column;
   gap: 10px;
@@ -71,7 +71,7 @@
   max-height: 400px;
   overflow-y: auto;
 }
-.scene-dialog-container .scene-dialog .scene-selector input {
+.resources-dialog-container .resources-dialog .resources-selector input {
   outline: none;
   border: none;
   padding: 8px;
@@ -82,26 +82,26 @@
   color: var(--black);
   transition: all 250ms ease-out;
 }
-.scene-dialog-container .scene-dialog .scene-selector input:hover {
+.resources-dialog-container .resources-dialog .resources-selector input:hover {
   background-color: rgba(234, 226, 183, 0.65);
 }
-.scene-dialog-container .scene-dialog .scene-selector input:active, .scene-dialog-container .scene-dialog .scene-selector input:focus {
+.resources-dialog-container .resources-dialog .resources-selector input:active, .resources-dialog-container .resources-dialog .resources-selector input:focus {
   background-color: rgba(234, 226, 183, 0.8);
 }
-.scene-dialog-container .scene-dialog .scene-selector input::placeholder {
+.resources-dialog-container .resources-dialog .resources-selector input::placeholder {
   color: rgba(0, 13, 20, 0.5);
 }
-.scene-dialog-container .scene-dialog .scene-selector input::-ms-input-placeholder { /* Microsoft Edge */
+.resources-dialog-container .resources-dialog .resources-selector input::-ms-input-placeholder { /* Microsoft Edge */
   color: rgba(0, 13, 20, 0.5);
 }
-.scene-dialog-container .scene-dialog .scene-selector .scene {
+.resources-dialog-container .resources-dialog .resources-selector .resource {
   all: unset;
   display: grid;
   width: 100%;
   grid-template-rows: 50px;
   grid-template-columns: 25% 75%;
 }
-.scene-dialog-container .scene-dialog .scene-selector .scene .image {
+.resources-dialog-container .resources-dialog .resources-selector .resource .image {
   object-fit: cover;
   width: 160%;
   background-repeat: no-repeat;
@@ -111,7 +111,7 @@
   mask: linear-gradient(to right, rgb(0, 0, 0) 0, rgb(0, 0, 0) 25%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
   transition: all 250ms ease-out;
 }
-.scene-dialog-container .scene-dialog .scene-selector .scene span {
+.resources-dialog-container .resources-dialog .resources-selector .resource span {
   align-self: center;
   font-size: 25px;
   font-weight: 600;
@@ -120,24 +120,24 @@
   overflow-x: hidden;
   white-space: nowrap;
 }
-.scene-dialog-container .scene-dialog .scene-selector .scene:hover {
+.resources-dialog-container .resources-dialog .resources-selector .resource:hover {
   cursor: pointer;
 }
-.scene-dialog-container .scene-dialog .scene-selector .scene:hover .image {
+.resources-dialog-container .resources-dialog .resources-selector .resource:hover .image {
   transform: scale(1.1);
 }
-.scene-dialog-container .delete-button {
+.resources-dialog-container .delete-button {
   min-width: 200px;
   width: 80vw;
   max-width: 400px;
   height: 50px;
 }
 
-.scene-dialog-container-open {
+.resources-dialog-container-open {
   display: flex;
   backdrop-filter: blur(20px);
 }
-.scene-dialog-container-open .scene-dialog {
+.resources-dialog-container-open .resources-dialog {
   animation: show-dialog 300ms ease-out normal;
 }
 

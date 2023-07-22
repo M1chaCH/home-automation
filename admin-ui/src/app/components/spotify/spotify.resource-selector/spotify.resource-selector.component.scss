@@ -27,7 +27,7 @@
   opacity: 0.6;
 }
 
-.scene-dialog-container {
+.resources-dialog-container {
   justify-content: center;
   align-items: center;
   flex-flow: column;
@@ -60,7 +60,7 @@
     }
   }
 
-  .scene-dialog {
+  .resources-dialog {
     z-index: 100;
     padding: 20px;
     border: none;
@@ -69,7 +69,7 @@
     background: linear-gradient(155deg, rgba(0,13,20,1) 0%, rgba(2,13,27,1) 70%, rgba(5,13,35,1) 100%);
     overflow: hidden;
 
-    .scene-selector {
+    .resources-selector {
       display: flex;
       flex-flow: column;
       gap: 10px;
@@ -109,7 +109,7 @@
         color: rgba(0,13,20,0.5);
       }
 
-      .scene {
+      .resource {
         all: unset;
         display: grid;
         width: 100%;
@@ -159,11 +159,11 @@
   }
 }
 
-.scene-dialog-container-open {
+.resources-dialog-container-open {
   display: flex;
   backdrop-filter: blur(20px);
 
-  .scene-dialog {
+  .resources-dialog {
     animation: show-dialog 300ms ease-out normal;
   }
 }
