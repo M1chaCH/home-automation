@@ -24,6 +24,9 @@ export const apiEndpoints = {
     DEVICES: "automation/device",
     ALARMS: "automation/alarm",
     CURRENT_ALARM: "automation/alarm/current",
-    ALARM_NOTIFICATIONS: "automation/alarm/notifications",
+}
+
+export const websockets = {
+    ALARM_NOTIFICATIONS: "alarm/notifications",
 }
 export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';

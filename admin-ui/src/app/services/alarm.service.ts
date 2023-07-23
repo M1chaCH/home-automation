@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {AlarmDTO, AlarmNotificationDTO} from "../dtos/AlarmDTO";
 import {Observable, of} from "rxjs";
 import {ApiService} from "./api.service";
-import {apiEndpoints} from "../configuration/app.config";
+import {apiEndpoints, websockets} from "../configuration/app.config";
 import {WebSocketSubject} from "rxjs/internal/observable/dom/WebSocketSubject";
 import {webSocket} from "rxjs/webSocket";
 import {environment} from "../../environments/environment";
@@ -29,7 +29,7 @@ export class AlarmService {
   constructor(
       private api: ApiService,
   ) {
-    this.notificationSocket = webSocket<AlarmNotificationDTO>(`${environment.WS_API_URL}/${apiEndpoints.ALARM_NOTIFICATIONS}`);
+    this.notificationSocket = webSocket<AlarmNotificationDTO>(`${environment.WS_API_URL}/${websockets.ALARM_NOTIFICATIONS}`);
   }
 
   connectToNotifications(): Observable<AlarmNotificationDTO> {

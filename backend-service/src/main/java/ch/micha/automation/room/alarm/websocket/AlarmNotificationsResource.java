@@ -8,7 +8,7 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
 @SuppressWarnings("unused") // intellij does not know that this is called by jakarta
-@ServerEndpoint("/automation/alarm/notifications")
+@ServerEndpoint("/websocket/alarm/notifications")
 public class AlarmNotificationsResource {
 
     private final AlarmNotificationService service;
