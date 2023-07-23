@@ -12,11 +12,13 @@ import java.util.StringJoiner;
 @ApplicationScoped
 public class AlarmService {
     private final AlarmProvider provider;
+    private final AlarmTrigger alarmTrigger;
     private final SceneProvider sceneProvider;
 
     @Inject
-    public AlarmService(AlarmProvider provider, SceneProvider sceneProvider) {
+    public AlarmService(AlarmProvider provider, AlarmTrigger alarmTrigger, SceneProvider sceneProvider) {
         this.provider = provider;
+        this.alarmTrigger = alarmTrigger;
         this.sceneProvider = sceneProvider;
     }
 
@@ -27,6 +29,11 @@ public class AlarmService {
         return entities.stream()
             .map(entity -> parseEntityToDto(entity, sceneNames))
             .toList();
+    }
+
+    public AlarmDTO loadNextAlarmAsDto() {
+        List<SceneEntity> sceneNames = sceneProvider.loadSimpleScenes();
+        return parseEntityToDto(alarmTrigger.loadNextAlarm(), sceneNames);
     }
 
     public AlarmDTO createAlarm(AlarmDTO toCreate) {
@@ -52,6 +59,14 @@ public class AlarmService {
 
     public void deleteAlarm(int id) {
         provider.deleteAlarm(id);
+    }
+
+    public void continueSceneOfAlarm() {
+        alarmTrigger.continueSceneOfAlarm();
+    }
+
+    public void stopCurrentAlarm() {
+        alarmTrigger.stopCurrentAlarm();
     }
 
     private AlarmDTO parseEntityToDto(AlarmEntity entity, List<SceneEntity> sceneNames){

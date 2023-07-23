@@ -54,4 +54,24 @@ public class AlarmResource {
         service.deleteAlarm(id);
         return Response.status(Status.NO_CONTENT).build();
     }
+
+    @GET
+    @Path("/current")
+    public Response getNextAlarm() {
+        return Response.status(Status.OK).entity(service.loadNextAlarmAsDto()).build();
+    }
+
+    @PUT
+    @Path("/current")
+    public Response continueSceneOfAlarm() {
+        service.continueSceneOfAlarm();
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @DELETE
+    @Path("/current")
+    public Response stopAlarm() {
+        service.stopCurrentAlarm();
+        return Response.status(Status.NO_CONTENT).build();
+    }
 }

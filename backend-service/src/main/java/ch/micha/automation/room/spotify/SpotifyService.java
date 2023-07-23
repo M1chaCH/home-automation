@@ -86,6 +86,10 @@ public class SpotifyService implements OnAppStartupListener {
         api.pausePlayback();
     }
 
+    public void setVolume(int volume) {
+        api.setPlaybackVolume(volume);
+    }
+
     /**
      * skips to the next song and loads the future player. Needs to wait a bit to make sure the player on spotify side
      * has updated, otherwise the new player won't be updated
