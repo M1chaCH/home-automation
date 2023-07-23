@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.helidon.applications</groupId>
         <artifactId>helidon-mp</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.2</version>
         <relativePath/>
     </parent>
     <groupId>ch.micha</groupId>
@@ -28,8 +28,8 @@
             <artifactId>helidon-microprofile-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.helidon.microprofile.health</groupId>
-            <artifactId>helidon-microprofile-health</artifactId>
+            <groupId>io.helidon.microprofile.websocket</groupId>
+            <artifactId>helidon-microprofile-websocket</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.json.bind</groupId>

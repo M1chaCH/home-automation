@@ -38,6 +38,8 @@ import { AddAlarmComponent } from './components/add-alarm/add-alarm.component';
 import { SceneSelectorComponent } from './components/scene-selector/scene-selector.component';
 import { AlarmDaysComponent } from './components/alarm-days/alarm-days.component';
 import { SubstringPipe } from './pipes/substring.pipe';
+import { NextAlarmComponent } from './components/next-alarm/next-alarm.component';
+import { AlarmListenerComponent } from './components/alarm-listener/alarm-listener.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +74,8 @@ import { SubstringPipe } from './pipes/substring.pipe';
     SceneSelectorComponent,
     AlarmDaysComponent,
     SubstringPipe,
+    NextAlarmComponent,
+    AlarmListenerComponent,
   ],
   imports: [
     BrowserModule,

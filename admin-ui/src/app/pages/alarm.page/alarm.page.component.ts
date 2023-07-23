@@ -17,7 +17,7 @@ import {ScenesService} from "../../services/scenes.service";
 export class AlarmPageComponent implements DataUpdateListener{
   alarms: AlarmDTO[] = [];
   simpleScenes: SimpleSceneDTO[] = [];
-  readonly AUTO_SAVE_WAIT: number = 3 * 1000;
+  readonly AUTO_SAVE_WAIT: number = 5 * 1000;
 
   deleting: boolean = false;
   alarmToDelete: AlarmDTO | undefined;

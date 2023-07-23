@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import {AlarmDTO} from "../dtos/AlarmDTO";
+import {AlarmDTO, AlarmNotificationDTO} from "../dtos/AlarmDTO";
 import {Observable, of} from "rxjs";
 import {ApiService} from "./api.service";
 import {apiEndpoints} from "../configuration/app.config";
+import {WebSocketSubject} from "rxjs/internal/observable/dom/WebSocketSubject";
+import {webSocket} from "rxjs/webSocket";
+import {environment} from "../../environments/environment";
 
 export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -21,10 +24,17 @@ export class AlarmService {
   ];
 
   private alarms?: AlarmDTO[];
+  private notificationSocket: WebSocketSubject<AlarmNotificationDTO>;
 
   constructor(
       private api: ApiService,
-  ) { }
+  ) {
+    this.notificationSocket = webSocket<AlarmNotificationDTO>(`${environment.WS_API_URL}/${apiEndpoints.ALARM_NOTIFICATIONS}`);
+  }
+
+  connectToNotifications(): Observable<AlarmNotificationDTO> {
+    return this.notificationSocket.asObservable();
+  }
 
   loadAlarms(): Observable<AlarmDTO[]> {
     if(this.alarms)
@@ -48,6 +58,18 @@ export class AlarmService {
 
   deleteAlarm(id: number): Observable<any> {
     return this.api.callApi(`${apiEndpoints.ALARMS}/${id}`, "DELETE", undefined);
+  }
+
+  loadNextAlarm(): Observable<AlarmDTO> {
+    return this.api.callApi<AlarmDTO>(apiEndpoints.CURRENT_ALARM, "GET", undefined);
+  }
+
+  continueSceneOfCurrentAlarm(): Observable<any> {
+    return this.api.callApi(apiEndpoints.CURRENT_ALARM, "PUT", undefined);
+  }
+
+  stopCurrentAlarm(): Observable<any> {
+    return this.api.callApi(apiEndpoints.CURRENT_ALARM, "DELETE", undefined);
   }
 
   handleAddAlarm(toAdd: AlarmDTO): AlarmDTO[] {
@@ -75,6 +97,60 @@ export class AlarmService {
 
     this.alarms.splice(this.alarms.findIndex(alarm => alarm.id === id), 1);
     return this.alarms;
+  }
+
+  public parseStringDay(alarm: AlarmDTO): string {
+    const currentDay: number = new Date().getDay();
+    const closestDay: WeekDayIndex = this.getClosestDayIndex(alarm.days);
+
+    if(currentDay == closestDay)
+      return "Today";
+    else if(closestDay == currentDay + 1)
+      return "Tomorrow";
+    else {
+      switch (closestDay) {
+        case 0:
+          return "Sunday";
+        case 1:
+          return "Monday";
+        case 2:
+          return "Tuesday";
+        case 3:
+          return "Wednesday";
+        case 4:
+          return "Thursday";
+        case 5:
+          return "Friday";
+        case 6:
+          return "Saturday";
+      }
+    }
+  }
+
+  getClosestDayIndex(days: WeekDayIndex[]): WeekDayIndex {
+    if(days.length < 2)
+      return days[0];
+
+    // prepare data into a week array
+    let week: (WeekDayIndex | undefined)[] = [];
+    for (let i: number = 0; i < 7; i++) {
+      const dayScheduled: boolean = !!days.find(d => d == i);
+      week[i] = dayScheduled ? i as WeekDayIndex : undefined;
+    }
+
+    const currentDay: WeekDayIndex = new Date().getDay() as WeekDayIndex;
+    // check if next alarm is in this week
+    for (let i = currentDay; i < week.length; i++) {
+      if(week[i]) return i;
+    }
+
+    // alarm has to be in next week
+    for (let i = 0; i < currentDay; i++) {
+      if(week[i]) return i as WeekDayIndex;
+    }
+
+    console.error("for some reason no next day could be found ):, returning 0, week used: ", week);
+    return 0;
   }
 
   public computeAlarmBadgeColor(alarm: AlarmDTO, day: WeekDayIndex): string {

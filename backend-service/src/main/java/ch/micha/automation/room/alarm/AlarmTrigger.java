@@ -1,6 +1,9 @@
 package ch.micha.automation.room.alarm;
 
+import ch.micha.automation.room.alarm.websocket.AlarmNotificationService;
 import ch.micha.automation.room.errorhandling.exceptions.InvalidAlarmState;
+import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
+import ch.micha.automation.room.errorhandling.exceptions.UnexpectedAlarmException;
 import ch.micha.automation.room.events.EventHandlerPriority;
 import ch.micha.automation.room.events.HandlerPriority;
 import ch.micha.automation.room.events.OnAppShutdownListener;
@@ -30,8 +33,9 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
     private static final Logger LOGGER = Logger.getLogger(AlarmTrigger.class.getSimpleName());
 
     private final AlarmProvider alarmProvider;
-    private final SceneProvider sceneProvider;
     private final AlarmExecutor alarmExecutor;
+    private final SceneProvider sceneProvider;
+    private final AlarmNotificationService notificationService;
     private final ScheduledExecutorService alarmCheckScheduler =
         Executors.newSingleThreadScheduledExecutor();
     private final CronParser cronParser =
@@ -40,10 +44,12 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
     private Thread currentAlarmThread;
 
     @Inject
-    public AlarmTrigger(AlarmProvider alarmProvider, SceneProvider sceneProvider, AlarmExecutor alarmExecutor) {
+    public AlarmTrigger(AlarmProvider alarmProvider, SceneProvider sceneProvider, AlarmExecutor alarmExecutor,
+        AlarmNotificationService notificationService) {
         this.alarmProvider = alarmProvider;
         this.sceneProvider = sceneProvider;
         this.alarmExecutor = alarmExecutor;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -71,6 +77,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
             alarmExecutor.applyFinalVolume();
             currentAlarmThread.interrupt();
             currentAlarmThread = null;
+            notificationService.sendCurrentAlarmDone();
             LOGGER.log(Level.INFO, "continued with scene after alarm");
         } else throw new InvalidAlarmState();
     }
@@ -80,6 +87,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
             alarmExecutor.stopAlarm();
             currentAlarmThread.interrupt();
             currentAlarmThread = null;
+            notificationService.sendCurrentAlarmDone();
             LOGGER.log(Level.INFO, "interrupted current alarm");
         } else throw new InvalidAlarmState();
     }
@@ -129,7 +137,8 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
             LOGGER.log(Level.WARNING,
                 "could not find scene by id -> {0}, for alarm, not running alarm",
                 new Object[]{alarm.sceneId()});
-            // todo add to queue for UI notification
+            notificationService.sendError(
+                new ResourceNotFoundException("scene for alarm", String.valueOf(alarm.sceneId())).getErrorMessage());
         } else {
             if(currentAlarmThread != null && currentAlarmThread.isAlive()) {
                 LOGGER.log(Level.WARNING, "an alarm is already running, killing and starting new one");
@@ -141,16 +150,19 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
             currentAlarmThread = new Thread(alarmExecutor, "alarm-executor");
             currentAlarmThread.setUncaughtExceptionHandler(this::handleAlarmExecutorExceptions);
             currentAlarmThread.start();
+            notificationService.sendAlarmNotification(alarm.asDTO(scene.get().id(), scene.get().name()));
             LOGGER.log(Level.INFO, "started new alarm with scene {0}", new Object[]{ scene.get().name() });
         }
     }
 
     // to handle exceptions thrown in the alarm executor thread
-    // TODO add to queue for UI notification
     public void handleAlarmExecutorExceptions(Thread thread, Throwable throwable) {
         if(throwable instanceof IllegalStateException illegalState) {
             LOGGER.log(Level.SEVERE, "could not run alarm: {0}", new Object[]{ illegalState.getMessage() });
-        } else
+            notificationService.sendError(new UnexpectedAlarmException(illegalState).getErrorMessage());
+        } else {
             LOGGER.log(Level.SEVERE, "unexpected error while running alarm", throwable);
+            notificationService.sendError(new UnexpectedAlarmException((Exception) throwable).getErrorMessage());
+        }
     }
 }
