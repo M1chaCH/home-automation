@@ -86,6 +86,10 @@ public class SpotifyService implements OnAppStartupListener {
         api.pausePlayback();
     }
 
+    public void setVolume(int volume) {
+        api.setPlaybackVolume(volume);
+    }
+
     /**
      * skips to the next song and loads the future player. Needs to wait a bit to make sure the player on spotify side
      * has updated, otherwise the new player won't be updated
@@ -113,7 +117,7 @@ public class SpotifyService implements OnAppStartupListener {
     /**
      * @return spotify resources (first 50 liked or owned playlists of current user)
      */
-    public List<SpotifyResourceDTO> loadResources() {
+    public synchronized List<SpotifyResourceDTO> loadResources() {
         return api.getSavedSpotifyResources();
     }
 
@@ -167,7 +171,7 @@ public class SpotifyService implements OnAppStartupListener {
      *             when api has nothing cached)
      * @return the current & working token set
      */
-    private SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth) {
+    private synchronized SpotifyAuthorisationDTO refreshTokenIfExpired(SpotifyAuthorisationDTO auth) {
         SpotifyAuthorisationDTO newAuth;
         if(auth != null)
             newAuth = api.refreshTokenIfExpired(auth, getClient());

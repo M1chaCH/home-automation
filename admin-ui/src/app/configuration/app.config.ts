@@ -7,6 +7,7 @@ export const appRoutes = {
     SPOTIFY_CALLBACK: "spotify/callback",
     DEVICES: "devices",
     MESSAGE_DETAILS: "message",
+    ALARM: "alarm",
 }
 
 export const apiEndpoints = {
@@ -21,5 +22,8 @@ export const apiEndpoints = {
     SPOTIFY_RESOURCES: "automation/spotify/resources",
     SPOTIFY_PLAYER: "automation/spotify/player",
     DEVICES: "automation/device",
+    ALARMS: "automation/alarm",
+    CURRENT_ALARM: "automation/alarm/current",
+    ALARM_NOTIFICATIONS: "automation/alarm/notifications",
 }
 export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';

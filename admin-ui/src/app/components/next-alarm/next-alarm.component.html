@@ -1,0 +1,3 @@
+<div class="next-alarm" *ngIf="nextAlarm$ | async as nextAlarm">
+    <p>The next alarm will be <strong>{{parseStringDay(nextAlarm)}}</strong> at <strong>{{nextAlarm.time}}</strong> with the <strong>{{nextAlarm.sceneName}}</strong> scene.</p>
+</div>

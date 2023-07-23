@@ -1,10 +1,11 @@
-<div *ngIf="activeResource else noneActive" class="scene-audio-container">
-    <a class="image-container" [href]="activeResource.href" target="_blank">
+<div *ngIf="activeResource else noneActive" class="scene-audio-container" [class.small]="small">
+    <a *ngIf="!small" class="image-container" [href]="activeResource.href" target="_blank">
         <img [src]="activeResource.imageUrl" alt="😢"/>
     </a>
     <div class="info">
         <app-spotify-resource-selector [(selectedResource)]="activeResource"
-                                       (selectedResourceChange)="activeResourceChange.emit($event)">
+                                       (selectedResourceChange)="activeResourceChange.emit($event)"
+                                       [small]="small">
         </app-spotify-resource-selector>
         <div class="volume">
             <label for="volume-range">{{activeVolume}}%</label>
@@ -19,6 +20,7 @@
 </div>
 <ng-template #noneActive>
     <app-spotify-resource-selector [(selectedResource)]="activeResource"
-                                   (selectedResourceChange)="activeResourceChange.emit($event)">
+                                   (selectedResourceChange)="activeResourceChange.emit($event)"
+                                   [small]="small">
     </app-spotify-resource-selector>
 </ng-template>

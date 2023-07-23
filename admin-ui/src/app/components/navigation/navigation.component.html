@@ -4,9 +4,10 @@
     <button class="burger material-symbols-rounded" [class.burger-open]="menuOpen" (click)="menuOpen = !menuOpen">add</button>
     <div class="links" [class.links-open]="menuOpen">
         <a [routerLink]="[homeRoute]" (click)="navigationClicked()">HOME</a>
+        <a [routerLink]="[alarmRoute]" (click)="navigationClicked()">ALARM</a>
+        <a [routerLink]="[spotifyRoute]" (click)="navigationClicked()">SPOTIFY</a>
         <a [routerLink]="[scenesRoute]" (click)="navigationClicked()">SCENES</a>
         <a [routerLink]="[lightConfigsRoute]" (click)="navigationClicked()">LIGHT CONFIGS</a>
-        <a [routerLink]="[spotifyRoute]" (click)="navigationClicked()">SPOTIFY</a>
         <a [routerLink]="[deviceRoute]" (click)="navigationClicked()">DEVICES</a>
     </div>
 </nav>

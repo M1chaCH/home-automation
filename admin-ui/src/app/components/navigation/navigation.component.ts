@@ -14,6 +14,7 @@ export class NavigationComponent {
   public readonly lightConfigsRoute: string = `/${appRoutes.ROOT}/${appRoutes.LIGHT_CONFIGS}`;
   public readonly spotifyRoute: string = `/${appRoutes.ROOT}/${appRoutes.SPOTIFY}`;
   public readonly deviceRoute: string = `/${appRoutes.ROOT}/${appRoutes.DEVICES}`;
+  public readonly alarmRoute: string = `/${appRoutes.ROOT}/${appRoutes.ALARM}`;
 
   navigationClicked() {
     this.menuOpen = false;

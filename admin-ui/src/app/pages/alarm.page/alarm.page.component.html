@@ -1,0 +1,67 @@
+<div class="alarm-page">
+    <div></div>
+    <p id="autoSave">Saves automatically after {{AUTO_SAVE_WAIT / 1000}} seconds</p>
+
+    <app-alarm-days [alarms]="alarms"
+                    (dayClicked)="changeDay($event.alarm, $event.day)"
+                    (disableAlarm)="changeActive($event, !$event.active)"
+                    height="max(30vh, 400px)">
+    </app-alarm-days>
+
+    <div class="alarms-container">
+        <div *ngFor="let alarm of alarms"
+             class="alarm">
+
+            <button *ngIf="alarm.id !== alarmTimeEditing else editTimeTemplate"
+                    (click)="markAlarmForEditing(alarm)"
+                    class="time">
+                {{alarm.time}}
+            </button>
+            <ng-template #editTimeTemplate>
+                <div class="edit-time">
+                    <app-fancy-button buttonIcon="cancel"
+                                      (buttonClicked)="alarmTimeEditing = -1">
+                    </app-fancy-button>
+                    <input type="time" [(ngModel)]="editedTime" autofocus/>
+                    <app-fancy-button buttonIcon="check"
+                                      (buttonClicked)="changeTimeOfAlarm(alarm)">
+                    </app-fancy-button>
+                </div>
+            </ng-template>
+
+            <div class="day-container">
+                <button *ngFor="let day of service.DAYS"
+                        class="day"
+                        (click)="changeDay(alarm, day.id)"
+                        [style.background-color]="service.computeAlarmBadgeColor(alarm, day.id)">
+                    {{day.name}}
+                </button>
+            </div>
+
+            <app-scene-selector (selectedSceneChange)="changeScene(alarm, $event)"
+                                [scenesAndSelected]="{
+                                    scenes: simpleScenes,
+                                    selected: alarm.sceneName
+                                }">
+            </app-scene-selector>
+
+            <div class="horizontal-controls">
+                <app-fancy-button [backgroundText]="alarm.active ? 'Enabled' : 'Disabled'"
+                                  [buttonIcon]="alarm.active ? 'toggle_on' : 'toggle_off'"
+                                  (buttonClicked)="changeActive(alarm, !alarm.active)"
+                                  [style.opacity]="alarm.active ? 1 : 0.75">
+                </app-fancy-button>
+                <app-fancy-button buttonIcon="delete"
+                                  backgroundText="delete"
+                                  (buttonClicked)="markAlarmForDeletion(alarm)">
+                </app-fancy-button>
+            </div>
+        </div>
+
+        <app-add-alarm style="align-self: flex-start; margin-top: 20px" [scenes]="simpleScenes"></app-add-alarm>
+    </div>
+
+    <app-verify-popup [(open)]="deleting" (responded)="deleteAlarmIfApproved($event)">
+        <p>Do you really want to delete alarm at {{alarmToDelete?.time}}?</p>
+    </app-verify-popup>
+</div>

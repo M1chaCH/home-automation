@@ -1,11 +1,13 @@
 package ch.micha.automation.room.scene;
 
+import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceProvider;
 import ch.micha.automation.room.scene.dtos.ChangeSceneDTO;
 import ch.micha.automation.room.scene.dtos.SceneDTO;
 import ch.micha.automation.room.scene.dtos.SceneLightConfigDTO;
+import ch.micha.automation.room.scene.dtos.SimpleSceneDTO;
 import ch.micha.automation.room.spotify.SpotifyApiWrapper;
 import ch.micha.automation.room.spotify.dtos.SpotifyResourceDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,6 +34,10 @@ public class SceneCrudService {
         return provider.loadScenes().stream().map(this::parseSceneDTO).toList();
     }
 
+    public List<SimpleSceneDTO> loadSimpleScenes() {
+        return provider.loadScenes().stream().map(this::parseSimpleSceneDTO).toList();
+    }
+
     public SceneDTO createScene(ChangeSceneDTO toCreate) {
         SceneEntity createdScene = provider.createNewScene(toCreate.getName(), false, toCreate.getSpotifyResource(),
                 toCreate.getSpotifyVolume(), parseSceneLightConfig(toCreate.getLights()));
@@ -49,8 +55,14 @@ public class SceneCrudService {
 
     public SceneDTO parseSceneDTO(SceneEntity entity) {
         SpotifyResourceDTO resource = spotifyApi.getSavedSpotifyResource(entity.spotifyResource())
-                .orElse(null);
+            .orElseThrow(() -> new ResourceNotFoundException("spotifyResource for scene", entity.spotifyResource()));
         return entity.toDto(resource);
+    }
+
+    public SimpleSceneDTO parseSimpleSceneDTO(SceneEntity entity) {
+        SpotifyResourceDTO resource = spotifyApi.getSavedSpotifyResource(entity.spotifyResource())
+            .orElseThrow(() -> new ResourceNotFoundException("spotifyResource for scene", entity.spotifyResource()));
+        return entity.toSimpleDto(resource);
     }
 
     private Map<YeelightDeviceEntity, LightConfig> parseSceneLightConfig(List<SceneLightConfigDTO> sceneLightConfigDTO) {

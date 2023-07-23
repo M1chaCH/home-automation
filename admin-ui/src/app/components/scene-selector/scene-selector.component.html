@@ -1,0 +1,61 @@
+<ng-container *ngIf="selectedScene else noSceneSelected">
+    <button class="preview-container" (click)="toggleDialog()">
+        <div class="row">
+            <span class="scene-name">{{selectedScene.name}}</span>
+            <div class="devices">
+                <span>{{selectedScene.deviceCount}}</span>
+                <span class="material-symbols-rounded">emoji_objects</span>
+            </div>
+        </div>
+        <div class="row" style="position: relative; height: clamp(50px, 25cqw, 80px);">
+            <p class="resource-name">{{selectedScene.spotifyResourceName}}</p>
+            <img class="resource-image" [src]="selectedScene.spotifyResourceImage" alt="😢" width="100%" height="100%"/>
+        </div>
+        <div class="row" style="margin-top: 4px;">
+            <span class="volume-indicator" [style.--volume]="selectedScene.spotifyVolume + '%'"></span>
+        </div>
+    </button>
+</ng-container>
+<ng-template #noSceneSelected>
+    <div class="preview-container">
+        <app-fancy-button style="height: 60px;"
+                          (buttonClicked)="toggleDialog()"
+                          buttonIcon="scene"
+                          backgroundText="select">
+        </app-fancy-button>
+    </div>
+</ng-template>
+
+<div class="scene-dialog-container" [class.scene-dialog-container-open]="open">
+    <div class="header">
+        <h2>Select scene</h2>
+        <app-fancy-button buttonIcon="close"
+                          backgroundText="X"
+                          (buttonClicked)="closeDialog()"
+                          class="close-button">
+        </app-fancy-button>
+    </div>
+    <div class="scene-dialog">
+        <div class="scene-selector">
+            <input placeholder="Search"
+                   [(ngModel)]="query"
+                   (ngModelChange)="queryChanged($event)" autofocus
+                   (keydown.enter)="resourceSelected()"/>
+            <button *ngFor="let scene of filteredScenes" class="scene" (click)="resourceSelected(scene)">
+                <div class="image" [style.background-image]="'url(' + scene.spotifyResourceImage + ')'"></div>
+                <div class="scene-details">
+                    <span style="text-transform: uppercase">{{scene.name}}</span>
+                    <div class="device-count">
+                        <span>{{scene.deviceCount}}</span>
+                        <span class="material-symbols-rounded">emoji_objects</span>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+    <app-fancy-button buttonIcon="delete"
+                      backgroundText="remove"
+                      (buttonClicked)="removeScene()"
+                      class="delete-button">
+    </app-fancy-button>
+</div>

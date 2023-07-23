@@ -1,0 +1,7 @@
+<div class="alarm-listener-container" *ngIf="runningAlarm">
+    <p class="alarm-text">{{runningAlarm.time}} alarm running!</p>
+    <div class="controls">
+        <app-fancy-button backgroundText="o" buttonIcon="resume" (buttonClicked)="continueAlarmScene()"></app-fancy-button>
+        <app-fancy-button backgroundText="x" buttonIcon="close" (buttonClicked)="stopAlarm()"></app-fancy-button>
+    </div>
+</div>

@@ -33,6 +33,13 @@ import {NgOptimizedImage} from "@angular/common";
 import { SceneAudioComponent } from './components/scene-audio/scene-audio.component';
 import { SpotifyResourceSelectorComponent } from './components/spotify/spotify.resource-selector/spotify.resource-selector.component';
 import { MessageDetailPageComponent } from './pages/message-detail.page/message-detail-page.component';
+import { AlarmPageComponent } from './pages/alarm.page/alarm.page.component';
+import { AddAlarmComponent } from './components/add-alarm/add-alarm.component';
+import { SceneSelectorComponent } from './components/scene-selector/scene-selector.component';
+import { AlarmDaysComponent } from './components/alarm-days/alarm-days.component';
+import { SubstringPipe } from './pipes/substring.pipe';
+import { NextAlarmComponent } from './components/next-alarm/next-alarm.component';
+import { AlarmListenerComponent } from './components/alarm-listener/alarm-listener.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +69,13 @@ import { MessageDetailPageComponent } from './pages/message-detail.page/message-
     SceneAudioComponent,
     SpotifyResourceSelectorComponent,
     MessageDetailPageComponent,
+    AlarmPageComponent,
+    AddAlarmComponent,
+    SceneSelectorComponent,
+    AlarmDaysComponent,
+    SubstringPipe,
+    NextAlarmComponent,
+    AlarmListenerComponent,
   ],
   imports: [
     BrowserModule,

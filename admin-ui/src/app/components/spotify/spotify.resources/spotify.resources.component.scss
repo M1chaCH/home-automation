@@ -2,7 +2,7 @@
   display: flex;
   flex-flow: column nowrap;
 
-  .resource {
+  .scene {
     all: unset;
     margin-top: 20px;
     padding: 10px;
@@ -58,7 +58,7 @@
     }
   }
 
-  .resource:hover {
+  .scene:hover {
     scale: 1.02;
   }
 }

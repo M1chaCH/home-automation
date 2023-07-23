@@ -1,3 +1,11 @@
+.header-button.small {
+  font-size: 17px !important;
+  font-weight: 400 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .header-button {
   all: unset;
 
@@ -61,7 +69,7 @@
     background: linear-gradient(155deg, rgba(0,13,20,1) 0%, rgba(2,13,27,1) 70%, rgba(5,13,35,1) 100%);
     overflow: hidden;
 
-    .resource-selector {
+    .resources-selector {
       display: flex;
       flex-flow: column;
       gap: 10px;

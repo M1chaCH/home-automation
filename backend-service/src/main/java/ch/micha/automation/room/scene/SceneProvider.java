@@ -327,6 +327,46 @@ public class SceneProvider {
         }
     }
 
+    public List<SceneEntity> loadSimpleScenes() {
+        final String query = """
+                 SELECT
+                     scene.id, scene.name, scene.default_scene, scene.spotify_resource,scene.spotify_volume,count(device.id) as device_count
+                 FROM scene
+                          LEFT JOIN device_light_scene AS dls ON scene.id = dls.scene_id
+                          LEFT JOIN yeelight_devices AS device ON dls.configuration_id = device.id
+                 GROUP BY scene.id
+                 ORDER BY scene.id;
+                 """;
+
+        try (PreparedStatement statement = sql.getConnection().prepareStatement(query)) {
+            ResultSet result = statement.executeQuery();
+            List<SceneEntity> entities = new ArrayList<>();
+
+            while (result.next()) {
+                int deviceCount = result.getInt("device_count");
+                final Map<YeelightDeviceEntity, LightConfig> fakeLights = new HashMap<>(3);
+                for (int i = 0; i < deviceCount; i++)  // hacky way to store the device_count in the entity
+                    fakeLights.put(
+                        new YeelightDeviceEntity(i, "", "", null),
+                        new LightConfig(i, "", 0, 0, 0, 0));
+
+                entities.add(new SceneEntity(
+                    result.getInt(ID_COLUMN),
+                    result.getString(NAME_COLUMN),
+                    result.getBoolean(DEFAULT_SCENE_COLUMN),
+                    fakeLights,
+                    result.getString(SPOTIFY_RESOURCE_COLUMN),
+                    result.getInt(SPOTIFY_VOLUME_COLUMN)
+                ));
+            }
+
+            logger.log(Level.INFO, "selected {0} scene names & defaults", entities.size());
+            return entities;
+        } catch (SQLException e) {
+            throw new UnexpectedSqlException(e);
+        }
+    }
+
     /**
      * resolves the devices and their configs of a given scene
      * @param sceneId the scene to search for

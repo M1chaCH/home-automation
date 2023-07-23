@@ -1,0 +1,223 @@
+.preview-container {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  flex-flow: column;
+  min-width: 120px;
+  width: 100%;
+  max-width: 350px;
+  container: scene-preview/inline-size;
+  transition: all 200ms ease-out;
+}
+.preview-container p {
+  margin: 0;
+  padding: 0;
+}
+.preview-container .row {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.preview-container .row .scene-name {
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.preview-container .row .resource-name {
+  font-weight: 700;
+  text-transform: lowercase;
+  font-size: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  padding: 0 5cqw;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+  position: absolute;
+  top: 10px;
+  filter: drop-shadow(0 4px 10px var(--black));
+}
+.preview-container .row .resource-image {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0 0 2cqw 2cqw;
+  opacity: 60%;
+  mask: linear-gradient(0deg, rgb(0, 0, 0) 0, rgb(0, 0, 0) 15%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
+}
+.preview-container .row .volume-indicator {
+  --volume: 50%;
+  height: 5px;
+  border-radius: 2.5px;
+  width: var(--volume);
+  background-color: var(--yellow-red);
+}
+.preview-container .devices {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3cqw;
+  padding: 3cqw;
+  border-radius: 1.5cqw;
+  background-color: color-mix(in srgb, var(--lemon-meringue) 20%, transparent);
+}
+.preview-container .devices span:not(.material-symbols-rounded) {
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.preview-container:hover {
+  scale: 102%;
+}
+
+.scene-dialog-container {
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  gap: 10px;
+  display: none;
+  transition: all 200ms ease-out;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  backdrop-filter: blur(0);
+  z-index: 996;
+}
+.scene-dialog-container .header {
+  min-width: 200px;
+  width: 80vw;
+  max-width: 400px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  gap: 10px;
+}
+.scene-dialog-container .header .close-button {
+  aspect-ratio: 1/1;
+}
+.scene-dialog-container .scene-dialog {
+  z-index: 100;
+  padding: 20px;
+  border: none;
+  border-radius: 20px;
+  background: rgb(0, 13, 20);
+  background: linear-gradient(155deg, rgb(0, 13, 20) 0%, rgb(2, 13, 27) 70%, rgb(5, 13, 35) 100%);
+  overflow: hidden;
+}
+.scene-dialog-container .scene-dialog .scene-selector {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+  min-width: 200px;
+  width: 80vw;
+  max-width: 400px;
+  height: 300px;
+  overflow-y: auto;
+}
+.scene-dialog-container .scene-dialog .scene-selector input {
+  outline: none;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(234, 226, 183, 0.5);
+  font-family: "Work Sans", sans-serif;
+  font-size: 18px;
+  color: var(--black);
+  transition: all 250ms ease-out;
+}
+.scene-dialog-container .scene-dialog .scene-selector input:hover {
+  background-color: rgba(234, 226, 183, 0.65);
+}
+.scene-dialog-container .scene-dialog .scene-selector input:active, .scene-dialog-container .scene-dialog .scene-selector input:focus {
+  background-color: rgba(234, 226, 183, 0.8);
+}
+.scene-dialog-container .scene-dialog .scene-selector input::placeholder {
+  color: rgba(0, 13, 20, 0.5);
+}
+.scene-dialog-container .scene-dialog .scene-selector input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(0, 13, 20, 0.5);
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene {
+  all: unset;
+  display: grid;
+  width: 100%;
+  grid-template-rows: 50px;
+  grid-template-columns: 25% 75%;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene .image {
+  object-fit: cover;
+  width: 160%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  border-radius: 8px 0 0 8px;
+  mask: linear-gradient(to right, rgb(0, 0, 0) 0, rgb(0, 0, 0) 25%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%) 100% 50%/100% 100% repeat-x;
+  transition: all 250ms ease-out;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene .scene-details {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene .scene-details .device-count .material-symbols-rounded {
+  font-size: 18px;
+  overflow-y: hidden;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene .scene-details .device-count span:not(.material-symbols-rounded) {
+  margin-right: 5px;
+  font-weight: 300;
+  font-size: 18px;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene span {
+  align-self: center;
+  font-size: 25px;
+  font-weight: 600;
+  color: var(--white);
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene:hover {
+  cursor: pointer;
+}
+.scene-dialog-container .scene-dialog .scene-selector .scene:hover .image {
+  transform: scale(1.1);
+}
+.scene-dialog-container .delete-button {
+  min-width: 200px;
+  width: 80vw;
+  max-width: 400px;
+  height: 50px;
+}
+
+.scene-dialog-container-open {
+  display: flex;
+  backdrop-filter: blur(20px);
+}
+.scene-dialog-container-open .scene-dialog {
+  animation: show-dialog 300ms ease-out normal;
+}
+
+@keyframes show-dialog {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    height: 50px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+    height: 300px;
+  }
+}
+
+/*# sourceMappingURL=scene-selector.component.css.map */

@@ -1,0 +1,56 @@
+.alarm-listener-container {
+  z-index: 999;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  margin: 3vh auto 0 auto;
+  height: 80px;
+  border-radius: 20px;
+  min-width: 200px;
+  width: 90vw;
+  max-width: 400px;
+
+  background-color: var(--yellow-red);
+  filter: drop-shadow(0 10px 20px color-mix(in srgb, var(--black) 50%, transparent));
+  animation: fly-in ease-out 350ms;
+
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  box-sizing: border-box;
+
+  .alarm-text {
+    font-size: 19px;
+    font-weight: 400;
+    color: var(--black);
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(2, calc(50% - 5px));
+    grid-template-rows: 100%;
+    gap: 10px;
+    width: 80px;
+    height: 100%;
+  }
+}
+
+@keyframes fly-in {
+  0% {
+    opacity: 0;
+    top: -80px;
+  }
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    top: 0;
+  }
+}

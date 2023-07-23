@@ -9,3 +9,13 @@ export type SceneDTO = {
   spotifyVolume: number,
   lights: SceneLightConfigDTO[],
 };
+
+export type SimpleSceneDTO = {
+  id: number,
+  name: string,
+  defaultScene: boolean,
+  spotifyResourceName: string,
+  spotifyResourceImage: string,
+  spotifyVolume: number,
+  deviceCount: number,
+};
