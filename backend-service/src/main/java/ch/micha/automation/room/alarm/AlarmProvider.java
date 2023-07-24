@@ -88,7 +88,7 @@ public class AlarmProvider {
 
         try (PreparedStatement statement = sql.getConnection().prepareStatement(
             "UPDATE alarm " +
-                "SET cron_schedule = ?, active = ?, scene = ?" +
+                "SET cron_schedule = ?, active = ?, scene = ? " +
                 "WHERE id = ?;"
         )) {
             statement.setString(1, cronSchedule);
