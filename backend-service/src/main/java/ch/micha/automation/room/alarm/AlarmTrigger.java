@@ -18,8 +18,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,6 +32,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener {
+    public static final ZoneId ALARM_TIME_ZONE = ZoneId.of("Europe/Zurich");
     public static final int ALARM_CHECK_INTERVAL = 5; // minutes
     private static final Logger LOGGER = Logger.getLogger(AlarmTrigger.class.getSimpleName());
 
@@ -60,7 +64,8 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         // Calculate the initial delay to the next round five-minute interval
         int initialDelayMinutes = 5 - ( LocalDateTime.now().getMinute() % 5 );
         alarmCheckScheduler.scheduleAtFixedRate(this::checkForAlarmToRun, initialDelayMinutes, ALARM_CHECK_INTERVAL, TimeUnit.MINUTES);
-        LOGGER.log(Level.INFO, "initialized alarm checker every {0} minutes", new Object[]{ ALARM_CHECK_INTERVAL });
+        LOGGER.log(Level.INFO, "initialized alarm checker every {0} minutes, using time zone {1}",
+            new Object[]{ ALARM_CHECK_INTERVAL, ALARM_TIME_ZONE.getDisplayName(TextStyle.FULL, Locale.ENGLISH) });
     }
 
     @Override
@@ -94,7 +99,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
 
     public Optional<AlarmEntity> loadNextAlarm() {
         List<AlarmEntity> alarms = alarmProvider.loadAlarms();
-        ZonedDateTime now = ZonedDateTime.now().minusMinutes(1); // to respect already started minute
+        ZonedDateTime now = ZonedDateTime.now(ALARM_TIME_ZONE).minusMinutes(1); // to respect already started minute
 
         long minTimeGap = Integer.MAX_VALUE;
         AlarmEntity nextAlarm = null;
@@ -129,7 +134,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         LOGGER.log(Level.INFO, "checking if alarm needs to be executed");
 
         Optional<AlarmEntity> nextAlarm = loadNextAlarm();
-        if(nextAlarm.isPresent() && calcTimeBetween(ZonedDateTime.now().minusMinutes(1), nextAlarm.get()) < ALARM_CHECK_INTERVAL) {
+        if(nextAlarm.isPresent() && calcTimeBetween(ZonedDateTime.now(ALARM_TIME_ZONE).minusMinutes(1), nextAlarm.get()) < ALARM_CHECK_INTERVAL) {
             LOGGER.log(Level.INFO, "found alarm to be executed ({0})", new Object[]{ nextAlarm.get().id() });
             runAlarm(nextAlarm.get());
         }
