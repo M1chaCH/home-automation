@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {AlarmDTO, AlarmNotificationDTO} from "../dtos/AlarmDTO";
-import {Observable, of} from "rxjs";
+import {Observable, of, Subscriber} from "rxjs";
 import {ApiService} from "./api.service";
 import {apiEndpoints, websockets} from "../configuration/app.config";
-import {WebSocketSubject} from "rxjs/internal/observable/dom/WebSocketSubject";
-import {webSocket} from "rxjs/webSocket";
+import {webSocket, WebSocketSubject} from "rxjs/webSocket";
 import {environment} from "../../environments/environment";
+import {MessageDistributorService} from "./message-distributor.service";
 
 export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -22,18 +22,32 @@ export class AlarmService {
     {id: 6, name: "saturday"},
     {id: 0, name: "sunday"},
   ];
+  alarmNotifications: Observable<AlarmNotificationDTO>;
 
   private alarms?: AlarmDTO[];
   private notificationSocket: WebSocketSubject<AlarmNotificationDTO>;
+  private readonly SOCKET_CLOSE_RETRY_WAIT: number = 5 * 1000; // millis
 
   constructor(
       private api: ApiService,
+      private messageService: MessageDistributorService,
   ) {
     this.notificationSocket = webSocket<AlarmNotificationDTO>(`${environment.WS_API_URL}/${websockets.ALARM_NOTIFICATIONS}`);
+    this.alarmNotifications = new Observable<AlarmNotificationDTO>(s =>
+      this.connectToAlarmNotifications(s));
   }
 
-  connectToNotifications(): Observable<AlarmNotificationDTO> {
-    return this.notificationSocket.asObservable();
+  private connectToAlarmNotifications(subscriber: Subscriber<AlarmNotificationDTO>) {
+    this.notificationSocket.asObservable().subscribe({
+      next: alarm => subscriber.next(alarm),
+      error: e => {
+        if(e.type === "close" && e.wasClean === false) {
+          console.warn("connection to alarm notifications closed, retrying in " + this.SOCKET_CLOSE_RETRY_WAIT + "ms")
+          setTimeout(() => this.connectToAlarmNotifications(subscriber), this.SOCKET_CLOSE_RETRY_WAIT);
+        } else if(e.type === "error")
+          this.messageService.pushMessage("ERROR", "can't receive alarm notifications")
+      }
+    });
   }
 
   loadAlarms(): Observable<AlarmDTO[]> {

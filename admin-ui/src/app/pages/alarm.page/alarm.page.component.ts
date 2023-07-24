@@ -112,6 +112,6 @@ export class AlarmPageComponent implements DataUpdateListener{
         this.dataDistributor.updateTopic("UPDATED_ALARM", toUpdate);
       });
     }
-    this.messageDistributor.pushMessage("INFO", "saved alarm e(\"INFO\", \"saved alarm changes\");changes");
+    this.messageDistributor.pushMessage("INFO", "saved alarm changes");
   }
 }

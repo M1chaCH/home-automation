@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class AlarmNotificationService {
+    public static final int CONNECTION_IDLE_TIMEOUT = 10 * 60 * 1000; // millis (10 Minutes)
     public static final String ALARM_RUNNING = "alarm";
     public static final String ALARM_COMPLETED = "alarm_completed";
     public static final String ERROR_MESSAGE = "error";
@@ -27,6 +28,7 @@ public class AlarmNotificationService {
     private final Jsonb jsonBuilder = JsonbBuilder.create();
 
     public void addSession(Session session) {
+        session.setMaxIdleTimeout(CONNECTION_IDLE_TIMEOUT);
         sessions.put(session.getId(), session);
         LOGGER.log(Level.INFO, "Alarm message listener connected: {0}", new Object[]{ session.getId() });
 

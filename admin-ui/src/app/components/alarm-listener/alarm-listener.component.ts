@@ -17,7 +17,7 @@ export class AlarmListenerComponent implements OnInit{
   ) { }
 
   ngOnInit(): void {
-    this.service.connectToNotifications().subscribe(notification => {
+    this.service.alarmNotifications.subscribe(notification => {
       switch (notification.notificationId) {
         case "alarm":
           this.runningAlarm = notification.body as AlarmDTO;
