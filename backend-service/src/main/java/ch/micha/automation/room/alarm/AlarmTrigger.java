@@ -100,7 +100,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         AlarmEntity nextAlarm = null;
         for (AlarmEntity alarm : alarms) {
             if(alarm.active()) {
-                long minutesToNextExecution = calcTimeUntil(alarm, now);
+                long minutesToNextExecution = calcTimeBetween(now, alarm);
                 if(minutesToNextExecution < minTimeGap) {
                     minTimeGap = minutesToNextExecution;
                     nextAlarm = alarm;
@@ -113,7 +113,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         return Optional.of(nextAlarm);
     }
 
-    public long calcTimeUntil(AlarmEntity alarm, ZonedDateTime from) {
+    public long calcTimeBetween(ZonedDateTime from, AlarmEntity alarm) {
         ExecutionTime executionTime = ExecutionTime.forCron(cronParser.parse(alarm.cronSchedule()));
         ZonedDateTime nextExecution = executionTime.nextExecution(from)
             .orElseThrow(() -> new IllegalStateException("alarm schedule will never occur again"));
@@ -129,8 +129,10 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         LOGGER.log(Level.INFO, "checking if alarm needs to be executed");
 
         Optional<AlarmEntity> nextAlarm = loadNextAlarm();
-        if(nextAlarm.isPresent() && calcTimeUntil(nextAlarm.get(), ZonedDateTime.now().minusMinutes(1)) <= ALARM_CHECK_INTERVAL)
+        if(nextAlarm.isPresent() && calcTimeBetween(ZonedDateTime.now().minusMinutes(1), nextAlarm.get()) < ALARM_CHECK_INTERVAL) {
+            LOGGER.log(Level.INFO, "found alarm to be executed ({0})", new Object[]{ nextAlarm.get().id() });
             runAlarm(nextAlarm.get());
+        }
     }
 
     private void runAlarm(AlarmEntity alarm) {
@@ -158,7 +160,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
     }
 
     // to handle exceptions thrown in the alarm executor thread
-    public void handleAlarmExecutorExceptions(Thread thread, Throwable throwable) {
+    private void handleAlarmExecutorExceptions(Thread thread, Throwable throwable) {
         if(throwable instanceof IllegalStateException illegalState) {
             LOGGER.log(Level.SEVERE, "could not run alarm: {0}", new Object[]{ illegalState.getMessage() });
             notificationService.sendError(new UnexpectedAlarmException(illegalState).getErrorMessage());

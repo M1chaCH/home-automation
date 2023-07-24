@@ -57,8 +57,8 @@ public class AlarmExecutor implements Runnable{
                 new Object[]{ ALARM_INITIAL_VOLUME });
 
             for (int currentVolume = ALARM_INITIAL_VOLUME; currentVolume <= maxAlarmVolume; currentVolume += ALARM_VOLUME_INCREASE_STEP) {
+                LOGGER.log(Level.INFO, "increasing volume of alarm to {0}", new Object[]{ currentVolume });
                 spotifyService.setVolume(currentVolume);
-                LOGGER.log(Level.INFO, "increased volume of alarm to {0}", new Object[]{ currentVolume });
                 Thread.sleep(ALARM_VOLUME_INCREASE_TIMEOUT * 1000L);
             }
 
