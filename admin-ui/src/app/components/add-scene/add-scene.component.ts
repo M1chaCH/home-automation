@@ -87,16 +87,16 @@ export class AddSceneComponent {
         this.dataUpdater.updateTopic("NEW_SCENE", scene);
         this.messageDistributor.pushMessage("INFO", "created new scene " + scene.name);
 
-        this.active = false;
-        this.scene = this.createEmptyScene();
-        this.sceneNameControl.setValue("");
+        this.resetValues();
       });
   }
 
-  cancel() {
+  resetValues() {
     this.scene = this.createEmptyScene();
     this.sceneNameControl.setValue("");
     this.active = false;
+    this.selectedResource = undefined;
+    this.currentAddStageIndex = 0;
   }
 
   isSceneValid(): boolean {

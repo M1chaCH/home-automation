@@ -1,7 +1,7 @@
 <div class="add-scene-container" [class.add-scene-container-open]="active">
     <div *ngIf="active else placeholder" class="add-scene">
         <button class="control"
-                (click)="cancel()"
+                (click)="resetValues()"
                 *ngIf="currentAddStageIndex === 0">
             <span class="material-symbols-rounded">cancel</span>
             <span>Cancel</span>
