@@ -6,6 +6,7 @@ import ch.micha.automation.room.scene.SceneProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class AlarmService {
@@ -30,7 +31,9 @@ public class AlarmService {
     }
 
     public AlarmDTO loadNextAlarmAsDto() {
-        return alarmTrigger.loadNextAlarm().asDTO(sceneProvider.loadSimpleScenes());
+        Optional<AlarmEntity> entity = alarmTrigger.loadNextAlarm();
+        return entity.map(alarmEntity -> alarmEntity.asDTO(sceneProvider.loadSimpleScenes()))
+            .orElse(null);
     }
 
     public AlarmDTO createAlarm(AlarmDTO toCreate) {

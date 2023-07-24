@@ -14,7 +14,7 @@ import {
   styleUrls: ['./next-alarm.component.scss']
 })
 export class NextAlarmComponent implements DataUpdateListener{
-  nextAlarm$: Observable<AlarmDTO>;
+  nextAlarm$: Observable<AlarmDTO | undefined>;
 
   constructor(
     private service: AlarmService,

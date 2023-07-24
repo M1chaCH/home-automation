@@ -2,7 +2,8 @@
     <div></div>
     <p id="autoSave">Saves automatically after {{AUTO_SAVE_WAIT / 1000}} seconds</p>
 
-    <app-alarm-days [alarms]="alarms"
+    <app-alarm-days *ngIf="alarms.length > 0"
+                    [alarms]="alarms"
                     (dayClicked)="changeDay($event.alarm, $event.day)"
                     (disableAlarm)="changeActive($event, !$event.active)"
                     height="max(30vh, 400px)">

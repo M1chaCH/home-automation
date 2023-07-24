@@ -60,8 +60,8 @@ export class AlarmService {
     return this.api.callApi(`${apiEndpoints.ALARMS}/${id}`, "DELETE", undefined);
   }
 
-  loadNextAlarm(): Observable<AlarmDTO> {
-    return this.api.callApi<AlarmDTO>(apiEndpoints.CURRENT_ALARM, "GET", undefined);
+  loadNextAlarm(): Observable<AlarmDTO | undefined> {
+    return this.api.callApi<AlarmDTO | undefined>(apiEndpoints.CURRENT_ALARM, "GET", undefined);
   }
 
   continueSceneOfCurrentAlarm(): Observable<any> {

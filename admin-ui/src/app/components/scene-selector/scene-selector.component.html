@@ -41,16 +41,21 @@
                    [(ngModel)]="query"
                    (ngModelChange)="queryChanged($event)" autofocus
                    (keydown.enter)="resourceSelected()"/>
-            <button *ngFor="let scene of filteredScenes" class="scene" (click)="resourceSelected(scene)">
-                <div class="image" [style.background-image]="'url(' + scene.spotifyResourceImage + ')'"></div>
-                <div class="scene-details">
-                    <span style="text-transform: uppercase">{{scene.name}}</span>
-                    <div class="device-count">
-                        <span>{{scene.deviceCount}}</span>
-                        <span class="material-symbols-rounded">emoji_objects</span>
+            <ng-container *ngIf="filteredScenes.length > 0 else noScenes">
+                <button *ngFor="let scene of filteredScenes" class="scene" (click)="resourceSelected(scene)">
+                    <div class="image" [style.background-image]="'url(' + scene.spotifyResourceImage + ')'"></div>
+                    <div class="scene-details">
+                        <span style="text-transform: uppercase">{{scene.name}}</span>
+                        <div class="device-count">
+                            <span>{{scene.deviceCount}}</span>
+                            <span class="material-symbols-rounded">emoji_objects</span>
+                        </div>
                     </div>
-                </div>
-            </button>
+                </button>
+            </ng-container>
+            <ng-template #noScenes>
+                <p>no scenes yet, head to scene page and create one.</p>
+            </ng-template>
         </div>
     </div>
     <app-fancy-button buttonIcon="delete"

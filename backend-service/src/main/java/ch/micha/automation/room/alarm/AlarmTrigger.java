@@ -92,7 +92,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         } else throw new InvalidAlarmState();
     }
 
-    public AlarmEntity loadNextAlarm() {
+    public Optional<AlarmEntity> loadNextAlarm() {
         List<AlarmEntity> alarms = alarmProvider.loadAlarms();
         ZonedDateTime now = ZonedDateTime.now().minusMinutes(1); // to respect already started minute
 
@@ -108,7 +108,9 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
             }
         }
 
-        return nextAlarm;
+        if(nextAlarm == null)
+            return Optional.empty();
+        return Optional.of(nextAlarm);
     }
 
     public long calcTimeUntil(AlarmEntity alarm, ZonedDateTime from) {
@@ -126,9 +128,9 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
     private void checkForAlarmToRun() {
         LOGGER.log(Level.INFO, "checking if alarm needs to be executed");
 
-        AlarmEntity nextAlarm = loadNextAlarm();
-        if(calcTimeUntil(nextAlarm, ZonedDateTime.now().minusMinutes(1)) <= ALARM_CHECK_INTERVAL)
-            runAlarm(nextAlarm);
+        Optional<AlarmEntity> nextAlarm = loadNextAlarm();
+        if(nextAlarm.isPresent() && calcTimeUntil(nextAlarm.get(), ZonedDateTime.now().minusMinutes(1)) <= ALARM_CHECK_INTERVAL)
+            runAlarm(nextAlarm.get());
     }
 
     private void runAlarm(AlarmEntity alarm) {
