@@ -2,10 +2,12 @@ package ch.micha.automation.room.spotify;
 
 import ch.micha.automation.room.cache.EntityCache;
 import ch.micha.automation.room.cache.EntityCacheFactory;
+import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyException;
 import ch.micha.automation.room.errorhandling.exceptions.SpotifyNotAuthorizedException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedSpotifyException;
 import ch.micha.automation.room.spotify.dtos.*;
+import ch.micha.automation.room.spotify.interceptor.SpeakerRequired;
 import ch.micha.automation.room.spotify.interceptor.SpotifyAuthorized;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -222,6 +224,7 @@ public class SpotifyApiWrapper {
     /**
      * tells spotify to move to the next song
      */
+    @SpeakerRequired
     @SpotifyAuthorized
     public void nextSong() {
         try {
@@ -239,6 +242,7 @@ public class SpotifyApiWrapper {
     /**
      * tells spotify to move to the previous song
      */
+    @SpeakerRequired
     @SpotifyAuthorized
     public void previousSong() {
         try {
@@ -301,6 +305,7 @@ public class SpotifyApiWrapper {
     /**
      * resumes the playback, if player is stopped nothing happens
      */
+    @SpeakerRequired
     @SpotifyAuthorized
     public void resumePlayback() {
         try {
@@ -319,6 +324,7 @@ public class SpotifyApiWrapper {
      * starts or plays the given context uri
      * @param contextUri the "thing" to play
      */
+    @SpeakerRequired
     @SpotifyAuthorized
     public void playContext(String contextUri) {
         try {
@@ -340,6 +346,7 @@ public class SpotifyApiWrapper {
      * sets the volume of the current spotify player
      * @param volume the volume in percent to apply
      */
+    @SpeakerRequired
     @SpotifyAuthorized
     public void setPlaybackVolume(int volume) {
         try {
@@ -359,6 +366,7 @@ public class SpotifyApiWrapper {
      * sets to shuffle of the player
      * @param shuffle the state of the shuffle to apply
      */
+    @SpeakerRequired
     @SpotifyAuthorized
     public void setPlaybackShuffle(boolean shuffle) {
         try {
@@ -529,13 +537,18 @@ public class SpotifyApiWrapper {
     /**
      * if the response status is an error (> 206) then logs the error, including the error body and throws an unexpected
      * spotify exception
+     * EXCEPT the error is 404 and the body contains "Device not found" in this case, a resource not found Exception is thrown.
      * @param response the response from the spotify api call
      * @param message the message to give to the thrown error
      */
     private void throwUnexpectedIfNeeded(HttpResponse<JsonNode> response, String message){
         if(response.getStatus() > 206) {
             try {
-                logger.log(Level.INFO, "call to spotify failed. with body: {0} - {1}", new Object[]{response.getStatus(), new String(response.getRawBody().readAllBytes())});
+                String responseBody = new String(response.getRawBody().readAllBytes());
+                logger.log(Level.INFO, "call to spotify failed. with body: {0} - {1}", new Object[]{response.getStatus(), responseBody});
+
+                if(response.getStatus() == 404 && responseBody.contains("Device not found"))
+                    throw new ResourceNotFoundException("spotify speaker", deviceId);
             } catch (IOException e) {
                 logger.log(Level.INFO, "call to spotify failed. with status: {0} - {1}", new Object[]{ response.getStatus(), response.getStatusText() });
             }

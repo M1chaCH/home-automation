@@ -6,7 +6,8 @@
        version="3.0"
        bean-discovery-mode="annotated">
     <interceptors>
-        <class>ch.micha.automation.room.spotify.interceptor.SpotifyAuthorisationInterceptor</class>
+        <class>ch.micha.automation.room.spotify.interceptor.SpotifyAuthorisationInterceptor</class>s
+        <class>ch.micha.automation.room.spotify.interceptor.SpeakerRequiredInterceptor</class>
         <class>ch.micha.automation.room.light.yeelight.interceptor.LightConnectionVerifier</class>
     </interceptors>
 </beans>

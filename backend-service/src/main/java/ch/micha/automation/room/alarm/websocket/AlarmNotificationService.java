@@ -102,7 +102,7 @@ public class AlarmNotificationService {
     private void sendNotification(Session session, AlarmNotificationDTO notification) {
         session.getAsyncRemote().sendText(jsonBuilder.toJson(notification), result -> {
             if(result.isOK())
-                LOGGER.log(Level.INFO, "successfully sent to {0}", new Object[]{ session.getId() });
+                LOGGER.log(Level.INFO, "successfully sent {0} to {1}", new Object[]{ notification.getNotificationId(), session.getId() });
             else
                 LOGGER.log(
                     Level.WARNING,
