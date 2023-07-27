@@ -189,8 +189,9 @@ public class YeelightDeviceService implements OnAppStartupListener {
     /**
      * loads all device from the db and tries to connect to all of them
      * (also resets the device cache in the provider)
+     * @return the loaded devices
      */
-    public void loadYeelightDevices() {
+    public Map<Integer, YeelightDeviceEntity> loadYeelightDevices() {
         List<YeelightDeviceEntity> storedDevices = provider.loadYeelightDeviceEntities();
         Map<Integer, YeelightDeviceEntity> devices = new HashMap<>();
 
@@ -207,6 +208,7 @@ public class YeelightDeviceService implements OnAppStartupListener {
         devicesLoaded = Instant.now();
         logger.log(Level.INFO, "connected to {0} devices & found {1} offline devices",
                 new Object[]{provider.getOnlineDevices().size(), provider.getOfflineDevices().size()});
+        return devices;
     }
 
     public boolean isDeviceConnectionExpired() {
