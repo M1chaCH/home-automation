@@ -1,3 +1,3 @@
 # Delete the comments when copying to shortcuts
 # run script over SSH: 
-/var/apps/room-automation/apply-scene.sh
+/var/apps/room-automation/room-automation-api.py
