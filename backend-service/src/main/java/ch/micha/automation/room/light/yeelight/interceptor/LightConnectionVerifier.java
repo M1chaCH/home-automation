@@ -1,5 +1,6 @@
 package ch.micha.automation.room.light.yeelight.interceptor;
 
+import ch.micha.automation.room.errorhandling.exceptions.YeeLightOfflineException;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
 import jakarta.inject.Inject;
@@ -33,8 +34,10 @@ public class LightConnectionVerifier {
      */
     @AroundInvoke
     public Object intercept(InvocationContext invocationContext) throws Exception {
-        if(deviceService.isDeviceConnectionExpired()) {
-            logger.log(Level.INFO, "light connection expired");
+        try {
+            return invocationContext.proceed();
+        } catch (YeeLightOfflineException e) {
+            logger.log(Level.INFO, "caught device offline for {0}, reconnecting all devices", new Object[]{ e.getDeviceIp() });
             List<YeelightDeviceEntity> devices = deviceService.loadYeelightDevices()
                 .values()
                 .stream()
@@ -43,9 +46,8 @@ public class LightConnectionVerifier {
             // the underlying method won't load the device again, so we need
             // to update its device argument to a device that is actually connected
             updateDeviceParameter(invocationContext, devices);
+            return invocationContext.proceed();
         }
-
-        return invocationContext.proceed();
     }
 
     /**

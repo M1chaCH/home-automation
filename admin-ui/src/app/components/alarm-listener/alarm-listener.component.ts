@@ -25,6 +25,7 @@ export class AlarmListenerComponent implements OnInit{
           break;
         case "alarm_completed":
           this.runningAlarm = undefined;
+          this.messageService.pushMessage("INFO", `alarm completed`);
           break;
         case "error":
           this.messageService.pushMessage("ERROR", "unexpected alarm error", {

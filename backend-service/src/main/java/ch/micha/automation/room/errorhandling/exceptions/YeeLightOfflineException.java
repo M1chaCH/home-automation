@@ -2,7 +2,9 @@ package ch.micha.automation.room.errorhandling.exceptions;
 
 import ch.micha.automation.room.errorhandling.ErrorMessageDTO;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 
+@Getter
 public class YeeLightOfflineException extends AppException{
     private final String deviceIp;
     private final String deviceName;
