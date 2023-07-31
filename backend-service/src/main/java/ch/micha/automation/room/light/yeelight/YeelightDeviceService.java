@@ -1,5 +1,6 @@
 package ch.micha.automation.room.light.yeelight;
 
+import ch.micha.automation.room.errorhandling.exceptions.ResourceNotFoundException;
 import ch.micha.automation.room.errorhandling.exceptions.UnexpectedYeeLightException;
 import ch.micha.automation.room.errorhandling.exceptions.YeeLightOfflineException;
 import ch.micha.automation.room.events.EventHandlerPriority;
@@ -65,6 +66,10 @@ public class YeelightDeviceService implements OnAppStartupListener {
         YeelightDevice light = lightEntity.light();
         if(light == null)
             throw new YeeLightOfflineException(lightEntity.ip(), lightEntity.name());
+        if(config == null) {
+            logger.log(Level.WARNING, "tried to apply NULL config to light {0}", new Object[]{ lightEntity.ip() });
+            return;
+        }
 
         try {
             light.setPower(true);
@@ -156,6 +161,20 @@ public class YeelightDeviceService implements OnAppStartupListener {
         }
 
         return response;
+    }
+
+    /**
+     * gets a device and makes sure that the device connection has not expired.
+     * @param deviceIp the ip of the device to get
+     * @return the wished for light after making sure the light connection is not expired.
+     */
+    @RequireLightConnection
+    public YeelightDeviceEntity getConnectedLight(String deviceIp) {
+        return provider.getDevices()
+            .stream()
+            .filter(device -> device.ip().equals(deviceIp))
+            .findAny()
+            .orElseThrow(() -> new ResourceNotFoundException("device", deviceIp));
     }
 
     /**

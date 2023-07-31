@@ -47,7 +47,12 @@ public class RoomAutomationService {
                 response.setSuccess(!sceneResponse.isFailed());
             } else {
                 try {
-                    currentLightConfigs.forEach(devices::applyConfigToLight);
+                    // since the connection of the stored devices might expire,
+                    // we need to make sure that we get a "connected" instance of the light
+                    currentLightConfigs.forEach((device, config) -> {
+                        device = devices.getConnectedLight(device.ip());
+                        devices.applyConfigToLight(device, config);
+                    });
                     spotify.resumePlayerOrStartContext(scenes.getDefaultSpotifyContext());
                     response.setSuccess(true);
                 } catch (Exception e) {
