@@ -6,7 +6,7 @@ import sys
 AUTH_COOKIE_FILE = "login.txt"
 triedAuthenticating = False
 
-def printHelp(): 
+def printHelp():
     print("Use this script to access the production room-automation REST API")
     print("arg1: username")
     print("arg2: password")
@@ -15,12 +15,13 @@ def printHelp():
 
 def executeAuthenticatedRequest(username, password, path, method):
     global triedAuthenticating
-    
+    print("executing " + method + ":michu-tech.com" + path)
+
     conn = http.client.HTTPSConnection(
-        "michu.tech",
+        "michu-tech.com",
         context = ssl._create_unverified_context()
     )
-    
+
     headers = {
         'Cookie': loadRequestCookie(username, password, False)
     }
@@ -33,6 +34,7 @@ def executeAuthenticatedRequest(username, password, path, method):
         return executeAuthenticatedRequest(username, password, path, method)
     else: triedAuthenticating = False
 
+    print("successfully executed request")
     return res
 
 def handleSceneRequest(username, password, parameter = 0):
@@ -70,7 +72,7 @@ def loadRequestCookie(username = "", password = "", forceLogin = False):
     print("performing login")        
 
     conn = http.client.HTTPSConnection(
-        "michu.tech",
+        "michu-tech.com",
         context = ssl._create_unverified_context()
     )
     payload = json.dumps({
@@ -85,6 +87,7 @@ def loadRequestCookie(username = "", password = "", forceLogin = False):
     authCookie = res.headers.get("Set-Cookie")
     with open(AUTH_COOKIE_FILE, "w") as file:
         file.write(authCookie)
+    print("successfully fetched and stored new authCookie")    
     return authCookie
 
 # def main(sys.argv): (don't like python, need an entry point, even if it is fake (;) 
