@@ -28,7 +28,7 @@ def executeAuthenticatedRequest(username, password, path, method):
 
     conn.request(method, path, "", headers)
     res = conn.getresponse()
-    if(triedAuthenticating != True and (res.status == 401 or res.status == 403)): 
+    if(triedAuthenticating != True and (res.status == 401 or res.status == 403 or res.status == 302)): 
         loadRequestCookie(username, password, True)
         triedAuthenticating = True
         return executeAuthenticatedRequest(username, password, path, method)
