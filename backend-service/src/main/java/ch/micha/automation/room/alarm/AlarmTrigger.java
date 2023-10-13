@@ -88,7 +88,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
     }
 
     public void stopCurrentAlarm() {
-        if(currentAlarmThread != null && currentAlarmThread.isAlive()) {
+        if(isAlarmRunning()) {
             alarmExecutor.stopAlarm();
             currentAlarmThread.interrupt();
             currentAlarmThread = null;
@@ -125,6 +125,10 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
         return Duration.between(from, nextExecution).toMinutes();
     }
 
+    public boolean isAlarmRunning() {
+        return currentAlarmThread != null && currentAlarmThread.isAlive();
+    }
+
     /**
      * checks if any alarm is scheduled in the next {@link #ALARM_CHECK_INTERVAL} minutes, if so
      * runs this alarm.
@@ -149,7 +153,7 @@ public class AlarmTrigger implements OnAppStartupListener, OnAppShutdownListener
             notificationService.sendError(
                 new ResourceNotFoundException("scene for alarm", String.valueOf(alarm.sceneId())).getErrorMessage());
         } else {
-            if(currentAlarmThread != null && currentAlarmThread.isAlive()) {
+            if(isAlarmRunning()) {
                 LOGGER.log(Level.WARNING, "an alarm is already running, killing and starting new one");
                 currentAlarmThread.interrupt();
             }

@@ -1,5 +1,6 @@
 package ch.micha.automation.room.automation;
 
+import ch.micha.automation.room.alarm.AlarmTrigger;
 import ch.micha.automation.room.errorhandling.SceneApplyResponseDTO;
 import ch.micha.automation.room.light.configuration.LightConfig;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
@@ -10,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,16 +21,16 @@ public class RoomAutomationService {
     private final SpotifyService spotify;
     private final YeelightDeviceService devices;
     private final SceneService scenes;
-
-    private boolean roomOn = false;
+    private final AlarmTrigger alarmTrigger;
 
     private Map<YeelightDeviceEntity, LightConfig> currentLightConfigs;
 
     @Inject
-    public RoomAutomationService(SpotifyService spotify, YeelightDeviceService devices, SceneService scenes) {
+    public RoomAutomationService(SpotifyService spotify, YeelightDeviceService devices, SceneService scenes, AlarmTrigger alarmTrigger) {
         this.spotify = spotify;
         this.devices = devices;
         this.scenes = scenes;
+        this.alarmTrigger = alarmTrigger;
     }
 
     /**
@@ -39,8 +41,19 @@ public class RoomAutomationService {
      */
     public ToggleRoomResponseDTO toggleRoom() {
         ToggleRoomResponseDTO response = new ToggleRoomResponseDTO();
-        if(!roomOn) {
+
+        // stop alarm if running
+        if(alarmTrigger.isAlarmRunning()) {
+            logger.log(Level.INFO, "smart toggle decision: stop alarm");
+            alarmTrigger.stopCurrentAlarm();
+            response.setOn(false);
+            response.setSuccess(true);
+            return response;
+        }
+
+        if(assumeRoomOff()) {
             logger.log(Level.INFO, "toggling room ON");
+            response.setOn(true);
 
             if(currentLightConfigs == null) {
                 SceneApplyResponseDTO sceneResponse = scenes.applyDefaultScene();
@@ -62,6 +75,7 @@ public class RoomAutomationService {
             }
         } else {
             logger.log(Level.INFO, "toggling room OFF");
+            response.setOn(false);
             currentLightConfigs = devices.loadCurrentOnlineConfigs();
 
             try {
@@ -72,8 +86,18 @@ public class RoomAutomationService {
                 logger.log(Level.INFO, "failed to shutdown room", e);
             }
         }
-        roomOn = !roomOn;
-        response.setOn(roomOn);
+
         return response;
+    }
+
+    private boolean assumeRoomOff() {
+        Map<YeelightDeviceEntity, LightConfig> configs = devices.loadCurrentOnlineConfigs();
+        int amountRunning = 0;
+        int amountStopped = 0;
+        for (Entry<YeelightDeviceEntity, LightConfig> entry : configs.entrySet()) {
+            if(entry.getValue() == null) amountStopped++;
+            else amountRunning++;
+        }
+        return amountRunning <= amountStopped;
     }
 }
