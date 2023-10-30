@@ -14,5 +14,6 @@ public class SpotifyPlayerDTO {
     private String albumCoverUrl;
     private String deviceName;
     private String trackUrl;
+    private SpotifyContextDTO context;
     private boolean playing;
 }

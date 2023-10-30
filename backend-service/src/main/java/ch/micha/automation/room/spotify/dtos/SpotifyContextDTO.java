@@ -8,6 +8,12 @@ import lombok.*;
 @Setter
 @ToString
 public class SpotifyContextDTO {
-    private String context;
+    private String contextUri;
+    private String offsetUri = "";
     private int volume;
+
+    public SpotifyContextDTO(String context, int volume) {
+        this.contextUri = context;
+        this.volume = volume;
+    }
 }

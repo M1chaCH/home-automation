@@ -61,7 +61,7 @@ public class SpotifyService implements OnAppStartupListener {
      * @param context the volume and the url to start
      */
     public void startContext(SpotifyContextDTO context) {
-        api.playContext(context.getContext());
+        api.playContext(context.getContextUri(), context.getOffsetUri());
         api.setPlaybackVolume(context.getVolume());
         api.setPlaybackShuffle(true);
     }

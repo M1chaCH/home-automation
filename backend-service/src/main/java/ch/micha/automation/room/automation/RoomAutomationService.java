@@ -7,6 +7,7 @@ import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
 import ch.micha.automation.room.scene.SceneService;
 import ch.micha.automation.room.spotify.SpotifyService;
+import ch.micha.automation.room.spotify.dtos.SpotifyPlayerDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -23,7 +24,8 @@ public class RoomAutomationService {
     private final SceneService scenes;
     private final AlarmTrigger alarmTrigger;
 
-    private Map<YeelightDeviceEntity, LightConfig> currentLightConfigs;
+    private Map<YeelightDeviceEntity, LightConfig> lastLightConfigs;
+    private SpotifyPlayerDTO lastPlayer = null;
 
     @Inject
     public RoomAutomationService(SpotifyService spotify, YeelightDeviceService devices, SceneService scenes, AlarmTrigger alarmTrigger) {
@@ -52,21 +54,24 @@ public class RoomAutomationService {
         }
 
         if(assumeRoomOff()) {
-            logger.log(Level.INFO, "toggling room ON");
+            logger.log(Level.INFO, "smart toggle decision: toggling room ON");
             response.setOn(true);
 
-            if(currentLightConfigs == null) {
+            if(lastLightConfigs == null) {
                 SceneApplyResponseDTO sceneResponse = scenes.applyDefaultScene();
                 response.setSuccess(!sceneResponse.isFailed());
             } else {
                 try {
                     // since the connection of the stored devices might expire,
                     // we need to make sure that we get a "connected" instance of the light
-                    currentLightConfigs.forEach((device, config) -> {
+                    lastLightConfigs.forEach((device, config) -> {
                         device = devices.getConnectedLight(device.ip());
                         devices.applyConfigToLight(device, config);
                     });
-                    spotify.resumePlayerOrStartContext(scenes.getDefaultSpotifyContext());
+
+                    if(lastPlayer != null && lastPlayer.isPlaying()) {
+                        spotify.resumePlayerOrStartContext(lastPlayer.getContext());
+                    }
                     response.setSuccess(true);
                 } catch (Exception e) {
                     response.setSuccess(false);
@@ -74,9 +79,10 @@ public class RoomAutomationService {
                 }
             }
         } else {
-            logger.log(Level.INFO, "toggling room OFF");
+            logger.log(Level.INFO, "smart toggle decision: toggling room OFF");
             response.setOn(false);
-            currentLightConfigs = devices.loadCurrentOnlineConfigs();
+            lastLightConfigs = devices.loadCurrentOnlineConfigs();
+            lastPlayer = spotify.loadCurrentPlayer();
 
             try {
                 scenes.shutdown();

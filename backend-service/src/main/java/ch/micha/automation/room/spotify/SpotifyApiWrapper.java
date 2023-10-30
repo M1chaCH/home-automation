@@ -192,6 +192,7 @@ public class SpotifyApiWrapper {
             JSONObject item = body.getJSONObject("item");
             String songName = item.getString("name");
             String trackUrl = item.getJSONObject("external_urls").getString("spotify");
+            String trackUri = item.getString("uri");
 
             JSONObject album = body.getJSONObject("item").getJSONObject("album");
             String artistName = album.getJSONArray("artists").getJSONObject(0).getString("name");
@@ -200,7 +201,12 @@ public class SpotifyApiWrapper {
             JSONArray images = album.getJSONArray("images");
             String albumCoverUrl = images.getJSONObject(0).getString("url");
 
-            String currentDeviceName = body.getJSONObject("device").getString("name");
+            JSONObject device = body.getJSONObject("device");
+            String currentDeviceName = device.getString("name");
+            int volume = device.optInt("volume_percent");
+
+            String contextUri = body.getJSONObject("context").optString("uri");
+
             boolean playing = body.getBoolean("is_playing");
 
             logger.log(Level.INFO, "successfully fetched spotify player");
@@ -211,6 +217,11 @@ public class SpotifyApiWrapper {
                     albumCoverUrl,
                     currentDeviceName,
                     trackUrl,
+                    new SpotifyContextDTO(
+                        contextUri,
+                        trackUri,
+                        volume
+                    ),
                     playing
             );
         } catch (UnirestException e) {
@@ -321,22 +332,28 @@ public class SpotifyApiWrapper {
     }
 
     /**
-     * starts or plays the given context uri
-     * @param contextUri the "thing" to play
+     * starts or resumes the given context uri at a given optional offsetUri
+     * @param contextUri the context of the track to play in (playlist / album uri)
+     * @param offsetUri the uri for the offset within the context
      */
     @SpeakerRequired
     @SpotifyAuthorized
-    public void playContext(String contextUri) {
+    public void playContext(String contextUri, String offsetUri) {
         try {
-            logger.log(Level.INFO, "playing {0}", contextUri);
+            logger.log(Level.INFO, "playing {0} at {1}", new Object[]{contextUri, offsetUri});
 
             JSONObject body = new JSONObject();
             body.put("context_uri", contextUri);
+            if(offsetUri != null && !offsetUri.isBlank()) {
+                JSONObject offset = new JSONObject();
+                offset.put("uri", offsetUri);
+                body.put("offset", offset);
+            }
 
             HttpResponse<JsonNode> response = callApi(SPOTIFY_PLAYER_PREFIX + "/play", "put", body, Map.of("device_id", deviceId));
-            throwUnexpectedIfNeeded(response, "failed to play contextUri " + contextUri);
+            throwUnexpectedIfNeeded(response, "failed to play contextUri %s, at %s".formatted(contextUri, offsetUri));
 
-            logger.log(Level.INFO, "successfully started at context");
+            logger.log(Level.INFO, "successfully started at context at offset");
         } catch (UnirestException e) {
             throw new UnexpectedSpotifyException(e);
         }
