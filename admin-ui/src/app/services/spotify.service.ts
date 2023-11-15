@@ -35,6 +35,17 @@ export class SpotifyService {
     return this.api.callApi<SpotifyPlayerDTO>(apiEndpoints.SPOTIFY_PLAYER, "GET", undefined);
   }
 
+  startContext(spotifyUri: string): Observable<void> {
+    return this.api.callApi(
+      apiEndpoints.SPOTIFY_PLAYBACK,
+      "POST",
+      {
+        contextUri: spotifyUri,
+        volume: 40,
+      }
+    );
+  }
+
   togglePlay(): Observable<void> {
     return this.api.callApi(
       apiEndpoints.SPOTIFY_PLAYBACK,

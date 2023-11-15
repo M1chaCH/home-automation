@@ -1,4 +1,10 @@
 .restart-speaker {
+  display: block;
   margin-top: 20px;
-  height: 100px;
+  height: 75px;
+
+  position: sticky;
+  bottom: 20px;
+  right: 20px;
+  left: 20px;
 }

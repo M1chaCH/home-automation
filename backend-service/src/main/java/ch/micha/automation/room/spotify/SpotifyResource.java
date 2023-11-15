@@ -2,11 +2,13 @@ package ch.micha.automation.room.spotify;
 
 import ch.micha.automation.room.events.Logged;
 import ch.micha.automation.room.spotify.dtos.SpotifyCodeDTO;
+import ch.micha.automation.room.spotify.dtos.SpotifyContextDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 @Logged
 @Path("/automation/spotify")
@@ -54,6 +56,13 @@ public class SpotifyResource {
         service.addAuthorisation(dto);
 
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    @POST
+    @Path("/playback")
+    public Response startResource(SpotifyContextDTO context) {
+        service.startContext(context);
+        return Response.status(Status.NO_CONTENT).build();
     }
 
     @PUT

@@ -16,4 +16,9 @@ export class SpotifyResourcesComponent {
   ) {
     this.resources$ = this.service.fetchResources();
   }
+
+  playPlaylist(resource: SpotifyResourceDTO, event: MouseEvent) {
+    event.preventDefault();
+    this.service.startContext(resource.spotifyURI).subscribe();
+  }
 }

@@ -7,5 +7,8 @@
             <p class="name">{{resource.name}}</p>
             <p class="description" [innerHTML]="resource.description"></p>
         </div>
+        <button class="play" (click)="playPlaylist(resource, $event)">
+            <span class="material-symbols-rounded">play_arrow</span>
+        </button>
     </a>
 </div>

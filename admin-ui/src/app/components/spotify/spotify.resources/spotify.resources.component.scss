@@ -21,6 +21,8 @@
     backdrop-filter: blur(5px);
     border: 2px solid rgba(255, 255, 255, 0.2);
 
+    position: relative;
+
     img {
       height: 100%;
       width: auto;
@@ -48,17 +50,61 @@
         text-transform: uppercase;
         font-size: 24px ;
         font-weight: 700;
+
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        word-break: keep-all;
+        white-space: nowrap;
+        width: 100%;
       }
 
       .description {
         text-transform: lowercase;
         font-size: 16px;
         font-weight: 300;
+
+        max-height: 40px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
       }
+    }
+
+    .play {
+      all: unset;
+      height: 60px;
+      width: 60px;
+      border-radius: 50%;
+
+      background: rgb(234, 226, 183);
+      background: linear-gradient(126deg, rgb(234, 226, 183) 0%, rgb(238, 199, 134) 50%, rgb(247, 127, 0) 100%);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin: auto;
+
+      position: absolute;
+      top: 0;
+      right: 30px;
+      bottom: 0;
+
+      visibility: hidden;
+      opacity: 0.2;
+      box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0);
+      transition: all 250ms ease-out;
     }
   }
 
   .scene:hover {
     scale: 1.02;
+
+    .play {
+      visibility: visible !important;
+      right: 10px;
+      opacity: 0.95;
+      box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
+    }
   }
 }

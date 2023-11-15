@@ -1,5 +1,6 @@
 package ch.micha.automation.room.light.yeelight.interceptor;
 
+import ch.micha.automation.room.errorhandling.exceptions.UnexpectedYeeLightException;
 import ch.micha.automation.room.errorhandling.exceptions.YeeLightOfflineException;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceEntity;
 import ch.micha.automation.room.light.yeelight.YeelightDeviceService;
@@ -36,8 +37,8 @@ public class LightConnectionVerifier {
     public Object intercept(InvocationContext invocationContext) throws Exception {
         try {
             return invocationContext.proceed();
-        } catch (YeeLightOfflineException e) {
-            logger.log(Level.INFO, "caught device offline for {0}, reconnecting all devices", new Object[]{ e.getDeviceIp() });
+        } catch (YeeLightOfflineException | UnexpectedYeeLightException e) {
+            logger.log(Level.INFO, "caught yeelight exception: {0}, reconnecting all devices", new Object[]{ e.getClass().getSimpleName() });
             List<YeelightDeviceEntity> devices = deviceService.loadYeelightDevices()
                 .values()
                 .stream()
